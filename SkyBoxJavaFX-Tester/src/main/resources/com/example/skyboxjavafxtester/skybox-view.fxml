@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.skyboxjavafxtester.SkyboxController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+
+
+    //TODO we will design our own welcome scene where we generate the default settings with options to change environment
+    <Label fx:id="welcomeText"/>
+    <Button text="Hello!" onAction="#onHelloButtonClick"/>
+
+    //TODO view for boxes for input of coords and any other data needed for location or time of year etc
+
+
+
+</VBox>
