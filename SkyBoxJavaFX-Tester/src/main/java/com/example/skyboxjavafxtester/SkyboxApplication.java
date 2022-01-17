@@ -6,11 +6,13 @@ import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.RotateEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -187,24 +189,25 @@ public class SkyboxApplication extends Application {
 
         //-----------SeanZ newest addition, imports both models and places them in the scene. ---------------------//
         //-----------Calls helper method that sets X, Y, Z variables for models. Method at bottom -----------------//
-        TdsModelImporter modelImporter = new TdsModelImporter();
-        modelImporter.read(house);
-        Node[] oneStoryHouse = modelImporter.getImport();
-        modelImporter.clear();
+        TdsModelImporter modelImporter = new TdsModelImporter(); //Model Importer
 
-        setModelVariables(oneStoryHouse);
+        modelImporter.read(house); //Read in the house model
+        Node[] oneStoryHouse = modelImporter.getImport(); //create House object with Node[]
+        modelImporter.clear(); // clear the importer
 
-        Group houseImport = new Group(oneStoryHouse);
-        sceneRoot.getChildren().add(houseImport);
+        setModelVariables(oneStoryHouse); //call to helper method
 
-        modelImporter.read(solarPanel);
-        Node[] theSolarPanel = modelImporter.getImport();
-        modelImporter.close();
+        Group houseImport = new Group(oneStoryHouse); //create new group with the house
+        sceneRoot.getChildren().add(houseImport); // add the house group to the scene
 
-        setModelVariables(theSolarPanel);
+        modelImporter.read(solarPanel); //Read in the solar panel model
+        Node[] theSolarPanel = modelImporter.getImport(); //create Solar Panel object with Node[]
+        modelImporter.close(); // Close the importer
 
-        Group solarPanelImport = new Group(theSolarPanel);
-        sceneRoot.getChildren().add(solarPanelImport);
+        setModelVariables(theSolarPanel); //call to helper method
+
+        Group solarPanelImport = new Group(theSolarPanel); // create new group with the solar panel
+        sceneRoot.getChildren().add(solarPanelImport); // add the solar panel group to the scene
 
         //--------------End of SeanZ newest addition------------------//
 
@@ -293,13 +296,20 @@ public class SkyboxApplication extends Application {
         stage.show();
     }
 
-    private void setModelVariables(Node[] model) //Model Helper Method
+    /*
+    Need to seperate functions for house and solar panel. I.E the house needs to be placed on the ground
+    at input coordinates and the solar panel needs to be placed in multiple spots on the roof.
+    Controllers will be needed.
+     */
+    private void setModelVariables(Node[] model) //----Model Helper Method----//
     {
         for (Node node : model) {
             node.setScaleX(.6);
             node.setScaleY(.6);
             node.setScaleZ(.6);
-            node.getTransforms().setAll(new Rotate(60, Rotate.Y_AXIS), new Rotate(-90, Rotate.X_AXIS));
+            node.getTransforms().setAll(new Rotate(25, Rotate.Y_AXIS), new Rotate(-90, Rotate.X_AXIS));
+            node.setTranslateX(200); // These place the house towards the ground and to the right of the view
+            node.setTranslateY(200); // ^^^^^^^^^^^^^^^
         }
     }
 
