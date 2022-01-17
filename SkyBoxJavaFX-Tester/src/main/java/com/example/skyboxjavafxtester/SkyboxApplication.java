@@ -1,32 +1,21 @@
 package com.example.skyboxjavafxtester;
 
+import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
 import javafx.application.Application;
+import javafx.geometry.Point3D;
 import javafx.scene.*;
-import javafx.scene.chart.ScatterChart;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.*;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import javafx.scene.shape.CullFace;
-import javafx.geometry.Point3D;
-import javafx.scene.Group;
-import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Box;
-import javafx.scene.shape.DrawMode;
-import javafx.scene.shape.MeshView;
-import javafx.scene.shape.Sphere;
-import javafx.scene.shape.TriangleMesh;
-import javafx.scene.transform.Rotate;
-import javafx.scene.paint.ImagePattern;
-
-import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
 
 //heavily inspired by http://www.mscs.mu.edu/~mikes/cosc3550/demos/3D_SkyboxDemo/SkyboxDemo.java
 
@@ -37,8 +26,6 @@ public class SkyboxApplication extends Application {
     private PerspectiveCamera camera;
     private Group cameraDolly;
     private final double cameraQuantity = 10.0;
-    private final double sceneWidth = 600; //TODO change to 1024
-    private final double sceneHeight = 600; //TODO change to 768
 
     //Mouse control variable declarations
     private double mousePosX;
@@ -185,7 +172,7 @@ public class SkyboxApplication extends Application {
 
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         //initiates the scene, environment and camera
 
                 //TODO directory for filesource is currently hard coded to path.
@@ -222,6 +209,10 @@ public class SkyboxApplication extends Application {
         //--------------End of SeanZ newest addition------------------//
 
 
+        //TODO change to 1024
+        double sceneWidth = 600;
+        //TODO change to 768
+        double sceneHeight = 600;
         Scene scene = new Scene(sceneRoot, sceneWidth, sceneHeight, true);
         scene.setFill(new ImagePattern(skyboxImage));
         camera = new PerspectiveCamera(true);
@@ -304,12 +295,11 @@ public class SkyboxApplication extends Application {
 
     private void setModelVariables(Node[] model) //Model Helper Method
     {
-        for (int i = 0; i < model.length; i++)
-        {
-            model[i].setScaleX(.6);
-            model[i].setScaleY(.6);
-            model[i].setScaleZ(.6);
-            model[i].getTransforms().setAll(new Rotate(60, Rotate.Y_AXIS), new Rotate(-90, Rotate.X_AXIS));
+        for (Node node : model) {
+            node.setScaleX(.6);
+            node.setScaleY(.6);
+            node.setScaleZ(.6);
+            node.getTransforms().setAll(new Rotate(60, Rotate.Y_AXIS), new Rotate(-90, Rotate.X_AXIS));
         }
     }
 
