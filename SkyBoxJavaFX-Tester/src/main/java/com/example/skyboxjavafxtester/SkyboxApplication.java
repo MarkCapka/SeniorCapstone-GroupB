@@ -1,23 +1,20 @@
 package com.example.skyboxjavafxtester;
 
 import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Scene;
+import javafx.scene.*;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javafx.scene.shape.CullFace;
 import javafx.geometry.Point3D;
-import javafx.scene.AmbientLight;
 import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.PointLight;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -28,6 +25,8 @@ import javafx.scene.shape.Sphere;
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Rotate;
 import javafx.scene.paint.ImagePattern;
+
+import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
 
 //heavily inspired by http://www.mscs.mu.edu/~mikes/cosc3550/demos/3D_SkyboxDemo/SkyboxDemo.java
 
@@ -49,11 +48,14 @@ public class SkyboxApplication extends Application {
     private double mouseDeltaX;
     private double mouseDeltaY;
 
+    //Model Import Declaration
+    private final File house = new File("/Users/seanz/workspace/SeniorCapstone-GroupB/SkyBoxJavaFX-Tester/src/main/resources/House.3ds");
+    private final File solarPanel = new File("/Users/seanz/workspace/SeniorCapstone-GroupB/SkyBoxJavaFX-Tester/src/main/resources/SolarPanel(Export).3ds");
 
         Image skyboxImage;
     {
         try {
-            skyboxImage = new Image(new FileInputStream("/Users/katiepalmer/IdeaProjects/SkyBoxJavaFX-Tester/src/main/resources/skyboxDesert.png"));
+            skyboxImage = new Image(new FileInputStream("/Users/seanz/workspace/SeniorCapstone-GroupB/SkyBoxJavaFX-Tester/src/main/resources/skyboxDesert.png"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -193,9 +195,32 @@ public class SkyboxApplication extends Application {
             // right now we are just setting up skybox
         //FXMLLoader fxmlLoader = new FXMLLoader(SkyboxApplication.class.getResource("skybox-view.fxml"));
 
-
         Group sceneRoot = new Group();
         constructWorld(sceneRoot);
+
+        //-----------SeanZ newest addition, imports both models and places them in the scene. ---------------------//
+        //-----------Calls helper method that sets X, Y, Z variables for models. Method at bottom -----------------//
+        TdsModelImporter modelImporter = new TdsModelImporter();
+        modelImporter.read(house);
+        Node[] oneStoryHouse = modelImporter.getImport();
+        modelImporter.clear();
+
+        setModelVariables(oneStoryHouse);
+
+        Group houseImport = new Group(oneStoryHouse);
+        sceneRoot.getChildren().add(houseImport);
+
+        modelImporter.read(solarPanel);
+        Node[] theSolarPanel = modelImporter.getImport();
+        modelImporter.close();
+
+        setModelVariables(theSolarPanel);
+
+        Group solarPanelImport = new Group(theSolarPanel);
+        sceneRoot.getChildren().add(solarPanelImport);
+
+        //--------------End of SeanZ newest addition------------------//
+
 
         Scene scene = new Scene(sceneRoot, sceneWidth, sceneHeight, true);
         scene.setFill(new ImagePattern(skyboxImage));
@@ -217,6 +242,8 @@ public class SkyboxApplication extends Application {
         sceneRoot.getChildren().add(cameraDolly);
         cameraDolly.getChildren().add(turn);
         turn.getChildren().add(camera);
+
+
 
         // Use keyboard to control camera position
         scene.setOnKeyPressed(event -> {
@@ -273,6 +300,17 @@ public class SkyboxApplication extends Application {
         stage.setTitle("Skybox");
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void setModelVariables(Node[] model) //Model Helper Method
+    {
+        for (int i = 0; i < model.length; i++)
+        {
+            model[i].setScaleX(.6);
+            model[i].setScaleY(.6);
+            model[i].setScaleZ(.6);
+            model[i].getTransforms().setAll(new Rotate(60, Rotate.Y_AXIS), new Rotate(-90, Rotate.X_AXIS));
+        }
     }
 
 

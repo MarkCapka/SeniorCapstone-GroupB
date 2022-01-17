@@ -1,0 +1,143 @@
+Index: SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxApplication.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.skyboxjavafxtester;\r\n\r\nimport javafx.application.Application;\r\nimport javafx.scene.Group;\r\nimport javafx.scene.Scene;\r\nimport javafx.scene.chart.ScatterChart;\r\nimport javafx.scene.image.Image;\r\nimport javafx.scene.image.ImageView;\r\nimport javafx.stage.Stage;\r\n\r\nimport java.io.FileInputStream;\r\nimport java.io.FileNotFoundException;\r\nimport java.io.IOException;\r\n\r\nimport javafx.scene.shape.CullFace;\r\nimport javafx.geometry.Point3D;\r\nimport javafx.scene.AmbientLight;\r\nimport javafx.scene.Group;\r\nimport javafx.scene.PerspectiveCamera;\r\nimport javafx.scene.PointLight;\r\nimport javafx.scene.input.KeyCode;\r\nimport javafx.scene.paint.Color;\r\nimport javafx.scene.paint.PhongMaterial;\r\nimport javafx.scene.shape.Box;\r\nimport javafx.scene.shape.DrawMode;\r\nimport javafx.scene.shape.MeshView;\r\nimport javafx.scene.shape.Sphere;\r\nimport javafx.scene.shape.TriangleMesh;\r\nimport javafx.scene.transform.Rotate;\r\nimport javafx.scene.paint.ImagePattern;\r\n\r\n//heavily inspired by http://www.mscs.mu.edu/~mikes/cosc3550/demos/3D_SkyboxDemo/SkyboxDemo.java\r\n\r\n\r\npublic class SkyboxApplication extends Application {\r\n\r\n    //camera controls and scene settings declarations\r\n    private PerspectiveCamera camera;\r\n    private Group cameraDolly;\r\n    private final double cameraQuantity = 10.0;\r\n    private final double sceneWidth = 600; //TODO change to 1024\r\n    private final double sceneHeight = 600; //TODO change to 768\r\n\r\n    //Mouse control variable declarations\r\n    private double mousePosX;\r\n    private double mousePosY;\r\n    private double mouseOldX;\r\n    private double mouseOldY;\r\n    private double mouseDeltaX;\r\n    private double mouseDeltaY;\r\n\r\n\r\n        Image skyboxImage;\r\n    {\r\n        try {\r\n            skyboxImage = new Image(new FileInputStream(\"/Users/katiepalmer/IdeaProjects/SkyBoxJavaFX-Tester/src/main/resources/skyboxDesert.png\"));\r\n        } catch (FileNotFoundException e) {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n\r\n    private void constructWorld(Group root) {\r\n        // AmbientLight light = new AmbientLight();\r\n        AmbientLight light = new AmbientLight(Color.rgb(160, 160, 160));\r\n\r\n        PointLight pl = new PointLight();\r\n        pl.setTranslateX(100);\r\n        pl.setTranslateY(-100);\r\n        pl.setTranslateZ(-100);\r\n        root.getChildren().add(pl);\r\n\r\n        final PhongMaterial greenMaterial = new PhongMaterial();\r\n        greenMaterial.setDiffuseColor(Color.FORESTGREEN);\r\n        greenMaterial.setSpecularColor(Color.LIMEGREEN);\r\n        Box xAxis = new Box(500, 10, 10);\r\n        xAxis.setMaterial(greenMaterial);\r\n        Box yAxis = new Box(10, 200, 10);\r\n        yAxis.setMaterial(greenMaterial);\r\n        Box zAxis = new Box(10, 10, 200);\r\n        zAxis.setMaterial(greenMaterial);\r\n\r\n        final PhongMaterial redMaterial = new PhongMaterial();\r\n        redMaterial.setDiffuseColor(Color.RED);\r\n        redMaterial.setSpecularColor(Color.TOMATO);\r\n        final Sphere sphere = new Sphere(30);\r\n        sphere.setMaterial(redMaterial);\r\n\r\n        sphere.setTranslateX(150);\r\n\r\n        final PhongMaterial yellowMaterial = new PhongMaterial();\r\n        yellowMaterial.setDiffuseColor(Color.rgb(200, 200, 0));\r\n        // yellowMaterial.setDiffuseColor(Color.YELLOW);\r\n        // yellowMaterial.setSpecularColor(Color.WHITE);\r\n        final Sphere sphere2 = new Sphere(30);\r\n        sphere2.setMaterial(yellowMaterial);\r\n        // sphere2.setDrawMode(DrawMode.LINE);\r\n\r\n        sphere2.setTranslateX(110);\r\n\r\n        // Example from JavaFX for Dummies\r\n        TriangleMesh pyramidMesh = new TriangleMesh();\r\n        // define (a trivial) texture map\r\n        pyramidMesh.getTexCoords().addAll(\r\n                0.5f, 0,\r\n                0, 0.5f,\r\n                1, 0.5f,\r\n                0, 1,\r\n                1, 1\r\n        );\r\n        // define vertices\r\n        float h = 100;                    // Height\r\n        float s = 200;                    // Base hypotenuse\r\n        pyramidMesh.getPoints().addAll(\r\n                0,    0,    0,            // Point 0 - Top\r\n                0,    h,    -s/2,         // Point 1 - Front\r\n                -s/2, h,    0,            // Point 2 - Left\r\n                s/2,  h,    0,            // Point 3 - Right\r\n                0,    h,    s/2           // Point 4 - Back\r\n        );\r\n        // define faces\r\n        pyramidMesh.getFaces().addAll(\r\n                0,0,  2,1,  1,2,          // Front left face\r\n                0,0,  1,1,  3,1,          // Front right face\r\n                0,0,  3,1,  4,2,          // Back right face\r\n                0,0,  4,1,  2,2,          // Back left face\r\n                4,1,  1,4,  2,2,          // Bottom left face\r\n                4,1,  3,3,  1,4           // Bottom right face\r\n        );\r\n        pyramidMesh.getFaceSmoothingGroups().addAll(\r\n                1, 2, 3, 4, 5, 5);\r\n        MeshView pyramid = new MeshView(pyramidMesh);\r\n        //pyramid.setDrawMode(DrawMode.LINE);\r\n        final PhongMaterial pyrMaterial = new PhongMaterial();\r\n        //pyrMaterial.setDiffuseMap(new Image(\"pyr_tex.png\")); //TODO missing this image, need to determine the diffuse map\r\n        pyrMaterial.setDiffuseColor(Color.BLUE);\r\n        pyrMaterial.setSpecularColor(Color.WHITE);\r\n        pyramid.setMaterial(pyrMaterial);\r\n        pyramid.setTranslateX(-50);\r\n        pyramid.setTranslateY(-200);\r\n        pyramid.setTranslateZ(0);\r\n        root.getChildren().add(pyramid);\r\n\r\n//\t\t// Dump out all characteristics of the TriangleMesh\r\n//\t\t// for debugging purposes\r\n//\t\tTriangleMesh tm = pyramidMesh;\r\n//\t\tSystem.out.println(\"Faces: \"+tm.getFaceElementSize());\r\n//\t\tSystem.out.println(tm.getFaces() );\r\n//\t\tSystem.out.println(tm.getFaceSmoothingGroups());\r\n//\t\tSystem.out.println(\"Normals: \"+tm.getNormalElementSize());\r\n//\t\tSystem.out.println(tm.getNormals());\r\n//\t\tSystem.out.println(\"Points: \"+tm.getPointElementSize());\r\n//\t\tSystem.out.println(tm.getPoints());\r\n//\t\tSystem.out.println(\"TexCoords: \"+tm.getTexCoordElementSize());\r\n//\t\tSystem.out.println(tm.getTexCoords());\r\n\r\n        final PhongMaterial blueMaterial = new PhongMaterial();\r\n        blueMaterial.setDiffuseColor(Color.BLUE);\r\n        //blueMaterial.setDiffuseMap(back);\r\n        blueMaterial.setSpecularColor(Color.WHITE);\r\n        Box box = new Box(40, 60, 80);\r\n        box.setMaterial(blueMaterial);\r\n        //box.setCullFace(CullFace.NONE);\r\n        // box.setDrawMode(DrawMode.LINE);\r\n\r\n        box.setTranslateX(-30);\r\n        box.setTranslateY(-20);\r\n        box.setTranslateZ(-20);\r\n\r\n        root.getChildren().addAll(xAxis, yAxis, zAxis);\r\n\r\n        root.getChildren().addAll(sphere2, sphere, box, light);\r\n\r\n        Image back = new Image(\"skyboxDesert.png\");\r\n        final PhongMaterial skyMaterial = new PhongMaterial();\r\n        skyMaterial.setDiffuseMap(back);\r\n        Box skybox = new Box(10000, 10000, 10000);\r\n        //Sphere skybox = new Sphere(5000);\r\n        skybox.setMaterial(skyMaterial);\r\n        skybox.setCullFace(CullFace.NONE);\r\n        root.getChildren().add(skybox);\r\n\r\n    }\r\n\r\n\r\n    @Override\r\n    public void start(Stage stage) throws IOException {\r\n        //initiates the scene, environment and camera\r\n\r\n                //TODO directory for filesource is currently hard coded to path.\r\n       // Image skyboxImage = new Image(new FileInputStream(\"/Users/katiepalmer/IdeaProjects/SkyBoxJavaFX-Tester/src/main/resources/skyboxDesert.png\"));\r\n\r\n            //TODO BELOW: we will likely use the fxmlLoader to call the view once we have more pieces impelmented within our view.\r\n            // right now we are just setting up skybox\r\n        //FXMLLoader fxmlLoader = new FXMLLoader(SkyboxApplication.class.getResource(\"skybox-view.fxml\"));\r\n\r\n\r\n        Group sceneRoot = new Group();\r\n        constructWorld(sceneRoot);\r\n\r\n        Scene scene = new Scene(sceneRoot, sceneWidth, sceneHeight, true);\r\n        scene.setFill(new ImagePattern(skyboxImage));\r\n        camera = new PerspectiveCamera(true);\r\n        camera.setNearClip(0.1);\r\n        camera.setFarClip(30000.0);\r\n        scene.setCamera(camera);\r\n        // translations through dolly\r\n        cameraDolly = new Group();\r\n        cameraDolly.setTranslateZ(-1000);\r\n        cameraDolly.setTranslateX(200);\r\n        // rotation transforms\r\n        Group turn = new Group();\r\n        Rotate xRotate = new Rotate(0, 0, 0, 0, Rotate.X_AXIS);\r\n        Rotate yRotate = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);\r\n        camera.getTransforms().addAll(xRotate);\r\n        turn.getTransforms().addAll(yRotate);\r\n\r\n        sceneRoot.getChildren().add(cameraDolly);\r\n        cameraDolly.getChildren().add(turn);\r\n        turn.getChildren().add(camera);\r\n\r\n        // Use keyboard to control camera position\r\n        scene.setOnKeyPressed(event -> {\r\n            double change = cameraQuantity;\r\n            // What key did the user press?\r\n            KeyCode keycode = event.getCode();\r\n\r\n            Point3D delta = null;\r\n            if (keycode == KeyCode.COMMA) {\r\n                delta = new Point3D(0, 0, change);\r\n            }\r\n            if (keycode == KeyCode.PERIOD) {\r\n                delta = new Point3D(0, 0, -change);\r\n            }\r\n            if (keycode == KeyCode.A) {\r\n                delta = new Point3D(-change, 0, 0);\r\n            }\r\n            if (keycode == KeyCode.D) {\r\n                delta = new Point3D(change, 0, 0);\r\n            }\r\n            if (keycode == KeyCode.W) {\r\n                delta = new Point3D(0, -change, 0);\r\n            }\r\n            if (keycode == KeyCode.S) {\r\n                delta = new Point3D(0, change, 0);\r\n            }\r\n            if (delta != null) {\r\n                Point3D delta2 = camera.localToParent(delta);\r\n                cameraDolly.setTranslateX(cameraDolly.getTranslateX() + delta2.getX());\r\n                cameraDolly.setTranslateY(cameraDolly.getTranslateY() + delta2.getY());\r\n                cameraDolly.setTranslateZ(cameraDolly.getTranslateZ() + delta2.getZ());\r\n\r\n            }\r\n        });\r\n\r\n        // Use mouse to control camera rotation\r\n        scene.setOnMousePressed(me -> {\r\n            mousePosX = me.getSceneX();\r\n            mousePosY = me.getSceneY();\r\n        });\r\n\r\n        scene.setOnMouseDragged(me -> {\r\n            mouseOldX = mousePosX;\r\n            mouseOldY = mousePosY;\r\n            mousePosX = me.getSceneX();\r\n            mousePosY = me.getSceneY();\r\n            mouseDeltaX = (mousePosX - mouseOldX);\r\n            mouseDeltaY = (mousePosY - mouseOldY);\r\n\r\n            yRotate.setAngle(((yRotate.getAngle() - mouseDeltaX * 0.2) % 360 + 540) % 360 - 180); // +\r\n            xRotate.setAngle(((xRotate.getAngle() + mouseDeltaY * 0.2) % 360 + 540) % 360 - 180); // -\r\n        });\r\n\r\n        stage.setTitle(\"Skybox\");\r\n        stage.setScene(scene);\r\n        stage.show();\r\n    }\r\n\r\n\r\n\r\n\r\n/*\r\n        //TODO below may be moved into skybox-view.fxml so we have control of all view functionality in one place\r\n        ImageView imageView = new ImageView(skyboxImage);\r\n        imageView.setX(50);\r\n        imageView.setY(25);\r\n        Group skyboxImages = new Group(imageView);\r\n        stage.setTitle(\"Java Skybox\");\r\n        stage.setScene(scene);\r\n        stage.show();*/\r\n\r\n\r\n    public static void main(String[] args) {\r\n        launch();\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxApplication.java b/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxApplication.java
+--- a/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxApplication.java	(revision 325cf6890634098ec6fc4109c9de29f4452c9b47)
++++ b/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxApplication.java	(date 1642403538603)
+@@ -1,23 +1,20 @@
+ package com.example.skyboxjavafxtester;
+ 
+ import javafx.application.Application;
+-import javafx.scene.Group;
+-import javafx.scene.Scene;
++import javafx.scene.*;
+ import javafx.scene.chart.ScatterChart;
+ import javafx.scene.image.Image;
+ import javafx.scene.image.ImageView;
+ import javafx.stage.Stage;
+ 
++import java.io.File;
+ import java.io.FileInputStream;
+ import java.io.FileNotFoundException;
+ import java.io.IOException;
+ 
+ import javafx.scene.shape.CullFace;
+ import javafx.geometry.Point3D;
+-import javafx.scene.AmbientLight;
+ import javafx.scene.Group;
+-import javafx.scene.PerspectiveCamera;
+-import javafx.scene.PointLight;
+ import javafx.scene.input.KeyCode;
+ import javafx.scene.paint.Color;
+ import javafx.scene.paint.PhongMaterial;
+@@ -29,6 +26,8 @@
+ import javafx.scene.transform.Rotate;
+ import javafx.scene.paint.ImagePattern;
+ 
++import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
++
+ //heavily inspired by http://www.mscs.mu.edu/~mikes/cosc3550/demos/3D_SkyboxDemo/SkyboxDemo.java
+ 
+ 
+@@ -49,11 +48,14 @@
+     private double mouseDeltaX;
+     private double mouseDeltaY;
+ 
++    //Model Import Declaration
++    private final File house = new File("/Users/seanz/workspace/SeniorCapstone-GroupB/SkyBoxJavaFX-Tester/src/main/resources/House.3ds");
++    private final File solarPanel = new File("/Users/seanz/workspace/SeniorCapstone-GroupB/SkyBoxJavaFX-Tester/src/main/resources/SolarPanel(Export).3ds");
+ 
+         Image skyboxImage;
+     {
+         try {
+-            skyboxImage = new Image(new FileInputStream("/Users/katiepalmer/IdeaProjects/SkyBoxJavaFX-Tester/src/main/resources/skyboxDesert.png"));
++            skyboxImage = new Image(new FileInputStream("/Users/seanz/workspace/SeniorCapstone-GroupB/SkyBoxJavaFX-Tester/src/main/resources/skyboxDesert.png"));
+         } catch (FileNotFoundException e) {
+             e.printStackTrace();
+         }
+@@ -193,10 +195,33 @@
+             // right now we are just setting up skybox
+         //FXMLLoader fxmlLoader = new FXMLLoader(SkyboxApplication.class.getResource("skybox-view.fxml"));
+ 
+-
+         Group sceneRoot = new Group();
+         constructWorld(sceneRoot);
+ 
++        //-----------SeanZ newest addition, imports both models and places them in the scene. ---------------------//
++        //-----------Calls helper method that sets X, Y, Z variables for models. Method at bottom -----------------//
++        TdsModelImporter modelImporter = new TdsModelImporter();
++        modelImporter.read(house);
++        Node[] oneStoryHouse = modelImporter.getImport();
++        modelImporter.clear();
++
++        setModelVariables(oneStoryHouse);
++
++        Group houseImport = new Group(oneStoryHouse);
++        sceneRoot.getChildren().add(houseImport);
++
++        modelImporter.read(solarPanel);
++        Node[] theSolarPanel = modelImporter.getImport();
++        modelImporter.close();
++
++        setModelVariables(theSolarPanel);
++
++        Group solarPanelImport = new Group(theSolarPanel);
++        sceneRoot.getChildren().add(solarPanelImport);
++
++        //--------------End of SeanZ newest addition------------------//
++
++
+         Scene scene = new Scene(sceneRoot, sceneWidth, sceneHeight, true);
+         scene.setFill(new ImagePattern(skyboxImage));
+         camera = new PerspectiveCamera(true);
+@@ -218,6 +243,8 @@
+         cameraDolly.getChildren().add(turn);
+         turn.getChildren().add(camera);
+ 
++
++
+         // Use keyboard to control camera position
+         scene.setOnKeyPressed(event -> {
+             double change = cameraQuantity;
+@@ -275,6 +302,17 @@
+         stage.show();
+     }
+ 
++    private void setModelVariables(Node[] model) //Model Helper Method
++    {
++        for (int i = 0; i < model.length; i++)
++        {
++            model[i].setScaleX(.6);
++            model[i].setScaleY(.6);
++            model[i].setScaleZ(.6);
++            model[i].getTransforms().setAll(new Rotate(60, Rotate.Y_AXIS), new Rotate(-90, Rotate.X_AXIS));
++        }
++    }
++
+ 
+ 
+ 
+Index: SkyBoxJavaFX-Tester/src/main/java/module-info.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>module com.example.skyboxjavafxtester {\r\n    requires org.controlsfx.controls;\r\n    requires com.dlsc.formsfx;\r\n    requires validatorfx;\r\n    requires org.kordamp.ikonli.javafx;\r\n    requires org.kordamp.bootstrapfx.core;\r\n    requires eu.hansolo.tilesfx;\r\n\r\n    opens com.example.skyboxjavafxtester to javafx.fxml;\r\n    exports com.example.skyboxjavafxtester;\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/SkyBoxJavaFX-Tester/src/main/java/module-info.java b/SkyBoxJavaFX-Tester/src/main/java/module-info.java
+--- a/SkyBoxJavaFX-Tester/src/main/java/module-info.java	(revision 325cf6890634098ec6fc4109c9de29f4452c9b47)
++++ b/SkyBoxJavaFX-Tester/src/main/java/module-info.java	(date 1642401565215)
+@@ -5,6 +5,9 @@
+     requires org.kordamp.ikonli.javafx;
+     requires org.kordamp.bootstrapfx.core;
+     requires eu.hansolo.tilesfx;
++    requires javafx.graphics;
++    requires javafx.controls;
++    requires jim3dsModelImporterJFX;
+ 
+     opens com.example.skyboxjavafxtester to javafx.fxml;
+     exports com.example.skyboxjavafxtester;
