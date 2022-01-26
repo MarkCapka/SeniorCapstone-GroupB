@@ -258,7 +258,7 @@
       <workItem from="1642373917693" duration="3868000" />
       <workItem from="1642377845373" duration="2732000" />
       <workItem from="1642382149938" duration="5902000" />
-      <workItem from="1642395322704" duration="19198000" />
+      <workItem from="1642395322704" duration="23681000" />
     </task>
     <task id="LOCAL-00001" summary="Models in the SkyBox">
       <created>1642405894649</created>
@@ -288,7 +288,14 @@
       <option name="project" value="LOCAL" />
       <updated>1642410681250</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Buttons added to add/remove panels">
+      <created>1643092556278</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1643092556278</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -322,7 +329,8 @@
     <MESSAGE value="Models in the SkyBox" />
     <MESSAGE value="Models in the SkyBox-Refactored" />
     <MESSAGE value="Models Uploaded, comments and explanations" />
-    <option name="LAST_COMMIT_MESSAGE" value="Models Uploaded, comments and explanations" />
+    <MESSAGE value="Buttons added to add/remove panels" />
+    <option name="LAST_COMMIT_MESSAGE" value="Buttons added to add/remove panels" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/SeniorCapstone_GroupB$SkyboxApplication.ic" NAME="SkyboxApplication Coverage Results" MODIFIED="1642394879393" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">

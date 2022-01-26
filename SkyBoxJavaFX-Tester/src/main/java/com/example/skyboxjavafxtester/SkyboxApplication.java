@@ -2,23 +2,20 @@ package com.example.skyboxjavafxtester;
 
 import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
 import javafx.application.Application;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.control.Button;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.RotateEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -47,7 +44,6 @@ public class SkyboxApplication extends Application {
     //Model Import Declaration
     private final File house = new File("/Users/seanz/workspace/SeniorCapstone-GroupB/SkyBoxJavaFX-Tester/src/main/resources/House.3ds");
     private final File solarPanel = new File("/Users/seanz/workspace/SeniorCapstone-GroupB/SkyBoxJavaFX-Tester/src/main/resources/SolarPanel(Export).3ds");
-
     private Group solarPanelImport;
 
 
@@ -182,7 +178,6 @@ public class SkyboxApplication extends Application {
 
     }
 
-
     @Override
     public void start(Stage stage) {
         //initiates the scene, environment and camera
@@ -201,6 +196,19 @@ public class SkyboxApplication extends Application {
         //-----------Calls helper method that sets X, Y, Z variables for models. Method at bottom -----------------//
         TdsModelImporter modelImporter = new TdsModelImporter(); //Model Importer
 
+        ///Anthony code
+        Light.Distant light = new Light.Distant();
+
+        //Setting the properties of the light source
+        light.setAzimuth(45.0);
+        light.setElevation(30.0);
+
+        //Instantiating the Lighting class
+        Lighting lighting = new Lighting();
+
+        //Setting the source of the light
+        lighting.setLight(light);
+
         modelImporter.read(house); //Read in the house model
         Node[] oneStoryHouse = modelImporter.getImport(); //create House object with Node[]
         modelImporter.clear(); // clear the importer
@@ -208,7 +216,13 @@ public class SkyboxApplication extends Application {
         setHouseVariables(oneStoryHouse); //call to helper method
 
         Group houseImport = new Group(oneStoryHouse); //create new group with the house
+
+        ///apply lighting effect on houese model
+        houseImport.setEffect(lighting);
+
         sceneRoot.getChildren().add(houseImport); // add the house group to the scene
+
+        //sceneRoot.setEffect(lighting);
 
         //--------------End of SeanZ House Import------------------//
 
@@ -240,43 +254,51 @@ public class SkyboxApplication extends Application {
 
         //-------------- SeanZ Newest Addition----------------//
         //-------------- Buttons to add and remove solar panels in the scene----------------//
-        //-------------- Only removes most recent solar panel placed right now----------------//
-        //-------------- I.E if adding more than one solar panel, cant remove them all----------------//
+        //-------------- Can add or remove any number of solar panels----------------//
+        //-------------- Need to un-hard code number of children in sceneroot group----------------//
+
         Button addSolarPanelToScene = new Button();
         addSolarPanelToScene.setText("Add Solar Panel");
         addSolarPanelToScene.setTranslateX(0);
         addSolarPanelToScene.setTranslateY(-250);
 
-        addSolarPanelToScene.setOnAction(new EventHandler() {
+        addSolarPanelToScene.setOnAction(new EventHandler()
+        {
             @Override
-            public void handle(Event event) {
+            public void handle(Event event)
+            {
                 modelImporter.read(solarPanel); //Read in the solar panel model
                 Node[] theSolarPanel = modelImporter.getImport(); //create Solar Panel object with Node[]
 
                 setSolarVariables(theSolarPanel); //call to helper method
 
-
                 solarPanelImport = new Group(theSolarPanel); // create new group with the solar panel
+                solarPanelImport.setEffect(lighting); // set lighting effects
                 sceneRoot.getChildren().add(solarPanelImport); // add the solar panel group to the scene
             }
-
         });
 
         Button removeSolarPanel = new Button();
         removeSolarPanel.setText("Remove Solar Panel");
         removeSolarPanel.setTranslateX(300);
         removeSolarPanel.setTranslateY(-250);
+        //final int allChildren = sceneRoot.getChildren().size(); Need to get number of children added
 
-        removeSolarPanel.setOnAction(new EventHandler() {
+        removeSolarPanel.setOnAction(new EventHandler()
+        {
             @Override
-            public void handle(Event event) {
-                sceneRoot.getChildren().remove(solarPanelImport); // add the solar panel group to the scene
+            public void handle(Event event)
+            {
+                int num = sceneRoot.getChildren().size() - 1;
+                if(num > 13) //hardcoded number of children in group, index 13 is the remove button
+                {
+                    sceneRoot.getChildren().remove(num); // remove the most recent solar panel
+                }
             }
-
         });
 
-        sceneRoot.getChildren().add(addSolarPanelToScene);
-        sceneRoot.getChildren().add(removeSolarPanel);
+        sceneRoot.getChildren().add(addSolarPanelToScene); //adding both buttons to scene
+        sceneRoot.getChildren().add(removeSolarPanel); // later should be out of skybox in ui bar
 
         //--------------End of SeanZ Newest Addition----------------//
 
@@ -338,9 +360,8 @@ public class SkyboxApplication extends Application {
         stage.show();
     }
 
-    /*
-    House needs to be placed on the ground at input coordinates and the solar panel
-    needs to be placed in multiple spots on the roof. Controllers will be needed.
+    /* Sean Z
+    House needs to be placed on the ground at input coordinates
      */
     private void setHouseVariables(Node[] model) //----Model Helper Method----//
     {
@@ -354,7 +375,7 @@ public class SkyboxApplication extends Application {
         }
     }
 
-    //Helper method with solar panels. Puts new solar panels in random spots at the moment
+    // Sean Z Helper method with solar panels. Puts new solar panels in random spots at the moment
     private void setSolarVariables(Node[] model) //----Model Helper Method----//
     {
         int min = 0;
