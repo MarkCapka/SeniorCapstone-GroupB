@@ -2,26 +2,24 @@ package com.example.skyboxjavafxtester;
 
 import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
 import javafx.application.Application;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
-import javafx.scene.control.Button;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.RotateEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Random;
 
 //heavily inspired by http://www.mscs.mu.edu/~mikes/cosc3550/demos/3D_SkyboxDemo/SkyboxDemo.java
 
@@ -42,15 +40,12 @@ public class SkyboxApplication extends Application {
     private double mouseDeltaY;
 
     //Model Import Declaration
-    private final File house = new File("/Users/seanz/workspace/SeniorCapstone-GroupB/SkyBoxJavaFX-Tester/src/main/resources/House.3ds");
-    private final File solarPanel = new File("/Users/seanz/workspace/SeniorCapstone-GroupB/SkyBoxJavaFX-Tester/src/main/resources/SolarPanel(Export).3ds");
-    private Group solarPanelImport;
-
-
-        Image skyboxImage;
+    private final File house = new File("C:\\House.3ds");
+    private final File solarPanel = new File("C:\\SolarPanel(Export).3ds");
+    Image skyboxImage;
     {
         try {
-            skyboxImage = new Image(new FileInputStream("/Users/seanz/workspace/SeniorCapstone-GroupB/SkyBoxJavaFX-Tester/src/main/resources/skyboxDesert.png"));
+            skyboxImage = new Image(new FileInputStream("C:\\SeniorCapstone-GroupB-SeanZ-ModelsUploaded-\\SkyBoxJavaFX-Tester\\src\\main\\resources/\\skyboxExample.png"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -178,6 +173,7 @@ public class SkyboxApplication extends Application {
 
     }
 
+
     @Override
     public void start(Stage stage) {
         //initiates the scene, environment and camera
@@ -192,10 +188,9 @@ public class SkyboxApplication extends Application {
         Group sceneRoot = new Group();
         constructWorld(sceneRoot);
 
-        //-----------SeanZ House Import ---------------------//
+        //-----------SeanZ newest addition, imports both models and places them in the scene. ---------------------//
         //-----------Calls helper method that sets X, Y, Z variables for models. Method at bottom -----------------//
         TdsModelImporter modelImporter = new TdsModelImporter(); //Model Importer
-
         ///Anthony code
         Light.Distant light = new Light.Distant();
 
@@ -208,23 +203,26 @@ public class SkyboxApplication extends Application {
 
         //Setting the source of the light
         lighting.setLight(light);
-
         modelImporter.read(house); //Read in the house model
         Node[] oneStoryHouse = modelImporter.getImport(); //create House object with Node[]
         modelImporter.clear(); // clear the importer
 
-        setHouseVariables(oneStoryHouse); //call to helper method
+        setModelVariables(oneStoryHouse); //call to helper method
 
         Group houseImport = new Group(oneStoryHouse); //create new group with the house
-
-        ///apply lighting effect on houese model
-        houseImport.setEffect(lighting);
-
         sceneRoot.getChildren().add(houseImport); // add the house group to the scene
+        ///apply lighting effect on houesmodel
+        houseImport.setEffect(lighting);
+        modelImporter.read(solarPanel); //Read in the solar panel model
+        Node[] theSolarPanel = modelImporter.getImport(); //create Solar Panel object with Node[]
+        modelImporter.close(); // Close the importer
 
+        setModelVariables(theSolarPanel); //call to helper method
+
+        Group solarPanelImport = new Group(theSolarPanel); // create new group with the solar panel
+        sceneRoot.getChildren().add(solarPanelImport); // add the solar panel group to the scene
         //sceneRoot.setEffect(lighting);
-
-        //--------------End of SeanZ House Import------------------//
+        //--------------End of SeanZ newest addition------------------//
 
 
         //TODO change to 1024
@@ -232,7 +230,9 @@ public class SkyboxApplication extends Application {
         //TODO change to 768
         double sceneHeight = 600;
         Scene scene = new Scene(sceneRoot, sceneWidth, sceneHeight, true);
+
         scene.setFill(new ImagePattern(skyboxImage));
+
         camera = new PerspectiveCamera(true);
         camera.setNearClip(0.1);
         camera.setFarClip(30000.0);
@@ -249,58 +249,10 @@ public class SkyboxApplication extends Application {
         turn.getTransforms().addAll(yRotate);
 
         sceneRoot.getChildren().add(cameraDolly);
+
         cameraDolly.getChildren().add(turn);
         turn.getChildren().add(camera);
 
-        //-------------- SeanZ Newest Addition----------------//
-        //-------------- Buttons to add and remove solar panels in the scene----------------//
-        //-------------- Can add or remove any number of solar panels----------------//
-        //-------------- Need to un-hard code number of children in sceneroot group----------------//
-
-        Button addSolarPanelToScene = new Button();
-        addSolarPanelToScene.setText("Add Solar Panel");
-        addSolarPanelToScene.setTranslateX(0);
-        addSolarPanelToScene.setTranslateY(-250);
-
-        addSolarPanelToScene.setOnAction(new EventHandler()
-        {
-            @Override
-            public void handle(Event event)
-            {
-                modelImporter.read(solarPanel); //Read in the solar panel model
-                Node[] theSolarPanel = modelImporter.getImport(); //create Solar Panel object with Node[]
-
-                setSolarVariables(theSolarPanel); //call to helper method
-
-                solarPanelImport = new Group(theSolarPanel); // create new group with the solar panel
-                solarPanelImport.setEffect(lighting); // set lighting effects
-                sceneRoot.getChildren().add(solarPanelImport); // add the solar panel group to the scene
-            }
-        });
-
-        Button removeSolarPanel = new Button();
-        removeSolarPanel.setText("Remove Solar Panel");
-        removeSolarPanel.setTranslateX(300);
-        removeSolarPanel.setTranslateY(-250);
-        //final int allChildren = sceneRoot.getChildren().size(); Need to get number of children added
-
-        removeSolarPanel.setOnAction(new EventHandler()
-        {
-            @Override
-            public void handle(Event event)
-            {
-                int num = sceneRoot.getChildren().size() - 1;
-                if(num > 13) //hardcoded number of children in group, index 13 is the remove button
-                {
-                    sceneRoot.getChildren().remove(num); // remove the most recent solar panel
-                }
-            }
-        });
-
-        sceneRoot.getChildren().add(addSolarPanelToScene); //adding both buttons to scene
-        sceneRoot.getChildren().add(removeSolarPanel); // later should be out of skybox in ui bar
-
-        //--------------End of SeanZ Newest Addition----------------//
 
 
         // Use keyboard to control camera position
@@ -360,35 +312,19 @@ public class SkyboxApplication extends Application {
         stage.show();
     }
 
-    /* Sean Z
-    House needs to be placed on the ground at input coordinates
+    /*
+    Need to seperate functions for house and solar panel. I.E the house needs to be placed on the ground
+    at input coordinates and the solar panel needs to be placed in multiple spots on the roof.
+    Controllers will be needed.
      */
-    private void setHouseVariables(Node[] model) //----Model Helper Method----//
+    private void setModelVariables(Node[] model) //----Model Helper Method----//
     {
         for (Node node : model) {
             node.setScaleX(.6);
             node.setScaleY(.6);
             node.setScaleZ(.6);
             node.getTransforms().setAll(new Rotate(25, Rotate.Y_AXIS), new Rotate(-90, Rotate.X_AXIS));
-            node.setTranslateX(0); // These place the house towards the ground and to the right of the view
-            node.setTranslateY(200); // ^^^^^^^^^^^^^^^
-        }
-    }
-
-    // Sean Z Helper method with solar panels. Puts new solar panels in random spots at the moment
-    private void setSolarVariables(Node[] model) //----Model Helper Method----//
-    {
-        int min = 0;
-        int max = 300;
-        Random randomInt = new Random();
-        int result = randomInt.nextInt((max-min) + min);
-
-        for (Node node : model) {
-            node.setScaleX(.6);
-            node.setScaleY(.6);
-            node.setScaleZ(.6);                      //90
-            node.getTransforms().setAll(new Rotate(0, Rotate.Y_AXIS), new Rotate(15, Rotate.X_AXIS), new Rotate(25, Rotate.Z_AXIS));
-            node.setTranslateX(result); // These place the house towards the ground and to the right of the view
+            node.setTranslateX(200); // These place the house towards the ground and to the right of the view
             node.setTranslateY(200); // ^^^^^^^^^^^^^^^
         }
     }

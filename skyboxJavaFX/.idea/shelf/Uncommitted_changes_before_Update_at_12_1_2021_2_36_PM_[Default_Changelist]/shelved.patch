@@ -1,0 +1,10 @@
+Index: ../.idea/.name
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- ../.idea/.name	(date 1638255546372)
++++ ../.idea/.name	(date 1638255546372)
+@@ -0,0 +1,1 @@
++skyboxJavaFX
+\ No newline at end of file
