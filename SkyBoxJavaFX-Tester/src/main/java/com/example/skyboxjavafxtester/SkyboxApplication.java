@@ -50,7 +50,7 @@ public class SkyboxApplication extends Application {
         Image skyboxImage;
     {
         try {
-            skyboxImage = new Image(new FileInputStream("/Users/katiepalmer/Downloads/SeniorCapstone-GroupB-MarkCapka/SkyBoxJavaFX-Tester/src/main/resources/skyboxExample.png"));
+            skyboxImage = new Image(new FileInputStream("/Users/katiepalmer/Downloads/SeniorCapstone-GroupB-MarkCapka/SkyBoxJavaFX-Tester/src/main/resources/skyboxDesert.png"));
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -168,6 +168,7 @@ public class SkyboxApplication extends Application {
 
         root.getChildren().addAll(sphere2, sphere, box, light);
 
+        //TODO the below is the backgorund behind the skybox, this can be deleted, but may want to address the color difference.
         Image back = new Image("skyboxDesert.png"); //if the skybox is working we can remove this.
 
         final PhongMaterial skyMaterial = new PhongMaterial();
@@ -233,7 +234,7 @@ public class SkyboxApplication extends Application {
         double sceneWidth = 1024;
         //TODO change to 768
         double sceneHeight = 768;
-        Scene scene = new Scene(sceneRoot, sceneWidth, sceneHeight, true);
+        Scene scene = new Scene(sceneRoot, sceneWidth, sceneHeight, false);
         scene.setFill(new ImagePattern(skyboxImage));
         camera = new PerspectiveCamera(true);
         camera.setNearClip(0.1);
