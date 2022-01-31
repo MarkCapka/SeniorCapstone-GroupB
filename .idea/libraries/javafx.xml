@@ -1,0 +1,81 @@
+<component name="libraryTable">
+  <library name="javafx">
+    <CLASSES>
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <NATIVE>
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+    </NATIVE>
+    <SOURCES>
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+      <root url="file://$JavaFX$/lib" />
+    </SOURCES>
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" type="SOURCES" />
+    <jarDirectory url="file://$JavaFX$/lib" recursive="false" type="SOURCES" />
+  </library>
+</component>
