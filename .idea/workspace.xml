@@ -104,7 +104,7 @@
     </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="MarkCapka" />
+        <entry key="$PROJECT_DIR$" value="SeanZ(ModelsUploaded)" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -148,7 +148,7 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
@@ -247,7 +247,7 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="5a7cf99e-928b-4076-a785-28527a02a19a" name="Changes" comment="" />
+      <changelist id="e9bf649f-0cb4-43aa-9690-d4372ba2d8f8" name="Changes" comment="" />
       <created>1638255460493</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -258,7 +258,9 @@
       <workItem from="1642373917693" duration="3868000" />
       <workItem from="1642377845373" duration="2732000" />
       <workItem from="1642382149938" duration="5902000" />
-      <workItem from="1642395322704" duration="23681000" />
+      <workItem from="1642395322704" duration="26415000" />
+      <workItem from="1643271657635" duration="496000" />
+      <workItem from="1643272196579" duration="22572000" />
     </task>
     <task id="LOCAL-00001" summary="Models in the SkyBox">
       <created>1642405894649</created>
@@ -295,7 +297,14 @@
       <option name="project" value="LOCAL" />
       <updated>1643092556278</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Anthony lighting code integrated, remove button now removes up to all solar panels added">
+      <created>1643180089404</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1643180089404</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -312,7 +321,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="HEAD" />
+                        <option value="origin/MarkCapka" />
                       </list>
                     </value>
                   </entry>
@@ -330,7 +339,23 @@
     <MESSAGE value="Models in the SkyBox-Refactored" />
     <MESSAGE value="Models Uploaded, comments and explanations" />
     <MESSAGE value="Buttons added to add/remove panels" />
-    <option name="LAST_COMMIT_MESSAGE" value="Buttons added to add/remove panels" />
+    <MESSAGE value="Anthony lighting code integrated, remove button now removes up to all solar panels added" />
+    <option name="LAST_COMMIT_MESSAGE" value="Anthony lighting code integrated, remove button now removes up to all solar panels added" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint type="java-method">
+          <url>file://$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxApplication.java</url>
+          <line>183</line>
+          <properties class="com.example.skyboxjavafxtester.SkyboxApplication" method="start">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/SeniorCapstone_GroupB$SkyboxApplication.ic" NAME="SkyboxApplication Coverage Results" MODIFIED="1642394879393" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
