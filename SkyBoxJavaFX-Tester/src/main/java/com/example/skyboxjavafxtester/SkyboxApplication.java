@@ -44,6 +44,7 @@ public class SkyboxApplication extends Application {
     //Model Import Declaration
     private final File house = new File("/Users/seanz/workspace/SeniorCapstone-GroupB/SkyBoxJavaFX-Tester/src/main/resources/House.3ds");
     private final File solarPanel = new File("/Users/seanz/workspace/SeniorCapstone-GroupB/SkyBoxJavaFX-Tester/src/main/resources/SolarPanel(Export).3ds");
+    private final File groundSolarPanel = new File("/Users/seanz/workspace/SeniorCapstone-GroupB/SkyBoxJavaFX-Tester/src/main/resources/GroundSolarPanel.3ds");
     private Group solarPanelImport;
 
 
@@ -236,6 +237,11 @@ public class SkyboxApplication extends Application {
         int p4X = 275, p4Y = -43, p4Z = 440;
         int lAY = -68, lAX = -113, lAZ = 0;
 
+        int gP1X = 0, gP1Y = 180, gP1Z = 190;
+        int gP2X = 460, gP2Y = 180, gP2Z = 100;
+        int gAY = 100, gAX = -90, gAZ = 0;
+        int gAYTwo = -60, gAXTwo = -90, gAZTwo = 0;
+
         modelImporter.read(solarPanel); //Read in the solar panel model
         Node[] modelOne = modelImporter.getImport(); //create Solar Panel object with Node[]
 
@@ -265,6 +271,22 @@ public class SkyboxApplication extends Application {
 
         Group solarPanelFour = setAllSolarPanels(modelFour, p4X, p4Y, p4Z, lAY, lAX, lAZ);
         sceneRoot.getChildren().add(solarPanelFour);
+
+        modelImporter.clear();
+
+        modelImporter.read(groundSolarPanel);
+        Node[] gModel = modelImporter.getImport(); //create Solar Panel object with Node[]
+
+        Group gPanelOne = setAllSolarPanels(gModel, gP1X, gP1Y, gP1Z, gAY, gAX, gAZ);
+        sceneRoot.getChildren().add(gPanelOne);
+
+        modelImporter.clear();
+
+        modelImporter.read(groundSolarPanel);
+        Node[] gModelTwo = modelImporter.getImport(); //create Solar Panel object with Node[]
+
+        Group gPanelTwo = setAllSolarPanels(gModelTwo, gP2X, gP2Y, gP2Z, gAYTwo, gAXTwo, gAZTwo);
+        sceneRoot.getChildren().add(gPanelTwo);
         //----------- End of Temp Static Solar Panel Code -------------- //
 
         //--------------End of SeanZ House Import------------------//

@@ -260,7 +260,7 @@
       <workItem from="1642382149938" duration="5902000" />
       <workItem from="1642395322704" duration="26415000" />
       <workItem from="1643271657635" duration="496000" />
-      <workItem from="1643272196579" duration="22572000" />
+      <workItem from="1643272196579" duration="26061000" />
     </task>
     <task id="LOCAL-00001" summary="Models in the SkyBox">
       <created>1642405894649</created>
@@ -304,7 +304,14 @@
       <option name="project" value="LOCAL" />
       <updated>1643180089404</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Static solar panels on roof">
+      <created>1643966065169</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1643966065169</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -340,14 +347,15 @@
     <MESSAGE value="Models Uploaded, comments and explanations" />
     <MESSAGE value="Buttons added to add/remove panels" />
     <MESSAGE value="Anthony lighting code integrated, remove button now removes up to all solar panels added" />
-    <option name="LAST_COMMIT_MESSAGE" value="Anthony lighting code integrated, remove button now removes up to all solar panels added" />
+    <MESSAGE value="Static solar panels on roof" />
+    <option name="LAST_COMMIT_MESSAGE" value="Static solar panels on roof" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint type="java-method">
           <url>file://$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxApplication.java</url>
-          <line>183</line>
+          <line>184</line>
           <properties class="com.example.skyboxjavafxtester.SkyboxApplication" method="start">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
