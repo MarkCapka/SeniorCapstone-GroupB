@@ -4,6 +4,7 @@ import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
 import javafx.application.Application;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.control.Button;
@@ -228,25 +229,70 @@ public class SkyboxApplication extends Application {
         //sceneRoot.setEffect(lighting); ****This changes the scene drastically
 
         //----Temp Code: Adding all solar panels to scene, 4 on roof 2 on ground-----//
+        //---- Now has anthonys code with rectangle over one solar panel-----//
 
-        int p1X = 300, p1Y = -74, p1Z = 190;
-        int p2X = 395, p2Y = -74, p2Z = 400;
-        int rAY = -68, rAX = -68, rAZ = 0;
+        int p1X = 300, p1Y = -74, p1Z = 190; // xyz coordinates for solar panel 1
+        int p2X = 395, p2Y = -74, p2Z = 400; // .. solar panel 2
+        int rAY = -68, rAX = -68, rAZ = 0; // .. angles of the right side of the roof
 
         int p3X = 190, p3Y = -43, p3Z = 250;
         int p4X = 275, p4Y = -43, p4Z = 440;
-        int lAY = -68, lAX = -113, lAZ = 0;
+        int lAY = -68, lAX = -113, lAZ = 0; // .. angles of the left side of the roof
 
         int gP1X = 0, gP1Y = 180, gP1Z = 190;
         int gP2X = 460, gP2Y = 180, gP2Z = 100;
-        int gAY = 100, gAX = -90, gAZ = 0;
-        int gAYTwo = -60, gAXTwo = -90, gAZTwo = 0;
+        int gAY = 100, gAX = -90, gAZ = 0; // Ground solar panel angles, right side of house
+        int gAYTwo = -60, gAXTwo = -90, gAZTwo = 0; // left side of house
 
         modelImporter.read(solarPanel); //Read in the solar panel model
         Node[] modelOne = modelImporter.getImport(); //create Solar Panel object with Node[]
 
         Group solarPanelOne = setAllSolarPanels(modelOne, p1X, p1Y, p1Z, rAY, rAX, rAZ);
         sceneRoot.getChildren().add(solarPanelOne);
+
+        Box rectangle = new Box();
+
+        //sceneRoot.getChildren().add(solarPanelOne);
+        Rectangle rectangle1 = new Rectangle();
+        Bounds x = solarPanelOne.getBoundsInLocal();
+        //modelImporter.clear();
+        ///Bounds x = solarPanelOne.getBoundsInLocal();
+        rectangle.getTransforms().setAll(new Rotate(rAY, Rotate.Y_AXIS), new Rotate(rAY, Rotate.X_AXIS), new Rotate(rAZ, Rotate.Z_AXIS));
+
+        rectangle.setTranslateX(x.getCenterX());
+        rectangle.setTranslateY(x.getCenterY());
+        rectangle.setTranslateZ(x.getCenterZ());
+        rectangle.setDepth(3.64);
+        rectangle.setWidth(65);
+        rectangle.setHeight(39);
+        //rectangle.getTransforms().setAll(new Rotate(rAY, Rotate.Y_AXIS), new Rotate(rAY, Rotate.X_AXIS), new Rotate(rAZ, Rotate.Z_AXIS));
+        //rectangle.setLayoutX(p1X);
+        //rectangle.setLayoutY(p1Y);
+        // Point3D point1 = new Point3D(rAX,rAY,rAZ);
+
+        //rectangle.setTranslateZ(p1Z);
+        //rectangle.setRotationAxis(point1);
+        //rectangle.relocate(p1X, p1Y);
+
+
+        //rectangle.relocate(p1X,p1Y);
+        //rectangle.setRotate(rAZ);
+
+        ///rectangle.setDepth(6);
+        //rectangle.set
+
+        //rectangle.
+
+        //rectangle.setTranslateZ(solarPanelImport.getTranslateZ());
+
+        //ObservableList<Transform> trans = solarPanelImport.getTransforms();
+        //rectangle.relocate(x.getCenterX(),x.getCenterY());
+        //rectangle.setTranslateZ(solarPanelImport.getTranslateZ());
+        // rectangle.setHeight(100.f);
+        Group solarPanelOnewR = new Group(solarPanelOne, rectangle);
+
+
+        sceneRoot.getChildren().add(solarPanelOnewR);
 
         modelImporter.clear();
 

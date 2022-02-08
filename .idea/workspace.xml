@@ -28,60 +28,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="061150a4-a859-4fca-87f0-b24d97dad9de" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/SeniorCapstone-GroupB.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__com_dlsc_formsfx_formsfx_core_11_3_2.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__eu_hansolo_tilesfx_11_48.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__net_synedra_validatorfx_0_1_13.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_1_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_controlsfx_controlsfx_11_1_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_7_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_engine_5_7_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_7_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_junit_platform_junit_platform_engine_1_7_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_kordamp_bootstrapfx_bootstrapfx_core_0_4_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_kordamp_ikonli_ikonli_core_12_2_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_kordamp_ikonli_ikonli_javafx_12_2_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_openjfx_javafx_base_17_0_0_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_openjfx_javafx_base_win_17_0_0_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_openjfx_javafx_controls_17_0_0_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_openjfx_javafx_controls_win_17_0_0_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_openjfx_javafx_fxml_17_0_0_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_openjfx_javafx_fxml_win_17_0_0_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_openjfx_javafx_graphics_17_0_0_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_openjfx_javafx_graphics_win_17_0_0_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_openjfx_javafx_media_17_0_0_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_openjfx_javafx_media_win_17_0_0_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_openjfx_javafx_web_17_0_0_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_openjfx_javafx_web_win_17_0_0_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/libraries/Maven__org_opentest4j_opentest4j_1_2_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/skyboxJavaFX/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/.idea/description.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/.idea/gradle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/src/sample/Controller.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/src/sample/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/src/sample/sample.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/test.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/skyboxJavaFX/skyboxJavaFX.iml" beforeDir="false" afterPath="$PROJECT_DIR$/skyboxJavaFX/skyboxJavaFX.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -247,7 +194,7 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="e9bf649f-0cb4-43aa-9690-d4372ba2d8f8" name="Changes" comment="" />
+      <changelist id="5890c6e3-5675-4e26-8429-414d0489d846" name="Changes" comment="" />
       <created>1638255460493</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -260,7 +207,8 @@
       <workItem from="1642382149938" duration="5902000" />
       <workItem from="1642395322704" duration="26415000" />
       <workItem from="1643271657635" duration="496000" />
-      <workItem from="1643272196579" duration="26061000" />
+      <workItem from="1643272196579" duration="27410000" />
+      <workItem from="1644273336728" duration="3026000" />
     </task>
     <task id="LOCAL-00001" summary="Models in the SkyBox">
       <created>1642405894649</created>
@@ -311,7 +259,21 @@
       <option name="project" value="LOCAL" />
       <updated>1643966065169</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Static solar panels on roof and ground">
+      <created>1644021720349</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1644021720349</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Static solar panels on roof and ground">
+      <created>1644021742304</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1644021742304</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -328,7 +290,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="origin/MarkCapka" />
+                        <option value="SeanZ(PanelOnRoof)" />
                       </list>
                     </value>
                   </entry>
@@ -348,14 +310,15 @@
     <MESSAGE value="Buttons added to add/remove panels" />
     <MESSAGE value="Anthony lighting code integrated, remove button now removes up to all solar panels added" />
     <MESSAGE value="Static solar panels on roof" />
-    <option name="LAST_COMMIT_MESSAGE" value="Static solar panels on roof" />
+    <MESSAGE value="Static solar panels on roof and ground" />
+    <option name="LAST_COMMIT_MESSAGE" value="Static solar panels on roof and ground" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint type="java-method">
           <url>file://$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxApplication.java</url>
-          <line>184</line>
+          <line>185</line>
           <properties class="com.example.skyboxjavafxtester.SkyboxApplication" method="start">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
