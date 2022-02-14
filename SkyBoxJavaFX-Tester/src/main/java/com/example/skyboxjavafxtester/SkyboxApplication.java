@@ -19,6 +19,7 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -217,11 +218,11 @@ public class SkyboxApplication extends Application {
 
         int p1X = 300, p1Y = -74, p1Z = 190;
         int p2X = 395, p2Y = -74, p2Z = 400;
-        int rAY = -68, rAX = -68, rAZ = 0;
+        int rAY = -68, rAX = -68, rAZ = 0; // Right side of roof angles for solar panels
 
         int p3X = 190, p3Y = -43, p3Z = 250;
         int p4X = 275, p4Y = -43, p4Z = 440;
-        int lAY = -68, lAX = -113, lAZ = 0;
+        int lAY = -68, lAX = -113, lAZ = 0; // Left side of roof angles for solar panels
 
         int gP1X = 0, gP1Y = 180, gP1Z = 190;
         int gP2X = 460, gP2Y = 180, gP2Z = 100;
@@ -268,7 +269,6 @@ public class SkyboxApplication extends Application {
         material.setDiffuseColor(Color.YELLOWGREEN);
         sphere.setMaterial(material);
 
-
         // create a point light
         PointLight pointlight = new PointLight();
 
@@ -289,8 +289,6 @@ public class SkyboxApplication extends Application {
         Bounds threbound = solarPanelThree.getBoundsInLocal();
         Bounds fourbound = solarPanelFour.getBoundsInLocal();
 
-        //modelImporter.clear();
-        ///Bounds x = solarPanelOne.getBoundsInLocal();
         rectangle.getTransforms().setAll(new Rotate(rAY, Rotate.Y_AXIS), new Rotate(rAY, Rotate.X_AXIS), new Rotate(rAZ, Rotate.Z_AXIS));
         rectangle2.getTransforms().setAll(new Rotate(rAY, Rotate.Y_AXIS), new Rotate(rAY, Rotate.X_AXIS), new Rotate(rAZ, Rotate.Z_AXIS));
         rectangle3.getTransforms().setAll(new Rotate(rAY, Rotate.Y_AXIS), new Rotate(-rAX, Rotate.X_AXIS), new Rotate(-(rAZ), Rotate.Z_AXIS));
@@ -309,9 +307,6 @@ public class SkyboxApplication extends Application {
         rectangle4.setTranslateY(fourbound.getCenterY());
         rectangle4.setTranslateZ(fourbound.getCenterZ());
 
-
-
-
         rectangle.setDepth(3.64);
         rectangle.setWidth(65);
         rectangle.setHeight(39);
@@ -325,25 +320,15 @@ public class SkyboxApplication extends Application {
         rectangle4.setWidth(65);
         rectangle4.setHeight(39);
 
-
-
-
-
         Group solarPanelOnewR = new Group(solarPanelOne, rectangle);
         Group solarPanelTwowR = new Group(solarPanelTwo, rectangle2);
         Group solarPanelThreewR = new Group(solarPanelThree, rectangle3);
         Group solarPanelFourwR = new Group(solarPanelFour, rectangle4);
 
-
-        sceneRoot.getChildren().add(solarPanelOnewR);
-        sceneRoot.getChildren().add(solarPanelTwowR);
-        sceneRoot.getChildren().add(solarPanelThreewR);
-        sceneRoot.getChildren().add(solarPanelFourwR);
         modelImporter.read(groundSolarPanel);
         Node[] gModel = modelImporter.getImport(); //create Solar Panel object with Node[]
 
         Group gPanelOne = setAllSolarPanels(gModel, gP1X, gP1Y, gP1Z, gAY, gAX, gAZ);
-        sceneRoot.getChildren().add(gPanelOne);
 
         modelImporter.clear();
 
@@ -351,11 +336,12 @@ public class SkyboxApplication extends Application {
         Node[] gModelTwo = modelImporter.getImport(); //create Solar Panel object with Node[]
 
         Group gPanelTwo = setAllSolarPanels(gModelTwo, gP2X, gP2Y, gP2Z, gAYTwo, gAXTwo, gAZTwo);
-        sceneRoot.getChildren().add(gPanelTwo);
+
+        Group panelsWHouse = new Group(solarPanelOnewR, solarPanelTwowR, solarPanelThreewR, solarPanelFourwR, gPanelOne, gPanelTwo, houseImport);
+        sceneRoot.getChildren().add(panelsWHouse);
         //----------- End of Temp Static Solar Panel Code -------------- //
 
         //--------------End of SeanZ House Import------------------//
-
 
         //TODO change to 1024
         double sceneWidth = 600;
@@ -439,6 +425,8 @@ public class SkyboxApplication extends Application {
             double change = cameraQuantity;
             // What key did the user press?
             KeyCode keycode = event.getCode();
+            Rotate r;
+            Transform t = new Rotate();
 
             Point3D delta = null;
             if (keycode == KeyCode.COMMA) {
@@ -458,6 +446,16 @@ public class SkyboxApplication extends Application {
             }
             if (keycode == KeyCode.S) {
                 delta = new Point3D(0, change, 0);
+            }
+            if (keycode == KeyCode.M) {
+                r = new Rotate(1, Rotate.Y_AXIS); // Rotate House Left
+                t = t.createConcatenation(r);
+                panelsWHouse.getTransforms().addAll(t);
+            }
+            if (keycode == KeyCode.N) { // Rotate House Right
+                r = new Rotate(-1, Rotate.Y_AXIS);
+                t = t.createConcatenation(r);
+                panelsWHouse.getTransforms().addAll(t);
             }
             if (delta != null) {
                 Point3D delta2 = camera.localToParent(delta);
@@ -541,10 +539,6 @@ public class SkyboxApplication extends Application {
 
             return solarPanelImport;
         }
-
-
-
-
 
 /*
         //TODO below may be moved into skybox-view.fxml so we have control of all view functionality in one place
