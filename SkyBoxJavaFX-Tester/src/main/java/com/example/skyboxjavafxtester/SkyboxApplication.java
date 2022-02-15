@@ -289,6 +289,7 @@ public class SkyboxApplication extends Application {
         Bounds threbound = solarPanelThree.getBoundsInLocal();
         Bounds fourbound = solarPanelFour.getBoundsInLocal();
 
+
         rectangle.getTransforms().setAll(new Rotate(rAY, Rotate.Y_AXIS), new Rotate(rAY, Rotate.X_AXIS), new Rotate(rAZ, Rotate.Z_AXIS));
         rectangle2.getTransforms().setAll(new Rotate(rAY, Rotate.Y_AXIS), new Rotate(rAY, Rotate.X_AXIS), new Rotate(rAZ, Rotate.Z_AXIS));
         rectangle3.getTransforms().setAll(new Rotate(rAY, Rotate.Y_AXIS), new Rotate(-rAX, Rotate.X_AXIS), new Rotate(-(rAZ), Rotate.Z_AXIS));
@@ -339,6 +340,7 @@ public class SkyboxApplication extends Application {
 
         Group panelsWHouse = new Group(solarPanelOnewR, solarPanelTwowR, solarPanelThreewR, solarPanelFourwR, gPanelOne, gPanelTwo, houseImport);
         sceneRoot.getChildren().add(panelsWHouse);
+
         //----------- End of Temp Static Solar Panel Code -------------- //
 
         //--------------End of SeanZ House Import------------------//
@@ -448,11 +450,12 @@ public class SkyboxApplication extends Application {
                 delta = new Point3D(0, change, 0);
             }
             if (keycode == KeyCode.M) {
-                r = new Rotate(1, Rotate.Y_AXIS); // Rotate House Left
+
+                r = new Rotate(1, Rotate.Y_AXIS); // Rotate House and Panels on/around Left
                 t = t.createConcatenation(r);
                 panelsWHouse.getTransforms().addAll(t);
             }
-            if (keycode == KeyCode.N) { // Rotate House Right
+            if (keycode == KeyCode.N) { // Rotate House and Panels on/around Right
                 r = new Rotate(-1, Rotate.Y_AXIS);
                 t = t.createConcatenation(r);
                 panelsWHouse.getTransforms().addAll(t);
