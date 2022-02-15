@@ -46,7 +46,7 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="project.structure.last.edited" value="Modules" />
-    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="preferences.JavaFX" />
   </component>
@@ -85,7 +85,14 @@
       <option name="project" value="LOCAL" />
       <updated>1644899137691</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="House rotate controls. New GroundSolarPanel.3DS file">
+      <created>1644904645932</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1644904645932</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -113,7 +120,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="UI file started/uploaded. House rotation with everything on/around the house." />
-    <option name="LAST_COMMIT_MESSAGE" value="UI file started/uploaded. House rotation with everything on/around the house." />
+    <MESSAGE value="House rotate controls. New GroundSolarPanel.3DS file" />
+    <option name="LAST_COMMIT_MESSAGE" value="House rotate controls. New GroundSolarPanel.3DS file" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
