@@ -30,7 +30,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="SeanZ-sunrise/sunset" />
+        <entry key="$PROJECT_DIR$" value="SeanZ-SunriseSunset" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -137,9 +137,16 @@
       <workItem from="1645049055802" duration="219000" />
       <workItem from="1645049338668" duration="113000" />
       <workItem from="1645057272177" duration="4358000" />
-      <workItem from="1645156921694" duration="2132000" />
+      <workItem from="1645156921694" duration="2516000" />
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Accurate sunset and sunrise times from location and date">
+      <created>1645159193328</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1645159193328</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -173,7 +180,8 @@
     <MESSAGE value="UI file started/uploaded. House rotation with everything on/around the house." />
     <MESSAGE value="House rotate controls. New GroundSolarPanel.3DS file" />
     <MESSAGE value="Code Cleaned and integrated with Anthony patch2" />
-    <option name="LAST_COMMIT_MESSAGE" value="Code Cleaned and integrated with Anthony patch2" />
+    <MESSAGE value="Accurate sunset and sunrise times from location and date" />
+    <option name="LAST_COMMIT_MESSAGE" value="Accurate sunset and sunrise times from location and date" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
