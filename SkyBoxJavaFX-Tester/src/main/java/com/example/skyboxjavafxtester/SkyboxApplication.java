@@ -1,6 +1,8 @@
 package com.example.skyboxjavafxtester;
 
 import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
+import com.luckycatlabs.sunrisesunset.*;
+import com.luckycatlabs.sunrisesunset.dto.Location;
 import javafx.application.Application;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -19,11 +21,15 @@ import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
-
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 
 public class SkyboxApplication extends Application {
 
@@ -45,6 +51,14 @@ public class SkyboxApplication extends Application {
     private final File solarPanel = new File("C:\\SolarPanel(Export).3ds");
     private final File groundSolarPanel = new File("C:\\GroundSolarPanel.3ds");
     private Group solarPanelImport;
+
+    //Location and Dates
+    private String sunriseTime;
+    private String sunsetTime;
+    private Calendar cal;
+    private String theDate; //User input date, if Date picker in UI gives date no reason for this string
+    private Date date; //Input date turned into date object
+    private Location location;
 
 
         Image skyboxImage;
@@ -163,7 +177,7 @@ public class SkyboxApplication extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws ParseException {
         //initiates the scene, environment and camera
 
                 //TODO directory for filesource is currently hard coded to path.
@@ -200,16 +214,34 @@ public class SkyboxApplication extends Application {
 
         //-------End of creating the sun-----------//
 
+        //------Getting sunset/sunrise time based on coordinates and date------//
 
+        theDate = "20200419"; //Will be date extracted from date picker tool in UI
+        DateFormat formatter = new SimpleDateFormat("yyyyMMdd"); //Formatter
+        Date date = (Date)formatter.parse(theDate.toString()); //Parse string to create Date object
+        cal = Calendar.getInstance(); //Calendar object created
+        cal.setTime(date); //Calender object given corresponding date
 
+        location = new Location(47.6588, 117.4260); // Will be entered in coordinates
+        SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, "America/New_York"); // Creates calculator for sun times
+
+        sunriseTime = calculator.getOfficialSunriseForDate(cal); // Gets sunrise based on date and calculator created
+        sunsetTime = calculator.getOfficialSunsetForDate(cal); // Gets sunset based on date and calculator created
+        System.out.println(sunriseTime); //Testing :)
+        System.out.println(sunsetTime);
+
+        //--------------End of sunset/sunrise times---------------//
 
         //-----------Sean and Anthony---------------------//
         //-----------Adding house and solar panels w/ box to scene -----------------//
 
         //Coordinates for placement of solar panels to look nice on the roof
-        int p1X = 300, p1Y = -74, p1Z = 190;
-        int p2X = 395, p2Y = -74, p2Z = 400;
+
+        //int p1X = 300, p1Y = -74, p1Z = 190;
+        //int p2X = 395, p2Y = -74, p2Z = 400;
         int rAY = -68, rAX = -68, rAZ = 0; // Right side of roof angles for solar panels
+        int panelOneCoordinates[] = {300, -74, 190, rAY, rAX, rAZ};
+        int panelTwoCoordinates[] = {395, -74, 400, rAY, rAX, rAZ};
 
         int p3X = 190, p3Y = -43, p3Z = 250;
         int p4X = 275, p4Y = -43, p4Z = 440;
@@ -217,13 +249,13 @@ public class SkyboxApplication extends Application {
 
         int gP1X = 0, gP1Y = 180, gP1Z = 190; //Ground solar panel coordinates
         int gP2X = 460, gP2Y = 180, gP2Z = 100;
-        int gAY = 100, gAX = -90, gAZ = 0;
+        int gAY = 105, gAX = -90, gAZ = 0;
         int gAYTwo = -60, gAXTwo = -90, gAZTwo = 0;
 
         Group houseImport = setHouse(); //create new group with the house
 
-        Group solarPanelOne = setAllSolarPanels(solarPanel, p1X, p1Y, p1Z, rAY, rAX, rAZ); //4 roof panels
-        Group solarPanelTwo = setAllSolarPanels(solarPanel, p2X, p2Y, p2Z, rAY, rAX, rAZ);
+        Group solarPanelOne = setAllSolarPanels(solarPanel, panelOneCoordinates[0], panelOneCoordinates[1], panelOneCoordinates[2], rAY, rAX, rAZ); //4 roof panels
+        Group solarPanelTwo = setAllSolarPanels(solarPanel, panelTwoCoordinates[0], panelTwoCoordinates[1], panelTwoCoordinates[2], rAY, rAX, rAZ);
         Group solarPanelThree = setAllSolarPanels(solarPanel, p3X, p3Y, p3Z, lAY, lAX, lAZ);
         Group solarPanelFour = setAllSolarPanels(solarPanel, p4X, p4Y, p4Z, lAY, lAX, lAZ);
 
@@ -283,6 +315,9 @@ public class SkyboxApplication extends Application {
 
         //----------------Controls Section----------------------------//
 
+
+
+
         // Use keyboard to control camera position
         scene.setOnKeyPressed(event -> {
             double change = cameraQuantity;
@@ -292,6 +327,7 @@ public class SkyboxApplication extends Application {
             Transform t = new Rotate();
 
             Point3D delta = null;
+
             if (keycode == KeyCode.COMMA) {
                 delta = new Point3D(0, 0, change);
             }
@@ -311,7 +347,6 @@ public class SkyboxApplication extends Application {
                 delta = new Point3D(0, change, 0);
             }
             if (keycode == KeyCode.M) {
-
                 r = new Rotate(1, Rotate.Y_AXIS); // Rotate House and Panels on/around Left
                 t = t.createConcatenation(r);
                 panelsWHouse.getTransforms().addAll(t);
@@ -321,6 +356,7 @@ public class SkyboxApplication extends Application {
                 t = t.createConcatenation(r);
                 panelsWHouse.getTransforms().addAll(t);
             }
+
             if (delta != null) {
                 Point3D delta2 = camera.localToParent(delta);
                 cameraDolly.setTranslateX(cameraDolly.getTranslateX() + delta2.getX());
@@ -335,6 +371,7 @@ public class SkyboxApplication extends Application {
             mousePosX = me.getSceneX();
             mousePosY = me.getSceneY();
         });
+
 
         scene.setOnMouseDragged(me -> {
             mouseOldX = mousePosX;
@@ -352,6 +389,10 @@ public class SkyboxApplication extends Application {
         stage.setScene(scene);
         stage.show();
     }
+
+
+
+
 
     //------------------------Helper Methods----------------------------------------//
     private Group setHouse()
