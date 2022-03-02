@@ -9,6 +9,7 @@ module com.example.skyboxjavafxtester {
     requires javafx.controls;
     requires jim3dsModelImporterJFX;
     requires sunset1;
+    requires javafx.fxml;
 
     opens com.example.skyboxjavafxtester to javafx.fxml;
     exports com.example.skyboxjavafxtester;

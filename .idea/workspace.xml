@@ -24,6 +24,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Kotlin Class" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -34,6 +35,14 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxApplication.java" root0="FORCE_HIGHLIGHTING" />
@@ -66,7 +75,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/resources/sunset1.jar" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/resources/timezonemap-master/.mvn/wrapper/maven-wrapper.jar" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -74,7 +83,12 @@
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.repository.indices" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.importing" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.example.skyboxjavafxtester" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="SkyboxApplication" type="Application" factoryName="Application">
@@ -137,7 +151,10 @@
       <workItem from="1645049055802" duration="219000" />
       <workItem from="1645049338668" duration="113000" />
       <workItem from="1645057272177" duration="4358000" />
-      <workItem from="1645156921694" duration="2516000" />
+      <workItem from="1645156921694" duration="17781000" />
+      <workItem from="1645561605767" duration="1078000" />
+      <workItem from="1645563715808" duration="664000" />
+      <workItem from="1645828800517" duration="25931000" />
     </task>
     <task id="LOCAL-00005" summary="Accurate sunset and sunrise times from location and date">
       <created>1645159193328</created>
@@ -146,7 +163,14 @@
       <option name="project" value="LOCAL" />
       <updated>1645159193328</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Accurate sunset and sunrise times from location and date">
+      <created>1645172071909</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1645172071909</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -182,6 +206,10 @@
     <MESSAGE value="Code Cleaned and integrated with Anthony patch2" />
     <MESSAGE value="Accurate sunset and sunrise times from location and date" />
     <option name="LAST_COMMIT_MESSAGE" value="Accurate sunset and sunrise times from location and date" />
+  </component>
+  <component name="XPathView.XPathProjectComponent">
+    <history />
+    <find-history />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
