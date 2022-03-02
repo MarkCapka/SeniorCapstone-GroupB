@@ -154,7 +154,7 @@
       <workItem from="1645156921694" duration="17781000" />
       <workItem from="1645561605767" duration="1078000" />
       <workItem from="1645563715808" duration="664000" />
-      <workItem from="1645828800517" duration="25931000" />
+      <workItem from="1645828800517" duration="26390000" />
     </task>
     <task id="LOCAL-00005" summary="Accurate sunset and sunrise times from location and date">
       <created>1645159193328</created>
@@ -170,7 +170,14 @@
       <option name="project" value="LOCAL" />
       <updated>1645172071909</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="New Controls and cleaner code">
+      <created>1646213992855</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1646213992855</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -205,7 +212,8 @@
     <MESSAGE value="House rotate controls. New GroundSolarPanel.3DS file" />
     <MESSAGE value="Code Cleaned and integrated with Anthony patch2" />
     <MESSAGE value="Accurate sunset and sunrise times from location and date" />
-    <option name="LAST_COMMIT_MESSAGE" value="Accurate sunset and sunrise times from location and date" />
+    <MESSAGE value="New Controls and cleaner code" />
+    <option name="LAST_COMMIT_MESSAGE" value="New Controls and cleaner code" />
   </component>
   <component name="XPathView.XPathProjectComponent">
     <history />
