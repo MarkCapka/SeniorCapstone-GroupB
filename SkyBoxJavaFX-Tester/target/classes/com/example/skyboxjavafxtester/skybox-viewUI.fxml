@@ -26,7 +26,7 @@
                   <Font name="Georgia Italic" size="15.0" />
                </font>
             </Label>
-            <TextField fx:id="theLocationPicker" alignment="CENTER" layoutX="13.0" layoutY="123.0" onAction="#getLocation" promptText="Enter Coordinates" />
+            <TextField fx:id="theLocationPicker" alignment="CENTER" layoutX="13.0" layoutY="123.0" onAction="#getLocation" promptText="Latitude, Longitude" />
             <Label fx:id="solarLabel" alignment="CENTER" layoutX="14.0" layoutY="232.0" prefHeight="17.0" prefWidth="149.0" text="Solar Panels:">
                <font>
                   <Font name="Georgia Italic" size="15.0" />
@@ -66,12 +66,12 @@
                   <Font name="System Bold" size="11.0" />
                </font>
             </Button>
-            <Label fx:id="timezoneLabel" alignment="CENTER" layoutX="14.0" layoutY="163.0" prefHeight="17.0" prefWidth="149.0" text="TimeZone:">
+            <Label fx:id="timezoneLabel" alignment="CENTER" layoutX="14.0" layoutY="163.0" prefHeight="17.0" prefWidth="149.0" text="Timezone">
                <font>
                   <Font name="Georgia Italic" size="15.0" />
                </font>
             </Label>
-            <TextField fx:id="timezone" alignment="CENTER" layoutX="14.0" layoutY="188.0" onAction="#getTimeZone" promptText="Enter TimeZone" />
+            <TextField fx:id="timezone" alignment="CENTER" layoutX="14.0" layoutY="188.0" onAction="#getTimeZone" promptText="GMT-8" />
             <Button fx:id="quit" layoutX="8.0" layoutY="613.0" mnemonicParsing="false" onAction="#exitProgram" prefHeight="38.0" prefWidth="159.0" style="-fx-background-color: red;" text="QUIT" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />

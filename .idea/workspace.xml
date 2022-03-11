@@ -162,7 +162,7 @@
       <workItem from="1645828800517" duration="26573000" />
       <workItem from="1646283573175" duration="869000" />
       <workItem from="1646382819472" duration="22747000" />
-      <workItem from="1646970046628" duration="13458000" />
+      <workItem from="1646970046628" duration="14081000" />
     </task>
     <task id="LOCAL-00005" summary="Accurate sunset and sunrise times from location and date">
       <created>1645159193328</created>
@@ -213,7 +213,21 @@
       <option name="project" value="LOCAL" />
       <updated>1646975232510</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="All UI tools working correctly, Anthonys sun code integrated in but not connected yet">
+      <created>1646984092859</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1646984092859</updated>
+    </task>
+    <task id="LOCAL-00013" summary="All UI tools working correctly, Anthonys sun code integrated in but not connected yet">
+      <created>1646984104666</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1646984104666</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
