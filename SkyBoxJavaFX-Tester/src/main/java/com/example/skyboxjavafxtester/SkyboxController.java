@@ -41,6 +41,8 @@ public class SkyBoxController {
     @FXML
     private Label locationLabel;
     @FXML
+    private Label currentTimeLabel;
+    @FXML
     private TextField theLocationPicker;
     @FXML
     private Button returnOnInvestment;
@@ -59,16 +61,23 @@ public class SkyBoxController {
     @FXML
     private Button addAll;
 
+    private static String currentTime;
+
 
     @FXML
     protected void initialize() throws ParseException, IOException {
         setSkyboxPane();
         setEntireFrame();
+
         //Initialize Slider Ticks
         LocalTime start = LocalTime.parse(SkyBoxApplication.sunriseTime);
         LocalTime end =  LocalTime.parse(SkyBoxApplication.sunsetTime);
         Long hours = ChronoUnit.HOURS.between(start, end);//# of mins between
         slider.setMax(hours); //Gives 11 ticks.... 11 hours between sunrise and sunset
+
+        //Initialize currentTime
+        changeHour(6);
+        currentTimeLabel.setText(currentTime);
 
     }
 
@@ -234,11 +243,132 @@ public class SkyBoxController {
     }
 
     public void sunMovement() {
-        //Units error checking... Each Major tick goes up +1, each minor tick doesnt make value
         float sliderValue = (float) slider.getValue();
+        if(sliderValue == .5)
+        {
+            changeMinute(SkyBoxApplication.sunriseTime, 30);
+            //call method to move sun here
+        }
+        else if(sliderValue >= 0 && sliderValue < 1)
+        {
+            //No time changes for hour 0
+            changeHour(0);
+
+            //Sun Stuff:
+            //Starting point for sun
+        }
+        else if(sliderValue == 1.5)
+        {
+            //change time
+            changeMinute(currentTime,30);
+
+            //change sun
+            //sun.translateXY blah blah blah
+        }
+        else if(sliderValue >= 1 && sliderValue < 2)
+        {
+            changeHour(1);
+        }
+        else if(sliderValue == 2.5)
+        {
+            changeMinute(currentTime,30);
+        }
+        else if(sliderValue >= 2 && sliderValue < 3)
+        {
+            changeHour(2);
+        }
+        else if(sliderValue == 3.5)
+        {
+            changeMinute(currentTime,30);
+        }
+        else if(sliderValue >= 3 && sliderValue < 4)
+        {
+            changeHour(3);
+        }
+        else if(sliderValue == 4.5)
+        {
+            changeMinute(currentTime,30);
+        }
+        else if(sliderValue >= 4 && sliderValue < 5)
+        {
+            changeHour(4);
+        }
+        else if(sliderValue == 5.5)
+        {
+            changeMinute(currentTime,30);
+        }
+        else if(sliderValue >= 5 && sliderValue < 6)
+        {
+            changeHour(5);
+        }
+        else if(sliderValue == 6.5)
+        {
+            changeMinute(currentTime, 30);
+        }
+        else if(sliderValue >= 6 && sliderValue < 7)
+        {
+            changeHour(6);
+        }
+        else if(sliderValue == 7.5)
+        {
+            changeMinute(currentTime,30);
+        }
+        else if(sliderValue >= 7 && sliderValue < 8)
+        {
+            changeHour(7);
+        }
+        else if(sliderValue == 8.5)
+        {
+            changeMinute(currentTime,30);
+        }
+        else if(sliderValue >= 8 && sliderValue < 9)
+        {
+            changeHour(8);
+        }
+        else if(sliderValue == 9.5)
+        {
+            changeMinute(currentTime,30);
+        }
+        else if(sliderValue >= 9 && sliderValue < 10)
+        {
+            changeHour(9);
+        }
+        else if(sliderValue == 10.5)
+        {
+            changeMinute(currentTime,30);
+        }
+        else if(sliderValue >= 10 && sliderValue < 11)
+        {
+            changeHour(10);
+
+        }
+        else if(sliderValue == 11)
+        {
+            changeHour(11);
+        }
         System.out.println(sliderValue + " ");
 
-
-
     }
+
+    public void changeHour(int n){
+        String startTime = SkyBoxApplication.sunriseTime;
+        String[] wholeTime = startTime.split(":");
+        int hour = Integer.parseInt(wholeTime[0]);
+        int current = hour + n;
+        StringBuilder timeMaker = new StringBuilder(current + ":" + wholeTime[1]);
+        currentTime = timeMaker.toString();
+        currentTimeLabel.setText(currentTime);
+        System.out.println(currentTime);
+    }
+
+    public void changeMinute(String currentTime, int n){
+        String[] wholeTime = currentTime.split(":");
+        int mins = Integer.parseInt(wholeTime[1]);
+        int current = mins + n;
+        StringBuilder timeMaker = new StringBuilder(wholeTime[0] + ":" + current);
+        currentTime = timeMaker.toString();
+        currentTimeLabel.setText(currentTime);
+        System.out.println(currentTime);
+    }
+
 }

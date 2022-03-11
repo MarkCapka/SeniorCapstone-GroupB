@@ -77,7 +77,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../SolarOptimization/src/main/resources/com/example/solaroptimization/skybox-viewUI.fxml" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -162,7 +162,7 @@
       <workItem from="1645828800517" duration="26573000" />
       <workItem from="1646283573175" duration="869000" />
       <workItem from="1646382819472" duration="22747000" />
-      <workItem from="1646970046628" duration="4775000" />
+      <workItem from="1646970046628" duration="13458000" />
     </task>
     <task id="LOCAL-00005" summary="Accurate sunset and sunrise times from location and date">
       <created>1645159193328</created>
@@ -199,7 +199,21 @@
       <option name="project" value="LOCAL" />
       <updated>1646970082759</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="All UI tools working correctly, Anthonys sun code integrated in but not connected yet">
+      <created>1646975219046</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1646975219046</updated>
+    </task>
+    <task id="LOCAL-00011" summary="All UI tools working correctly, Anthonys sun code integrated in but not connected yet">
+      <created>1646975232510</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1646975232510</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -236,7 +250,8 @@
     <MESSAGE value="Accurate sunset and sunrise times from location and date" />
     <MESSAGE value="New Controls and cleaner code" />
     <MESSAGE value="Most Up to Date, most of UI working" />
-    <option name="LAST_COMMIT_MESSAGE" value="Most Up to Date, most of UI working" />
+    <MESSAGE value="All UI tools working correctly, Anthonys sun code integrated in but not connected yet" />
+    <option name="LAST_COMMIT_MESSAGE" value="All UI tools working correctly, Anthonys sun code integrated in but not connected yet" />
   </component>
   <component name="XPathView.XPathProjectComponent">
     <history />
