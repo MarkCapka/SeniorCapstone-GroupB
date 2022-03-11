@@ -1,36 +1,37 @@
 package com.example.skyboxjavafxtester;
 
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.print.*;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.SplitPane;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
 import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
 import com.luckycatlabs.sunrisesunset.*;
 import com.luckycatlabs.sunrisesunset.dto.Location;
-import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
-import javafx.geometry.Point3D;
 import javafx.scene.*;
-import javafx.scene.control.DatePicker;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Transform;
-import javafx.stage.Stage;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import javafx.fxml.FXMLLoader;
 
-public class SkyboxApplication extends Application {
+
+public class SkyBoxApplication extends Application {
 
     //camera controls and scene settings declarations
     private PerspectiveCamera camera;
@@ -46,45 +47,243 @@ public class SkyboxApplication extends Application {
     private double mouseDeltaY;
 
     //Model Import Declaration
-    private final File house = new File("C:\\House.3ds");
-    private final File solarPanel = new File("C:\\SolarPanel(Export).3ds");
-    private final File groundSolarPanel = new File("C:\\GroundSolarPanel.3ds");
-    private Group solarPanelImport;
-    private Group gPanelOne;
-    private Group gPanelTwo;
-    private Group houseImport;
+    private static final File house = new File("C:\\House.3ds");
+    private static final File solarPanel = new File("C:\\SolarPanel(Export).3ds");
+    private static final File groundSolarPanel = new File("C:\\GroundSolarPanel.3ds");
+    private static Group solarPanelImport;
+    private static Group gPanelOne;
+    static Group gPanelOneBox;
+    private static Group gPanelTwo;
+    static Group gPanelTwoBox;
+    private static Group houseImport;
+    static Group solarPanelOnewR;
+    static Group solarPanelTwowR;
+    static Group solarPanelThreewR;
+    static Group solarPanelFourwR;
+    static Group panelsWHouse;
     private Boolean oneSelected = false;
     private Boolean twoSelected = false;
+    private static PhongMaterial clear = new PhongMaterial(Color.TRANSPARENT);
+    private PhongMaterial white = new PhongMaterial(Color.WHITE);
 
     //Location and Dates
-    private String sunriseTime;
-    private String sunsetTime;
-    private Calendar cal;
-    private String theDate = "20200419";
-    private String timeZone = "GMT-8";
-    private Location location;
-    private Double latitude = 47.6588;
-    private Double longitude = 117.4260;
-    private Date date;
+    static String sunriseTime;
+    static String sunsetTime;
+    static Calendar cal;
+    static String theDate = "20220310";
+    static String theLocation;
+    static String timeZone = "GMT-8";
+    static Location location;
+    static Double latitude = 47.6588;
+    static Double longitude = -117.4260;
+    static Date date;
+
+    private AnchorPane sliderAndDate;
+    private AnchorPane uiPane;
+    private Label label;
+
+    static Image skyboxImage;
+    private Pane entireFrame;
+    private Pane skyboxPane;
 
 
-    @FXML
-    private DatePicker datePicker; //Input date turned into date object
+    @Override
+    public void start(Stage stage) throws IOException, ParseException {
+        FXMLLoader fxmlLoader = new FXMLLoader(SkyBoxApplication.class.getResource("skybox-viewUI.fxml"));
+        Pane entireFrame = new Pane();
+        Group root = new Group(); //TODO: make thie borderpane the root, but load the fxmlL
+        Scene scene = new Scene(root, 1024, 768); // Make the whole scene with everything
+        entireFrame.getChildren().add(fxmlLoader.load());
+
+        root.getChildren().addAll(entireFrame);
+        scene.setRoot(root);
+
+        /* Uncomment this section to see the difference that happens
+
+        // This needs to set up the inside of the skyboxPane?
+        scene.setFill(new ImagePattern(skyboxImage)); //THIS causes whole UI to get filled over
+        camera = new PerspectiveCamera(true);
+        camera.setNearClip(0.1);
+        camera.setFarClip(30000.0);
+        //sceneRoot.getScene().setCamera(camera);
+        root.getScene().setCamera(camera);
+        // translations through dolly
+        cameraDolly = new Group();
+        cameraDolly.setTranslateZ(-1000);
+        cameraDolly.setTranslateX(200);
+        // rotation transforms
+        Group turn = new Group();
+        Rotate xRotate = new Rotate(0, 0, 0, 0, Rotate.X_AXIS);
+        Rotate yRotate = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);
+        camera.getTransforms().addAll(xRotate);
+        turn.getTransforms().addAll(yRotate);
+
+        //sceneRoot.getChildren().add(cameraDolly);
+        root.getChildren().add(cameraDolly);
+        cameraDolly.getChildren().add(turn);
+        turn.getChildren().add(camera);
+
+         */
 
 
-        Image skyboxImage;
-    {
-        try {
-            skyboxImage = new Image(new FileInputStream("C:\\skyboxDesert.png"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        //-------------END of Scene and Camera set up----------------------------//
+
+
+
+
+        //----------------Controls Section----------------------------//
+/*
+        // Use keyboard to control camera position
+        //scene.getRoot().setOnKeyPressed(event -> { ???????????????????????????? scene.getRoot() put controls in the anchorPane?
+        scene.setOnKeyPressed(event -> {
+            double change = cameraQuantity;
+            KeyCode keycode = event.getCode();
+
+            Rotate r = new Rotate(-1, Rotate.Y_AXIS); //rotate house right
+            Rotate l = new Rotate(1, Rotate.Y_AXIS); //rotate house left
+            Rotate n = new Rotate(45, Rotate.Y_AXIS); //rotate Ground Panel One
+            Rotate n1 = new Rotate(45, Rotate.Y_AXIS); //rotate Ground Panel One
+
+            setCenters(r, houseImport); //Get centers to rotate from center
+            setCenters(l, houseImport);
+            setCenters(n, gPanelOne);
+            setCenters(n1, gPanelTwo);
+
+            Transform t = new Rotate();
+
+            Point3D delta = null;
+
+            if (keycode == KeyCode.COMMA) {
+                delta = new Point3D(0, 0, change);
+            }
+            if (keycode == KeyCode.PERIOD) {
+                delta = new Point3D(0, 0, -change);
+            }
+            if (keycode == KeyCode.A) {
+                delta = new Point3D(-change, 0, 0);
+            }
+            if (keycode == KeyCode.D) {
+                delta = new Point3D(change, 0, 0);
+            }
+            if (keycode == KeyCode.W) {
+                delta = new Point3D(0, -change, 0);
+            }
+            if (keycode == KeyCode.S) {
+                delta = new Point3D(0, change, 0);
+            }
+            if (keycode == KeyCode.M) { //Rotate house and all solar panels Right
+                t = t.createConcatenation(l);
+                panelsWHouse.getTransforms().addAll(t);
+            }
+            if (keycode == KeyCode.N) { //Rotate house and all solar panels Left
+                t = t.createConcatenation(r);
+                panelsWHouse.getTransforms().addAll(t);
+            }
+            if(keycode == KeyCode.DIGIT0){ //Clears selected panels
+                clearSelected();
+            }
+            if(keycode == KeyCode.DIGIT1){ // Selects ground panel number 1
+                gPanelOneSelected();
+            }
+            if(keycode == KeyCode.DIGIT2) //selects ground panel number 2
+            {
+                gPanelTwoSelected();
+            }
+            if (keycode == KeyCode.RIGHT) { //Move selected ground panel to the right in the screen
+                if(oneSelected == true) {
+                    gPanelOneBox.setTranslateX(gPanelOneBox.getTranslateX() + 1);
+                }
+                else if(twoSelected == true){
+                    gPanelTwoBox.setTranslateX(gPanelTwoBox.getTranslateX() + 1);
+                }
+            }
+
+            if (keycode == KeyCode.LEFT) { //Move selected ground panel to the left in the screen
+                if(oneSelected == true) {
+                    gPanelOneBox.setTranslateX(gPanelOneBox.getTranslateX() - 1);
+                }
+                else if(twoSelected == true){
+                    gPanelTwoBox.setTranslateX(gPanelTwoBox.getTranslateX() - 1);
+                }
+            }
+
+            if (keycode == KeyCode.UP) { // Move selected ground panel back
+                if(oneSelected == true) {
+                    gPanelOneBox.setTranslateZ(gPanelOneBox.getTranslateZ() + 1);
+                }
+                else if(twoSelected == true) {
+                    gPanelTwoBox.setTranslateZ(gPanelTwoBox.getTranslateZ() + 1);
+                }
+            }
+
+            if (keycode == KeyCode.DOWN) { // Move selected ground panel forward
+                if(oneSelected == true) {
+                    gPanelOneBox.setTranslateZ(gPanelOneBox.getTranslateZ() - 1);
+                }
+                else if(twoSelected == true) {
+                    gPanelTwoBox.setTranslateZ(gPanelTwoBox.getTranslateZ() - 1);
+                }
+            }
+
+            if (keycode == KeyCode.SPACE) {  //Rotate selected ground solar panel
+                if(oneSelected == true) {
+                    t = t.createConcatenation(n);
+                    gPanelOneBox.getTransforms().addAll(t);
+                }
+                else if(twoSelected == true) {
+                    t = t.createConcatenation(n1);
+                    gPanelTwoBox.getTransforms().addAll(t);
+                }
+            }
+
+            if (delta != null) {
+                Point3D delta2 = camera.localToParent(delta);
+                cameraDolly.setTranslateX(cameraDolly.getTranslateX() + delta2.getX());
+                cameraDolly.setTranslateY(cameraDolly.getTranslateY() + delta2.getY());
+                cameraDolly.setTranslateZ(cameraDolly.getTranslateZ() + delta2.getZ());
+
+            }
+        });
+
+        // Use mouse to control camera rotation
+        scene.setOnMousePressed(me -> {
+            mousePosX = me.getSceneX();
+            mousePosY = me.getSceneY();
+        });
+
+        scene.setOnMouseDragged(me -> {
+            mouseOldX = mousePosX;
+            mouseOldY = mousePosY;
+            mousePosX = me.getSceneX();
+            mousePosY = me.getSceneY();
+            mouseDeltaX = (mousePosX - mouseOldX);
+            mouseDeltaY = (mousePosY - mouseOldY);
+
+            yRotate.setAngle(((yRotate.getAngle() - mouseDeltaX * 0.2) % 360 + 540) % 360 - 180); // +
+            xRotate.setAngle(((xRotate.getAngle() + mouseDeltaY * 0.2) % 360 + 540) % 360 - 180); // -
+        });
+
+
+ */
+//        Node printPane = (Node) controller.setSkyboxPane();
+//        Printer printer = Printer.getDefaultPrinter();
+//        PageLayout pageLayout = printer.createPageLayout(Paper.A4,
+//                PageOrientation.PORTRAIT, Printer.MarginType.HARDWARE_MINIMUM);
+//        PrinterJob job = PrinterJob.createPrinterJob();
+//
+//        if (job != null && job.showPrintDialog(printPane.getScene().getWindow())) {
+//            boolean success = job.printPage(pageLayout, printPane);
+//            if (success) {
+//                job.endJob();
+//            }
+//        }
+
+        stage.setTitle("Hello!");
+        stage.setScene(scene);
+        stage.show();
     }
 
-    public SkyboxApplication() {
-    }
-
-    private void constructWorld(Group root) {
+    static void constructWorld(Group root) {
         // AmbientLight light = new AmbientLight();
         AmbientLight light = new AmbientLight(Color.rgb(160, 160, 160));
 
@@ -163,7 +362,7 @@ public class SkyboxApplication extends Application {
         pyramid.setTranslateX(-50);
         pyramid.setTranslateY(-200);
         pyramid.setTranslateZ(0);
-      //  root.getChildren().add(pyramid);
+        //  root.getChildren().add(pyramid);
 
         final PhongMaterial blueMaterial = new PhongMaterial();
         blueMaterial.setDiffuseColor(Color.BLUE);
@@ -177,9 +376,10 @@ public class SkyboxApplication extends Application {
 
         root.getChildren().add(light);
 
-        Image back = new Image("skyboxDesert.png");
+        //Image back = new Image(String.valueOf(SkyBoxApplication.class.getResource("skyboxDesert.png")));
+        Image back2 = new Image ("file:skyboxDesert.png");
         final PhongMaterial skyMaterial = new PhongMaterial();
-        skyMaterial.setDiffuseMap(back);
+        skyMaterial.setDiffuseMap(back2);
         Box skybox = new Box(10000, 10000, 10000);
         skybox.setMaterial(skyMaterial);
         skybox.setCullFace(CullFace.NONE);
@@ -187,211 +387,7 @@ public class SkyboxApplication extends Application {
 
     }
 
-    @Override
-    public void start(Stage stage) throws ParseException, IOException {
-
-        //FXMLLoader loader = new FXMLLoader(SkyboxApplication.class.getResource("skybox-viewUI.fxml"));
-        //BorderPane pane = loader.load();
-        Group sceneRoot = new Group();
-        constructWorld(sceneRoot);
-
-        //----------Anthony: Creating the sun-------------------//
-
-        Sphere sphere = new Sphere(80.0f);
-        PhongMaterial material = new PhongMaterial();
-        material.setDiffuseColor(Color.YELLOWGREEN);
-        sphere.setMaterial(material);
-
-        // create a point light
-        PointLight pointlight = new PointLight();
-
-        // create a Group
-        Group sun = new Group(sphere, pointlight);
-        // translate the sphere to a position
-
-        sphere.setTranslateX(100);
-        sphere.setTranslateY(-200);
-        pointlight.setTranslateZ(-1000);
-        pointlight.setTranslateX(+1000);
-        pointlight.setTranslateY(+10);
-        pointlight.setColor(Color.YELLOWGREEN);
-        sceneRoot.getChildren().add(sun);
-
-        //-------End of creating the sun-----------//
-
-        startParams(); // Setting start date, location, sunset/sunrise times
-        Group panelsWHouse = models(); //Creating all models for the scene
-        sceneRoot.getChildren().add(panelsWHouse); //adding all models to the scene
-
-        //-------------Scene and Camera set up----------------------------//
-        //TODO change to 1024
-        double sceneWidth = 600;
-        //TODO change to 768
-        double sceneHeight = 600;
-        Scene scene = new Scene(sceneRoot, sceneWidth, sceneHeight, true);
-        scene.setFill(new ImagePattern(skyboxImage));
-        camera = new PerspectiveCamera(true);
-        camera.setNearClip(0.1);
-        camera.setFarClip(30000.0);
-        scene.setCamera(camera);
-        // translations through dolly
-        cameraDolly = new Group();
-        cameraDolly.setTranslateZ(-1000);
-        cameraDolly.setTranslateX(200);
-        // rotation transforms
-        Group turn = new Group();
-        Rotate xRotate = new Rotate(0, 0, 0, 0, Rotate.X_AXIS);
-        Rotate yRotate = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);
-        camera.getTransforms().addAll(xRotate);
-        turn.getTransforms().addAll(yRotate);
-
-        sceneRoot.getChildren().add(cameraDolly);
-        cameraDolly.getChildren().add(turn);
-        turn.getChildren().add(camera);
-        //-------------END of Scene and Camera set up----------------------------//
-
-
-
-
-        //----------------Controls Section----------------------------//
-
-        // Use keyboard to control camera position
-        scene.setOnKeyPressed(event -> {
-            double change = cameraQuantity;
-            KeyCode keycode = event.getCode();
-
-            Rotate r = new Rotate(-1, Rotate.Y_AXIS); //rotate house right
-            Rotate l = new Rotate(1, Rotate.Y_AXIS); //rotate house left
-            Rotate n = new Rotate(45, Rotate.Y_AXIS); //rotate Ground Panel One
-            Rotate n1 = new Rotate(45, Rotate.Y_AXIS); //rotate Ground Panel One
-
-            setCenters(r, houseImport);
-            setCenters(l, houseImport);
-            setCenters(n, gPanelOne);
-            setCenters(n1, gPanelTwo);
-
-            Transform t = new Rotate();
-
-            Point3D delta = null;
-
-            if (keycode == KeyCode.COMMA) {
-                delta = new Point3D(0, 0, change);
-            }
-            if (keycode == KeyCode.PERIOD) {
-                delta = new Point3D(0, 0, -change);
-            }
-            if (keycode == KeyCode.A) {
-                delta = new Point3D(-change, 0, 0);
-            }
-            if (keycode == KeyCode.D) {
-                delta = new Point3D(change, 0, 0);
-            }
-            if (keycode == KeyCode.W) {
-                delta = new Point3D(0, -change, 0);
-            }
-            if (keycode == KeyCode.S) {
-                delta = new Point3D(0, change, 0);
-            }
-            if (keycode == KeyCode.M) { //Rotate house and all solar panels Right
-                t = t.createConcatenation(l);
-                panelsWHouse.getTransforms().addAll(t);
-            }
-            if (keycode == KeyCode.N) { //Rotate house and all solar panels Left
-                t = t.createConcatenation(r);
-                panelsWHouse.getTransforms().addAll(t);
-            }
-            if(keycode == KeyCode.NUMPAD0){ //Clears selected panels
-                clearSelected();
-            }
-            if(keycode == KeyCode.NUMPAD1){ // Selects ground panel number 1
-                gPanelOneSelected();
-            }
-            if(keycode == KeyCode.NUMPAD2) //selects ground panel number 2
-            {
-                gPanelTwoSelected();
-            }
-            if (keycode == KeyCode.RIGHT) { //Move selected ground panel to the right in the screen
-                if(oneSelected == true) {
-                    gPanelOne.setTranslateX(gPanelOne.getTranslateX() + 1);
-                }
-                else if(twoSelected == true){
-                    gPanelTwo.setTranslateX(gPanelTwo.getTranslateX() + 1);
-                }
-            }
-
-            if (keycode == KeyCode.LEFT) { //Move selected ground panel to the left in the screen
-                if(oneSelected == true) {
-                    gPanelOne.setTranslateX(gPanelOne.getTranslateX() - 1);
-                }
-                else if(twoSelected == true){
-                    gPanelTwo.setTranslateX(gPanelTwo.getTranslateX() - 1);
-                }
-            }
-
-            if (keycode == KeyCode.UP) { // Move selected ground panel back
-                if(oneSelected == true) {
-                    gPanelOne.setTranslateZ(gPanelOne.getTranslateZ() + 1);
-                }
-                else if(twoSelected == true) {
-                    gPanelTwo.setTranslateZ(gPanelTwo.getTranslateZ() + 1);
-                }
-            }
-
-            if (keycode == KeyCode.DOWN) { // Move selected ground panel forward
-                if(oneSelected == true) {
-                    gPanelOne.setTranslateZ(gPanelOne.getTranslateZ() - 1);
-                }
-                else if(twoSelected == true) {
-                    gPanelTwo.setTranslateZ(gPanelTwo.getTranslateZ() - 1);
-                }
-            }
-
-            if (keycode == KeyCode.SPACE) {  //Rotate selected ground solar panel
-                if(oneSelected == true) {
-                    t = t.createConcatenation(n);
-                    gPanelOne.getTransforms().addAll(t);
-                }
-                else if(twoSelected == true) {
-                    t = t.createConcatenation(n1);
-                    gPanelTwo.getTransforms().addAll(t);
-                }
-            }
-
-            if (delta != null) {
-                Point3D delta2 = camera.localToParent(delta);
-                cameraDolly.setTranslateX(cameraDolly.getTranslateX() + delta2.getX());
-                cameraDolly.setTranslateY(cameraDolly.getTranslateY() + delta2.getY());
-                cameraDolly.setTranslateZ(cameraDolly.getTranslateZ() + delta2.getZ());
-
-            }
-        });
-
-        // Use mouse to control camera rotation
-        scene.setOnMousePressed(me -> {
-            mousePosX = me.getSceneX();
-            mousePosY = me.getSceneY();
-        });
-
-        scene.setOnMouseDragged(me -> {
-            mouseOldX = mousePosX;
-            mouseOldY = mousePosY;
-            mousePosX = me.getSceneX();
-            mousePosY = me.getSceneY();
-            mouseDeltaX = (mousePosX - mouseOldX);
-            mouseDeltaY = (mousePosY - mouseOldY);
-
-            yRotate.setAngle(((yRotate.getAngle() - mouseDeltaX * 0.2) % 360 + 540) % 360 - 180); // +
-            xRotate.setAngle(((xRotate.getAngle() + mouseDeltaY * 0.2) % 360 + 540) % 360 - 180); // -
-        });
-
-        stage.setTitle("Skybox");
-        stage.setScene(scene);
-        stage.show();
-    }
-
-
-    //------------------------Helper Methods----------------------------------------//
-    private Group setHouse()
+    private static Group setHouse()
     {
         TdsModelImporter modelImporter = new TdsModelImporter(); //Model Importer
 
@@ -411,7 +407,7 @@ public class SkyboxApplication extends Application {
         return houseImport;
     }
 
-    private Group setAllSolarPanels(File solar,int pX, int pY, int pZ, int AY, int AX, int AZ) //----Model Helper Method----//
+    private static Group setAllSolarPanels(File solar, int pX, int pY, int pZ, int AY, int AX, int AZ) //----Model Helper Method----//
     {
         TdsModelImporter modelImporter = new TdsModelImporter(); //Model Importer
         modelImporter.read(solar);
@@ -430,7 +426,7 @@ public class SkyboxApplication extends Application {
         return solarPanelImport;
     }
 
-    private Box createsolar(Group group1, double height, double depth, double width, double rax, double raz, double ray){
+    private static Box createsolar(Group group1, double height, double depth, double width, double rax, double raz, double ray){
         Box box = new Box();
         Bounds cord = group1.getBoundsInLocal();
         box.getTransforms().setAll(new Rotate(ray, Rotate.Y_AXIS), new Rotate(rax, Rotate.X_AXIS), new Rotate(raz, Rotate.Z_AXIS));
@@ -440,6 +436,7 @@ public class SkyboxApplication extends Application {
         box.setHeight(height);
         box.setDepth(depth);
         box.setWidth(width);
+        box.setMaterial(clear);
         return box;
     }
 
@@ -464,27 +461,23 @@ public class SkyboxApplication extends Application {
         twoSelected = false;
     }
 
-    private void startParams() throws ParseException {
+    static void startParams() throws ParseException {
         DateFormat formatter = new SimpleDateFormat("yyyyMMdd"); //Formatter
-        date = (Date)formatter.parse(theDate); //Parse string to create Date object
+        date = formatter.parse(theDate); //Parse string to create Date object
         cal = Calendar.getInstance(); //Calendar object created
         cal.setTime(date); //Calender object given corresponding date
 
-        location = new Location(latitude, longitude); // Will be entered in coordinates
+        location = new Location(latitude.doubleValue(), longitude.doubleValue()); // Will be entered in coordinates
         SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, timeZone); // Creates calculator for sun times
 
         sunriseTime = calculator.getOfficialSunriseForDate(cal); // Gets sunrise based on date and calculator created
         sunsetTime = calculator.getOfficialSunsetForDate(cal); // Gets sunset based on date and calculator created
-        System.out.println(sunriseTime); //Testing :)
-        System.out.println(sunsetTime);
     }
 
-    private Group models(){
-        //Coordinates/Angles for placement of solar panels to look nice on the roof
-        //                       x    y    z
+    static Group models(){
+
         int rightSideAngles[] = {-68, -68, 0};
 
-        //                            x   y    z
         int panelOneCoordinates[] = {300, -74, 190};
         int panelTwoCoordinates[] = {395, -74, 400};
 
@@ -494,9 +487,9 @@ public class SkyboxApplication extends Application {
 
         int gPanelOneCoordinates[] = {0, 180, 190};
         int gPanelTwoCoordinates[] = {460, 180, 100};
-        int gPanelLeftAngles[] = {105, -90, 0};
-        int gPanelRightAngles[] = {-60, -90, 0};
-
+        int gPanelLeftAngles[] = {115, -90, 0};
+        int gPanelRightAngles[] = {-65, -90, 0};
+//                                105
         //Sets house and panels into scene
         Group houseImport = setHouse();
         Group solarPanelOne = setAllSolarPanels(solarPanel, panelOneCoordinates[0], panelOneCoordinates[1], panelOneCoordinates[2], rightSideAngles[0], rightSideAngles[1], rightSideAngles[2]); //4 roof panels
@@ -511,29 +504,46 @@ public class SkyboxApplication extends Application {
         Box boxers2 = createsolar(solarPanelTwo, 39, 3.64, 65, rightSideAngles[1], rightSideAngles[2], rightSideAngles[0]);
         Box boxers3 = createsolar(solarPanelThree, 39, 3.64, 65, -rightSideAngles[1], -rightSideAngles[2], rightSideAngles[0]);
         Box boxers4 = createsolar(solarPanelFour, 39, 3.64, 65, -rightSideAngles[1], -rightSideAngles[2], rightSideAngles[0]);
+        Box boxers5 = createsolar(gPanelOne, 39, 3.64, 130, 55, 0, -65);
+        Box boxers6 = createsolar(gPanelTwo, 39, 3.64, 130, -55, 0, -65);
 
         //Grouping together solar panel w/ respective box
-        Group solarPanelOnewR = new Group(solarPanelOne, boxers);
-        Group solarPanelTwowR = new Group(solarPanelTwo, boxers2);
-        Group solarPanelThreewR = new Group(solarPanelThree, boxers3);
-        Group solarPanelFourwR = new Group(solarPanelFour, boxers4);
+        solarPanelOnewR = new Group(solarPanelOne, boxers);
+        solarPanelTwowR = new Group(solarPanelTwo, boxers2);
+        solarPanelThreewR = new Group(solarPanelThree, boxers3);
+        solarPanelFourwR = new Group(solarPanelFour, boxers4);
+        gPanelOneBox = new Group(gPanelOne, boxers5);
+        gPanelTwoBox = new Group(gPanelTwo, boxers6);
 
-        Group panelsWHouse = new Group(solarPanelOnewR, solarPanelTwowR, solarPanelThreewR, solarPanelFourwR, gPanelOne, gPanelTwo, houseImport);
+        panelsWHouse = new Group(houseImport, solarPanelOnewR, solarPanelTwowR, solarPanelThreewR, solarPanelFourwR, gPanelOneBox, gPanelTwoBox);
+        panelsWHouse.setTranslateY(-200); // puts house at 0,0,0... If you uncomment this it shows models on screen
         return panelsWHouse;
     }
 
-/*
-        //TODO below may be moved into skybox-view.fxml so we have control of all view functionality in one place
-        ImageView imageView = new ImageView(skyboxImage);
-        imageView.setX(50);
-        imageView.setY(25);
-        Group skyboxImages = new Group(imageView);
-        stage.setTitle("Java Skybox");
-        stage.setScene(scene);
-        stage.show();*/
+    static Group sunCreation(){
+        Sphere sphere = new Sphere(80.0f);
+        PhongMaterial material = new PhongMaterial();
+        material.setDiffuseColor(Color.YELLOWGREEN);
+        sphere.setMaterial(material);
 
+        // create a point light
+        PointLight pointlight = new PointLight();
+
+        // create a Group
+        Group sun = new Group(sphere, pointlight);
+        // translate the sphere to a position
+
+        sphere.setTranslateX(100);
+        sphere.setTranslateY(-200);
+        pointlight.setTranslateZ(-1000);
+        pointlight.setTranslateX(+1000);
+        pointlight.setTranslateY(+10);
+        pointlight.setColor(Color.GREENYELLOW);
+        return sun;
+    }
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
+
 }

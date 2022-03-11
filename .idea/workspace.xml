@@ -5,15 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6cee0f4c-ae2b-4f37-92d9-62094ef5f861" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/java.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/resources/sunset1.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/SkyBoxJavaFX-Tester.iml" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/SkyBoxJavaFX-Tester.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyboxApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyboxApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/module-info.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +23,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="SeanZ-SunriseSunset" />
+        <entry key="$PROJECT_DIR$" value="SeanZ-SunriseAndSunsetTimes" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -45,7 +37,7 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxApplication.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyBoxApplication.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/module-info.java" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/SkyBoxJavaFX-Tester/pom.xml" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -75,7 +67,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/resources/timezonemap-master/.mvn/wrapper/maven-wrapper.jar" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/resources/com/example/skyboxjavafxtester" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -89,10 +81,13 @@
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.example.skyboxjavafxtester" />
     </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\seanz\workspace\SeniorCapstone-GroupB\SkyBoxJavaFX-Tester\src\main\resources\com\example\skyboxjavafxtester" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="SkyboxApplication" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.example.skyboxjavafxtester.SkyboxApplication" />
+      <option name="MAIN_CLASS_NAME" value="com.example.skyboxjavafxtester.SkyBoxApplication" />
       <module name="SkyBoxJavaFX-Tester" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -154,7 +149,9 @@
       <workItem from="1645156921694" duration="17781000" />
       <workItem from="1645561605767" duration="1078000" />
       <workItem from="1645563715808" duration="664000" />
-      <workItem from="1645828800517" duration="26390000" />
+      <workItem from="1645828800517" duration="26573000" />
+      <workItem from="1646283573175" duration="869000" />
+      <workItem from="1646382819472" duration="22747000" />
     </task>
     <task id="LOCAL-00005" summary="Accurate sunset and sunrise times from location and date">
       <created>1645159193328</created>
@@ -177,7 +174,14 @@
       <option name="project" value="LOCAL" />
       <updated>1646213992855</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="New Controls and cleaner code">
+      <created>1646214118286</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1646214118286</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -213,7 +217,8 @@
     <MESSAGE value="Code Cleaned and integrated with Anthony patch2" />
     <MESSAGE value="Accurate sunset and sunrise times from location and date" />
     <MESSAGE value="New Controls and cleaner code" />
-    <option name="LAST_COMMIT_MESSAGE" value="New Controls and cleaner code" />
+    <MESSAGE value="Most Up to Date, most of UI working" />
+    <option name="LAST_COMMIT_MESSAGE" value="Most Up to Date, most of UI working" />
   </component>
   <component name="XPathView.XPathProjectComponent">
     <history />
