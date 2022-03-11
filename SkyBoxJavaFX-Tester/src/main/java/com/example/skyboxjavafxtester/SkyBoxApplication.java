@@ -79,6 +79,7 @@ public class SkyBoxApplication extends Application {
     static Double longitude = -117.4260;
     static Date date;
 
+    //Sun movement variables
     static int timeAS;
     static int timeBS;
     static int sliceofday;
@@ -286,7 +287,7 @@ public class SkyBoxApplication extends Application {
 //            }
 //        }
 
-        stage.setTitle("Hello!");
+        stage.setTitle("Solar Optimization Simulator!");
         stage.setScene(scene);
         stage.show();
     }
