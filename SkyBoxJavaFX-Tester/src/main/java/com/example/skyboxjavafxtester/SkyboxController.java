@@ -17,10 +17,11 @@ import javafx.stage.Stage;
 import javax.swing.JOptionPane;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 
 public class SkyBoxController {
@@ -59,12 +60,15 @@ public class SkyBoxController {
     private Button addAll;
 
 
-
-
     @FXML
     protected void initialize() throws ParseException, IOException {
         setSkyboxPane();
         setEntireFrame();
+        //Initialize Slider Ticks
+        LocalTime start = LocalTime.parse(SkyBoxApplication.sunriseTime);
+        LocalTime end =  LocalTime.parse(SkyBoxApplication.sunsetTime);
+        Long hours = ChronoUnit.HOURS.between(start, end);//# of mins between
+        slider.setMax(hours); //Gives 11 ticks.... 11 hours between sunrise and sunset
 
     }
 
@@ -222,5 +226,19 @@ public class SkyBoxController {
 
         SkyBoxApplication.sunriseTime = calculator.getOfficialSunriseForDate(SkyBoxApplication.cal); // Gets sunrise based on date and calculator created
         SkyBoxApplication.sunsetTime = calculator.getOfficialSunsetForDate(SkyBoxApplication.cal); // Gets sunset based on date and calculator created
+
+        LocalTime start = LocalTime.parse(SkyBoxApplication.sunriseTime);
+        LocalTime end =  LocalTime.parse(SkyBoxApplication.sunsetTime);
+        Long hours = ChronoUnit.HOURS.between(start, end);
+        slider.setMax(hours);
+    }
+
+    public void sunMovement() {
+        //Units error checking... Each Major tick goes up +1, each minor tick doesnt make value
+        float sliderValue = (float) slider.getValue();
+        System.out.println(sliderValue + " ");
+
+
+
     }
 }
