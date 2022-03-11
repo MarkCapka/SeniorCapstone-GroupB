@@ -15,7 +15,7 @@
    <children>
       <AnchorPane fx:id="sliderAndDate" layoutY="39.0" minHeight="0.0" minWidth="0.0" prefHeight="51.0" prefWidth="1024.0" style="-fx-background-color: linear-gradient(to right, indigo 20%, red 70%, indigo 100%); -fx-border-color: black;">
          <children>
-            <DatePicker fx:id="datePicker" layoutX="14.0" layoutY="13.0" onAction="#getDate" prefHeight="25.0" prefWidth="166.0" promptText="Choose Date" />
+            <DatePicker fx:id="datePicker" layoutX="14.0" layoutY="13.0" onAction="#getDate" prefHeight="25.0" prefWidth="166.0" promptText="03/10/2022" />
             <Slider fx:id="slider" layoutX="193.0" layoutY="7.0" onMouseReleased="#sunMovement" majorTickUnit="1.0" max="12.0" minorTickCount="1" prefHeight="38.0" prefWidth="811.0" showTickMarks="true" snapToTicks="true" value="6.0"  />
          </children>
       </AnchorPane>
@@ -26,7 +26,7 @@
                   <Font name="Georgia Italic" size="15.0" />
                </font>
             </Label>
-            <TextField fx:id="theLocationPicker" alignment="CENTER" layoutX="13.0" layoutY="123.0" onAction="#getLocation" promptText="Latitude, Longitude" />
+            <TextField fx:id="theLocationPicker" alignment="CENTER" layoutX="13.0" layoutY="123.0" onAction="#getLocation" promptText="47.6588, -117.4260" />
             <Label fx:id="solarLabel" alignment="CENTER" layoutX="14.0" layoutY="232.0" prefHeight="17.0" prefWidth="149.0" text="Solar Panels:">
                <font>
                   <Font name="Georgia Italic" size="15.0" />

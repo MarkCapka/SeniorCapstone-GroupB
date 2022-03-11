@@ -53,19 +53,19 @@ public class SkyBoxApplication extends Application {
     private static final File groundSolarPanel = new File("C:\\GroundSolarPanel.3ds");
     private static Group solarPanelImport;
     private static Group gPanelOne;
-    static Group gPanelOneBox;
     private static Group gPanelTwo;
-    static Group gPanelTwoBox;
     private static Group houseImport;
     static Group solarPanelOnewR;
     static Group solarPanelTwowR;
     static Group solarPanelThreewR;
     static Group solarPanelFourwR;
+    static Group gPanelOneBox;
+    static Group gPanelTwoBox;
     static Group panelsWHouse;
+    static Group sun;
     private Boolean oneSelected = false;
     private Boolean twoSelected = false;
-    private static PhongMaterial clear = new PhongMaterial(Color.TRANSPARENT);
-    private PhongMaterial white = new PhongMaterial(Color.WHITE);
+    static PhongMaterial clear = new PhongMaterial(Color.TRANSPARENT);
 
     //Location and Dates
     static String sunriseTime;
@@ -86,6 +86,14 @@ public class SkyBoxApplication extends Application {
     static int totalMinutes = 720;
     static int sunrise = 0;
     static int sunset = 720;
+    static boolean box1closest;
+    static boolean box2closest;
+    static boolean box3closest;
+    static boolean box4closest;
+    static boolean gbox1closest;
+    static boolean gbox2closest;
+    static PhongMaterial col = new PhongMaterial(Color.GREEN);
+    static PhongMaterial col1 = new PhongMaterial(Color.RED);
 
     private AnchorPane sliderAndDate;
     private AnchorPane uiPane;
@@ -136,8 +144,6 @@ public class SkyBoxApplication extends Application {
 
 
         //-------------END of Scene and Camera set up----------------------------//
-
-
 
 
         //----------------Controls Section----------------------------//
@@ -344,20 +350,20 @@ public class SkyBoxApplication extends Application {
         float h = 100;                    // Height
         float s = 200;                    // Base hypotenuse
         pyramidMesh.getPoints().addAll(
-                0,    0,    0,            // Point 0 - Top
-                0,    h,    -s/2,         // Point 1 - Front
-                -s/2, h,    0,            // Point 2 - Left
-                s/2,  h,    0,            // Point 3 - Right
-                0,    h,    s/2           // Point 4 - Back
+                0, 0, 0,            // Point 0 - Top
+                0, h, -s / 2,         // Point 1 - Front
+                -s / 2, h, 0,            // Point 2 - Left
+                s / 2, h, 0,            // Point 3 - Right
+                0, h, s / 2           // Point 4 - Back
         );
         // define faces
         pyramidMesh.getFaces().addAll(
-                0,0,  2,1,  1,2,          // Front left face
-                0,0,  1,1,  3,1,          // Front right face
-                0,0,  3,1,  4,2,          // Back right face
-                0,0,  4,1,  2,2,          // Back left face
-                4,1,  1,4,  2,2,          // Bottom left face
-                4,1,  3,3,  1,4           // Bottom right face
+                0, 0, 2, 1, 1, 2,          // Front left face
+                0, 0, 1, 1, 3, 1,          // Front right face
+                0, 0, 3, 1, 4, 2,          // Back right face
+                0, 0, 4, 1, 2, 2,          // Back left face
+                4, 1, 1, 4, 2, 2,          // Bottom left face
+                4, 1, 3, 3, 1, 4           // Bottom right face
         );
         pyramidMesh.getFaceSmoothingGroups().addAll(
                 1, 2, 3, 4, 5, 5);
@@ -386,7 +392,7 @@ public class SkyBoxApplication extends Application {
         root.getChildren().add(light);
 
         //Image back = new Image(String.valueOf(SkyBoxApplication.class.getResource("skyboxDesert.png")));
-        Image back2 = new Image ("file:skyboxDesert.png");
+        Image back2 = new Image("file:skyboxDesert.png");
         final PhongMaterial skyMaterial = new PhongMaterial();
         skyMaterial.setDiffuseMap(back2);
         Box skybox = new Box(10000, 10000, 10000);
@@ -396,8 +402,7 @@ public class SkyBoxApplication extends Application {
 
     }
 
-    private static Group setHouse()
-    {
+    private static Group setHouse() {
         TdsModelImporter modelImporter = new TdsModelImporter(); //Model Importer
 
         modelImporter.read(house); //Read in the house model
@@ -435,7 +440,7 @@ public class SkyBoxApplication extends Application {
         return solarPanelImport;
     }
 
-    private static Box createsolar(Group group1, double height, double depth, double width, double rax, double raz, double ray){
+    private static Box createsolar(Group group1, double height, double depth, double width, double rax, double raz, double ray) {
         Box box = new Box();
         Bounds cord = group1.getBoundsInLocal();
         box.getTransforms().setAll(new Rotate(ray, Rotate.Y_AXIS), new Rotate(rax, Rotate.X_AXIS), new Rotate(raz, Rotate.Z_AXIS));
@@ -449,23 +454,23 @@ public class SkyBoxApplication extends Application {
         return box;
     }
 
-    private void setCenters(Rotate r, Group beingRotated){
+    private void setCenters(Rotate r, Group beingRotated) {
         r.setPivotX(beingRotated.getBoundsInLocal().getCenterX());
         r.setPivotY(beingRotated.getBoundsInLocal().getCenterY());
         r.setPivotZ(beingRotated.getBoundsInLocal().getCenterZ());
     }
 
-    private void gPanelOneSelected(){
+    private void gPanelOneSelected() {
         oneSelected = true;
         twoSelected = false;
     }
 
-    private void gPanelTwoSelected(){
+    private void gPanelTwoSelected() {
         oneSelected = false;
         twoSelected = true;
     }
 
-    private void clearSelected(){
+    private void clearSelected() {
         oneSelected = false;
         twoSelected = false;
     }
@@ -483,7 +488,7 @@ public class SkyBoxApplication extends Application {
         sunsetTime = calculator.getOfficialSunsetForDate(cal); // Gets sunset based on date and calculator created
     }
 
-    static Group models(){
+    static Group models() {
 
         int rightSideAngles[] = {-68, -68, 0};
 
@@ -525,11 +530,11 @@ public class SkyBoxApplication extends Application {
         gPanelTwoBox = new Group(gPanelTwo, boxers6);
 
         panelsWHouse = new Group(houseImport, solarPanelOnewR, solarPanelTwowR, solarPanelThreewR, solarPanelFourwR, gPanelOneBox, gPanelTwoBox);
-        panelsWHouse.setTranslateY(-200); // puts house at 0,0,0... If you comment this it shows models on screen
+        //panelsWHouse.setTranslateY(-200); // puts house at 0,0,0... If you comment this it shows models on screen
         return panelsWHouse;
     }
 
-    static Group sunCreation(){
+    static Group sunCreation() {
         Sphere sphere = new Sphere(80.0f);
         PhongMaterial material = new PhongMaterial();
         material.setDiffuseColor(Color.YELLOWGREEN);
@@ -539,7 +544,7 @@ public class SkyBoxApplication extends Application {
         PointLight pointlight = new PointLight();
 
         // create a Group
-        Group sun = new Group(sphere, pointlight);
+        sun = new Group(sphere, pointlight);
         // translate the sphere to a position
 
         sphere.setTranslateX(100);
@@ -548,10 +553,11 @@ public class SkyBoxApplication extends Application {
         pointlight.setTranslateX(+1000);
         pointlight.setTranslateY(+10);
         pointlight.setColor(Color.GREENYELLOW);
+
         return sun;
     }
 
-    static void sunMovement(){
+    static void sunTrajectory() {
         Sphere sphere = new Sphere(80.0f);
         Sphere sphere1 = new Sphere(80.0f);
         Sphere sphere3 = new Sphere(80.0f);
@@ -574,19 +580,19 @@ public class SkyBoxApplication extends Application {
         Point3D point1 = new Point3D(gPanelOneBox.getTranslateX(), gPanelOneBox.getTranslateY(), gPanelOneBox.getTranslateZ());
         Point3D point2 = new Point3D(sun.getTranslateX(), sun.getTranslateY(), sun.getTranslateZ());
 
-        Double distance =  Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2) + Math.pow(point1.getZ() - point2.getZ(), 2));
+        Double distance = Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2) + Math.pow(point1.getZ() - point2.getZ(), 2));
         System.out.println(distance);
 
         //code for 7:59 current time
         //199 minutes after sunrise
         //at 6 am or 0;
         int totaltime = 720;
-        int slice = totaltime/6;
+        int slice = totaltime / 6;
         int currenttime = 720;
         int sliceofday = 0;
 
 
-        if(slice >= currenttime) {
+        if (slice >= currenttime) {
             double angle = 30;
             angle = Math.toRadians(angle);
             double x33 = Math.cos(angle);
@@ -601,8 +607,7 @@ public class SkyBoxApplication extends Application {
         }
 
 
-
-        if(((2*slice)>=currenttime)&&(slice<currenttime)) {
+        if (((2 * slice) >= currenttime) && (slice < currenttime)) {
             double angle1 = 60;
             angle1 = Math.toRadians(angle1);
             double x66 = Math.cos(angle1);
@@ -614,7 +619,7 @@ public class SkyBoxApplication extends Application {
 
             //sun1.setTranslateZ(0);
         }
-        if(((4*slice)>=currenttime)&&(3*slice<currenttime)) {
+        if (((4 * slice) >= currenttime) && (3 * slice < currenttime)) {
             double angle2 = 120;
             angle2 = Math.toRadians(angle2);
             double x12 = Math.cos(angle2);
@@ -624,7 +629,7 @@ public class SkyBoxApplication extends Application {
             sun.setTranslateZ(0);
             //sceneRoot.getChildren().add(sun3);
         }
-        if(((3*slice)>=currenttime)&&(2*slice<currenttime)) {
+        if (((3 * slice) >= currenttime) && (2 * slice < currenttime)) {
             double angle3 = 90;
             angle3 = Math.toRadians(angle3);
             double x90 = Math.cos(angle3);
@@ -634,7 +639,7 @@ public class SkyBoxApplication extends Application {
             sun.setTranslateY(-y90 * 500);
             //sceneRoot.getChildren().add(sun4);
         }
-        if(((5*slice)>=currenttime)&&(4*slice<currenttime)) {
+        if (((5 * slice) >= currenttime) && (4 * slice < currenttime)) {
             double angle3 = 150;
             angle3 = Math.toRadians(angle3);
             double x150 = Math.cos(angle3);
@@ -644,7 +649,7 @@ public class SkyBoxApplication extends Application {
             sun.setTranslateY(-y150 * 500);
             //sceneRoot.getChildren().add(sun4);
         }
-        if(((6*slice)>=currenttime)&&(5*slice<currenttime)) {
+        if (((6 * slice) >= currenttime) && (5 * slice < currenttime)) {
             double angle3 = 180;
             angle3 = Math.toRadians(angle3);
             double x180 = Math.cos(angle3);
@@ -657,6 +662,93 @@ public class SkyBoxApplication extends Application {
         //sceneRoot.getChildren().add(sun);
 
     }
+
+    //helper methods for most optimal
+    public static double distancecalc(Box box, Group sun) {
+        Point3D point1 = new Point3D(box.getTranslateX(), box.getTranslateY(), box.getTranslateZ());
+        Point3D point2 = new Point3D(sun.getTranslateX(), sun.getTranslateY(), sun.getTranslateZ());
+        Double distance = Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2) + Math.pow(point1.getZ() - point2.getZ(), 2));
+        return distance;
+    }
+
+    public static void colorSetOpt(Group sunOb) {
+        Double b1d = distancecalc((Box) solarPanelOnewR.getChildren().get(1), sunOb);
+        Double b2d = distancecalc((Box) solarPanelTwowR.getChildren().get(1), sunOb);
+        Double b3d = distancecalc((Box) solarPanelThreewR.getChildren().get(1), sunOb);
+        Double b4d = distancecalc((Box) solarPanelFourwR.getChildren().get(1), sunOb);
+        box1closest = true;
+        box2closest = false;
+        box3closest = false;
+        box4closest = false;
+
+        if ((b2d < b1d) && (b2d < b3d) && (b2d < b4d)) {
+            box1closest = false;
+            box2closest = true;
+            box3closest = false;
+            box4closest = false;
+        }
+        if ((b3d < b2d) && (b3d < b1d) && (b3d < b4d)) {
+            box1closest = false;
+            box2closest = false;
+            box3closest = true;
+            box4closest = false;
+        }
+        if ((b4d < b1d) && (b4d < b3d) && (b4d < b2d)) {
+            box1closest = false;
+            box2closest = false;
+            box3closest = false;
+            box4closest = true;
+        }
+        if (box1closest = true) {
+            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col);
+            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col1);
+            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col1);
+            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col1);
+        }
+        if (box2closest = true) {
+            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col1);
+            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col);
+            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col1);
+            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col1);
+
+        }
+        if (box3closest = true) {
+            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col1);
+            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col1);
+            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col);
+            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col1);
+        }
+        if (box4closest = true) {
+            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col1);
+            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col1);
+            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col1);
+            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col);
+
+        }
+    }
+
+
+    public static void gColorSetOpt(Group sunOb){
+        Double b1d = distancecalc((Box) gPanelOneBox.getChildren().get(1), sunOb);
+        Double b2d = distancecalc((Box) gPanelTwoBox.getChildren().get(1), sunOb);
+        gbox1closest = true;
+        gbox2closest=false;
+
+        if((b2d < b1d)){
+            box1closest = false;
+            box2closest = true;
+        }
+        if(gbox1closest = true){
+            ((Box) gPanelOneBox.getChildren().get(1)).setMaterial(col);
+            ((Box) gPanelTwoBox.getChildren().get(1)).setMaterial(col1);
+        }
+        if(gbox2closest = true){
+            ((Box) gPanelOneBox.getChildren().get(1)).setMaterial(col1);
+            ((Box) gPanelTwoBox.getChildren().get(1)).setMaterial(col);
+        }
+    }
+
+
 
     public static void main(String[] args) {
         launch(args);
