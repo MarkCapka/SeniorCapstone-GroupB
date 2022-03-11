@@ -2,6 +2,7 @@ package com.example.skyboxjavafxtester;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point3D;
 import javafx.print.*;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -77,6 +78,13 @@ public class SkyBoxApplication extends Application {
     static Double latitude = 47.6588;
     static Double longitude = -117.4260;
     static Date date;
+
+    static int timeAS;
+    static int timeBS;
+    static int sliceofday;
+    static int totalMinutes = 720;
+    static int sunrise = 0;
+    static int sunset = 720;
 
     private AnchorPane sliderAndDate;
     private AnchorPane uiPane;
@@ -516,7 +524,7 @@ public class SkyBoxApplication extends Application {
         gPanelTwoBox = new Group(gPanelTwo, boxers6);
 
         panelsWHouse = new Group(houseImport, solarPanelOnewR, solarPanelTwowR, solarPanelThreewR, solarPanelFourwR, gPanelOneBox, gPanelTwoBox);
-        panelsWHouse.setTranslateY(-200); // puts house at 0,0,0... If you uncomment this it shows models on screen
+        panelsWHouse.setTranslateY(-200); // puts house at 0,0,0... If you comment this it shows models on screen
         return panelsWHouse;
     }
 
@@ -540,6 +548,113 @@ public class SkyBoxApplication extends Application {
         pointlight.setTranslateY(+10);
         pointlight.setColor(Color.GREENYELLOW);
         return sun;
+    }
+
+    static void sunMovement(){
+        Sphere sphere = new Sphere(80.0f);
+        Sphere sphere1 = new Sphere(80.0f);
+        Sphere sphere3 = new Sphere(80.0f);
+        Sphere sphere4 = new Sphere(80.0f);
+
+        PhongMaterial material = new PhongMaterial();
+        material.setDiffuseColor(Color.YELLOWGREEN);
+        sphere.setMaterial(material);
+        //sphere1.setMaterial(material);
+
+        // create a point light
+        PointLight pointlight = new PointLight();
+        Group sun = new Group(sphere, pointlight);
+        Group sun1 = new Group(sphere1, pointlight);
+        Group sun3 = new Group(sphere3, pointlight);
+        Group sun4 = new Group(sphere4, pointlight);
+
+        pointlight.setColor(Color.YELLOWGREEN);
+
+        Point3D point1 = new Point3D(gPanelOneBox.getTranslateX(), gPanelOneBox.getTranslateY(), gPanelOneBox.getTranslateZ());
+        Point3D point2 = new Point3D(sun.getTranslateX(), sun.getTranslateY(), sun.getTranslateZ());
+
+        Double distance =  Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2) + Math.pow(point1.getZ() - point2.getZ(), 2));
+        System.out.println(distance);
+
+        //code for 7:59 current time
+        //199 minutes after sunrise
+        //at 6 am or 0;
+        int totaltime = 720;
+        int slice = totaltime/6;
+        int currenttime = 720;
+        int sliceofday = 0;
+
+
+        if(slice >= currenttime) {
+            double angle = 30;
+            angle = Math.toRadians(angle);
+            double x33 = Math.cos(angle);
+            double y33 = Math.sin(angle);
+
+            sun.setTranslateX(x33 * 500);
+            sun.setTranslateY(-y33 * 500);
+            //sceneRoot.getChildren().add(sun);
+            sun.setTranslateZ(0);
+            //sceneRoot.getChildren().add(sun);
+
+        }
+
+
+
+        if(((2*slice)>=currenttime)&&(slice<currenttime)) {
+            double angle1 = 60;
+            angle1 = Math.toRadians(angle1);
+            double x66 = Math.cos(angle1);
+            double y66 = Math.sin(angle1);
+            sun.setTranslateX(x66 * 500);
+            sun.setTranslateY(-y66 * 500);
+            sun.setTranslateZ(0);
+            //sceneRoot.getChildren().add(sun1);
+
+            //sun1.setTranslateZ(0);
+        }
+        if(((4*slice)>=currenttime)&&(3*slice<currenttime)) {
+            double angle2 = 120;
+            angle2 = Math.toRadians(angle2);
+            double x12 = Math.cos(angle2);
+            double y12 = Math.sin(angle2);
+            sun.setTranslateX(x12 * 500);
+            sun.setTranslateY(-y12 * 500);
+            sun.setTranslateZ(0);
+            //sceneRoot.getChildren().add(sun3);
+        }
+        if(((3*slice)>=currenttime)&&(2*slice<currenttime)) {
+            double angle3 = 90;
+            angle3 = Math.toRadians(angle3);
+            double x90 = Math.cos(angle3);
+            double y90 = Math.sin(angle3);
+            sun.setTranslateX(x90 * 500);
+            sun.setTranslateZ(0);
+            sun.setTranslateY(-y90 * 500);
+            //sceneRoot.getChildren().add(sun4);
+        }
+        if(((5*slice)>=currenttime)&&(4*slice<currenttime)) {
+            double angle3 = 150;
+            angle3 = Math.toRadians(angle3);
+            double x150 = Math.cos(angle3);
+            double y150 = Math.sin(angle3);
+            sun.setTranslateX(x150 * 500);
+            sun.setTranslateZ(0);
+            sun.setTranslateY(-y150 * 500);
+            //sceneRoot.getChildren().add(sun4);
+        }
+        if(((6*slice)>=currenttime)&&(5*slice<currenttime)) {
+            double angle3 = 180;
+            angle3 = Math.toRadians(angle3);
+            double x180 = Math.cos(angle3);
+            double y180 = Math.sin(angle3);
+            sun.setTranslateX(x180 * 500);
+            sun.setTranslateZ(0);
+            sun.setTranslateY(-y180 * 500);
+            //sceneRoot.getChildren().add(sun4);
+        }
+        //sceneRoot.getChildren().add(sun);
+
     }
 
     public static void main(String[] args) {

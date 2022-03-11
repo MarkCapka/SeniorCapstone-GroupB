@@ -16,7 +16,7 @@
       <AnchorPane fx:id="sliderAndDate" layoutY="39.0" minHeight="0.0" minWidth="0.0" prefHeight="51.0" prefWidth="1024.0" style="-fx-background-color: linear-gradient(to right, indigo 20%, red 70%, indigo 100%); -fx-border-color: black;">
          <children>
             <DatePicker fx:id="datePicker" layoutX="14.0" layoutY="13.0" onAction="#getDate" prefHeight="25.0" prefWidth="166.0" promptText="Choose Date" />
-            <Slider fx:id="slider" layoutX="193.0" layoutY="7.0" majorTickUnit="1.0" max="12.0" minorTickCount="1" prefHeight="38.0" prefWidth="811.0" showTickMarks="true" snapToTicks="true" value="1.0" />
+            <Slider fx:id="slider" layoutX="193.0" layoutY="7.0" onMouseReleased="#sunMovement" majorTickUnit="1.0" max="12.0" minorTickCount="5" prefHeight="38.0" prefWidth="811.0" showTickMarks="true" snapToTicks="true" value="1.0" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="uiPane" layoutY="89.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="678.0" prefWidth="177.0" style="-fx-border-color: black;">
