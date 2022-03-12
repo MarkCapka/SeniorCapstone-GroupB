@@ -68,6 +68,7 @@ public class SkyBoxApplication extends Application {
             };
 
 
+
     //Model Import Declaration
     private static final File house = new File("C:\\House.3ds");
     private static final File solarPanel = new File("C:\\SolarPanel(Export).3ds");
@@ -123,22 +124,39 @@ public class SkyBoxApplication extends Application {
     static Image skyboxImage;
     private Pane entireFrame;
     private Pane skyboxPane;
+    Group root = new Group();
 
+    //TODO: skybox integration setup call for image     -Mark: 3/11
+//    {
+//        try {
+//            skyboxImage = new Image(new FileInputStream("C:\\skyboxExample.png"));
+//            skyboxImage.isSmooth(); //TODO confirm if I need this, I THINK it helps with blending the photo together for the skybox corners .
+//
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     public void start(Stage stage) throws IOException, ParseException {
         FXMLLoader fxmlLoader = new FXMLLoader(SkyBoxApplication.class.getResource("skybox-viewUI.fxml"));
         Pane entireFrame = new Pane();
         //Pane skyboxPane = new Pane();
-        //set up panes
+
+        //set up panes          //believe i need to declare the panes here for grouping, but confirm if that is the cas.e
             //entireFrame
             //skyboxPane
             //UI Pane
         //TODO: make thie borderpane the root, but load the fxml
-        Group root = new Group();
 
-
+//        double width = skyboxImage.getWidth();
+//        double height = skyboxImage.getHeight();
+//        constructWorld(root);
+//        createSun(root);
+//        sunriseSunset();
 //
+//        modifySkybox(root);
+
 //            try {
 //                skyboxImage = new Image(new FileInputStream("com/example/skyboxjavafxtester/skyboxDesert.png"));
 //              //  skyboxImage.isSmooth(); //TODO confirm if I need this, I THINK it helps with blending the photo together for the skybox corners
@@ -149,7 +167,9 @@ public class SkyBoxApplication extends Application {
 
 
         Scene scene = new Scene(root, 1024, 768); // Make the whole scene with everything
-       // Group skybox = modifySkybox();
+//        Group panelsWHouse = addSolarPanel(root);
+//        cameraAndControls(root, panelsWHouse, scene);
+
         entireFrame.getChildren().add(fxmlLoader.load());
 
         root.getChildren().addAll(entireFrame);
@@ -295,26 +315,24 @@ public class SkyBoxApplication extends Application {
 //        });
 //    }
 //
-//    //TOOD call to implement
-//    public static void modifySkybox() {
-//        // Image back = new Image("skyboxExample.png"); //TODO this is the actual skybox image????
+////    //TOOD call to implement, need to rewrite the BOx skybox powrtion and replace with a meshview: consider the 3 various info pieces you need (faces, points, coords or sometihng like that. see mesh example above: Mark-3/11
+//private void modifySkybox() {
+//    // Image back = new Image("skyboxExample.png"); //TODO this is the actual skybox image????
+//    final PhongMaterial skyMaterial = new PhongMaterial();
+//    // skyMaterial.setSpecularColor(Color.TRANSPARENT);
+//    skyMaterial.setDiffuseMap(skyboxImage);
+//    //TriangleMesh cube = new TriangleMesh();
+//    // skyMaterial.setDiffuseColor(Color.TRANSPARENT);
+//    //MeshView meshView = new MeshView();
+//    //cube = new TriangleMesh(skyboxImage)
+//    //TODO may change from box to a mesh cube since we can easily make that transparent
+//    Box skybox = new Box(10000, 10000, 10000);
+//    skybox.setMaterial(skyMaterial);
 //
-//        //fold the skybox
-//        final PhongMaterial skyMaterial = new PhongMaterial();
-//        // skyMaterial.setSpecularColor(Color.TRANSPARENT);
-//        skyMaterial.setDiffuseMap(skyboxImage);
-//        //TriangleMesh cube = new TriangleMesh();
-//        // skyMaterial.setDiffuseColor(Color.TRANSPARENT);
-//        //MeshView meshView = new MeshView();
-//        //cube = new TriangleMesh(skyboxImage)
-//        //TODO may change from box to a mesh cube since we can easily make that transparent
-//        Box skybox = new Box(10000, 10000, 10000);
-//        skybox.setMaterial(skyMaterial);
+//    skybox.setCullFace(CullFace.NONE);
+//    scene.getChildren().add(skybox);
 //
-//        skybox.setCullFace(CullFace.NONE);
-//
-//     //   root.getChildren().add(skybox);
-//    }
+//}
 
 
     static void constructWorld(Group root) {
@@ -327,33 +345,9 @@ public class SkyBoxApplication extends Application {
         pl.setTranslateZ(-100);
         root.getChildren().add(pl);
 
-        final PhongMaterial greenMaterial = new PhongMaterial();
-        greenMaterial.setDiffuseColor(Color.FORESTGREEN);
-        greenMaterial.setSpecularColor(Color.LIMEGREEN);
-        Box xAxis = new Box(500, 10, 10);
-        xAxis.setMaterial(greenMaterial);
-        Box yAxis = new Box(10, 200, 10);
-        yAxis.setMaterial(greenMaterial);
-        Box zAxis = new Box(10, 10, 200);
-        zAxis.setMaterial(greenMaterial);
 
-        final PhongMaterial redMaterial = new PhongMaterial();
-        redMaterial.setDiffuseColor(Color.RED);
-        redMaterial.setSpecularColor(Color.TOMATO);
-        final Sphere sphere = new Sphere(30);
-        sphere.setMaterial(redMaterial);
+        //TODO delete this once mesh is implemented -- Mark: 3/11
 
-        sphere.setTranslateX(150);
-
-        final PhongMaterial yellowMaterial = new PhongMaterial();
-        yellowMaterial.setDiffuseColor(Color.rgb(200, 200, 0));
-        // yellowMaterial.setDiffuseColor(Color.YELLOW);
-        // yellowMaterial.setSpecularColor(Color.WHITE);
-        final Sphere sphere2 = new Sphere(30);
-        sphere2.setMaterial(yellowMaterial);
-        // sphere2.setDrawMode(DrawMode.LINE);
-
-        sphere2.setTranslateX(110);
 
         // Example from JavaFX for Dummies
         TriangleMesh pyramidMesh = new TriangleMesh();
@@ -393,31 +387,23 @@ public class SkyBoxApplication extends Application {
         pyrMaterial.setDiffuseColor(Color.BLUE);
         pyrMaterial.setSpecularColor(Color.WHITE);
         pyramid.setMaterial(pyrMaterial);
-        pyramid.setTranslateX(-50);
-        pyramid.setTranslateY(-200);
+        pyramid.setTranslateX(500);
+        pyramid.setTranslateY(400);
         pyramid.setTranslateZ(0);
-        //  root.getChildren().add(pyramid);
-
-        final PhongMaterial blueMaterial = new PhongMaterial();
-        blueMaterial.setDiffuseColor(Color.BLUE);
-        blueMaterial.setSpecularColor(Color.WHITE);
-        Box box = new Box(40, 60, 80);
-        box.setMaterial(blueMaterial);
-
-        box.setTranslateX(-30);
-        box.setTranslateY(-20);
-        box.setTranslateZ(-20);
+        root.getChildren().add(pyramid);
+    //TODO delete this once mesh is implemented.
 
         root.getChildren().add(light);
 
-        //Image back = new Image(String.valueOf(SkyBoxApplication.class.getResource("skyboxDesert.png")));
-        Image back2 = new Image("file:skyboxDesert.png");
-        final PhongMaterial skyMaterial = new PhongMaterial();
-        skyMaterial.setDiffuseMap(back2);
-        Box skybox = new Box(10000, 10000, 10000);
-        skybox.setMaterial(skyMaterial);
-        skybox.setCullFace(CullFace.NONE);
-        root.getChildren().add(skybox);
+//TODO no can delete this, no need once mesh is implemented, but leaving until then in case i need to reference - Mark 3/11
+//        //Image back = new Image(String.valueOf(SkyBoxApplication.class.getResource("skyboxDesert.png")));
+//        Image back2 = new Image("file:skyboxDesert.png");
+//        final PhongMaterial skyMaterial = new PhongMaterial();
+//        skyMaterial.setDiffuseMap(back2);
+//        Box skybox = new Box(10000, 10000, 10000);
+//        skybox.setMaterial(skyMaterial);
+//        skybox.setCullFace(CullFace.NONE);
+//        root.getChildren().add(skybox);
 
     }
 
