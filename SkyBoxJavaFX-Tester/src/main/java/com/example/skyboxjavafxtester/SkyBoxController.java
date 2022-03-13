@@ -5,6 +5,7 @@ import com.luckycatlabs.sunrisesunset.dto.Location;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Slider;
@@ -22,6 +23,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+
+import static com.example.skyboxjavafxtester.SkyBoxApplication.skyboxImage;
 
 
 public class SkyBoxController{
@@ -62,6 +66,7 @@ public class SkyBoxController{
     private Button addAll;
 
     private static String currentTime;
+    private Group root;
 
 
     @FXML
@@ -89,19 +94,23 @@ public class SkyBoxController{
 
     @FXML
     protected Pane setSkyboxPane() throws ParseException {
-        Group skybox = new Group();
+        Group skyboxGroup = new Group();
+        Group skyBox = SkyBoxApplication.createSkybox(skyboxGroup);
 
-        //SkyBoxApplication.modifySkybox();
+        //TODO pretty sure we need to pull in the details of the skybox in createskybox() and pass them to be added to the skybox pane group below.
+
+
+
         Group sun = SkyBoxApplication.sunCreation(); //creating sun
-        skyboxPane = new Pane(sun, skybox);
+
         SkyBoxApplication.startParams(); // Setting start date, location, sunset/sunrise times
         Group panelsWHouse = SkyBoxApplication.models(); //Creating all models for the scene
+        SkyBoxApplication.constructWorld(skyBox); // Construct the empty SkyBox group
+        skyboxGroup.getChildren().addAll(skyBox, sun, panelsWHouse);
 
-        skybox.getChildren().addAll(sun, panelsWHouse);
-        SkyBoxApplication.constructWorld(skybox); // Construct the empty SkyBox group
-
+        skyboxPane = new Pane(sun, skyboxGroup);
         //THIS causes an error: Duplicate children added so i commented it out. Its being out in skyboxPane above
-        //skyboxPane.getChildren().add(skybox);
+     //   skyboxPane.getChildren().add(skybox);
 
 
         //Heres where we do the set up camera and background?

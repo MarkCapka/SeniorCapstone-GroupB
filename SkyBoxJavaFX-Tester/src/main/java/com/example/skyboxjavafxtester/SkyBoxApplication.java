@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Box;
 import javafx.scene.transform.Affine;
 import javafx.stage.Stage;
 import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
@@ -21,6 +22,8 @@ import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -28,8 +31,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableFloatArray;
+import javafx.collections.ObservableIntegerArray;
+
 
 public class SkyBoxApplication extends Application {
+
 
     //camera controls and scene settings declarations
     private PerspectiveCamera camera;
@@ -66,6 +74,7 @@ public class SkyBoxApplication extends Application {
             {
                     top, left, back, right, front, bottom
             };
+
 
 
 
@@ -121,58 +130,72 @@ public class SkyBoxApplication extends Application {
     private AnchorPane uiPane;
     private Label label;
 
-    static Image skyboxImage;
-    private Pane entireFrame;
-    private Pane skyboxPane;
-    Group root = new Group();
 
-    //TODO: skybox integration setup call for image     -Mark: 3/11
-//    {
-//        try {
-//            skyboxImage = new Image(new FileInputStream("C:\\skyboxExample.png"));
-//            skyboxImage.isSmooth(); //TODO confirm if I need this, I THINK it helps with blending the photo together for the skybox corners .
-//
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    //private final double WIDTH, HEIGHT, DEPTH;
+    private TriangleMesh cube;
+    private MeshView skyBox;
+    private float x0, x1, x2, x3, x4, y0, y1, y2, y3; //values for points of skybox
+    public static Image skyboxImage;
+    //private final Image textureImage;
+
+
+
+
+
+
+
+
+
+    Group root = new Group();
+    {
+        try {
+            skyboxImage = new Image(new FileInputStream("C:\\skyboxExample.png"));
+            skyboxImage.isSmooth(); //TODO confirm if I need this, I THINK it helps with blending the photo together for the skybox corners .
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
-    public void start(Stage stage) throws IOException, ParseException {
+    public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(SkyBoxApplication.class.getResource("skybox-viewUI.fxml"));
         Pane entireFrame = new Pane();
-        //Pane skyboxPane = new Pane();
 
+
+     //   Pane skyboxPane = new Pane();
+        //Pane skyboxPane = new Pane();
+        //SkyBoxApplication skyBox = new SkyBoxApplication((skyboxImage));
         //set up panes          //believe i need to declare the panes here for grouping, but confirm if that is the cas.e
             //entireFrame
             //skyboxPane
             //UI Pane
         //TODO: make thie borderpane the root, but load the fxml
-
 //        double width = skyboxImage.getWidth();
 //        double height = skyboxImage.getHeight();
-//        constructWorld(root);
+        //skyboxPane.getChildren().add(skyBox);
+        //  createSkybox(root);
+           //constructWorld(root); //lights
+
 //        createSun(root);
 //        sunriseSunset();
 //
-//        modifySkybox(root);
-
-//            try {
-//                skyboxImage = new Image(new FileInputStream("com/example/skyboxjavafxtester/skyboxDesert.png"));
-//              //  skyboxImage.isSmooth(); //TODO confirm if I need this, I THINK it helps with blending the photo together for the skybox corners
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            }
+        //    modifySkybox(root);
 
 
 
-        Scene scene = new Scene(root, 1024, 768); // Make the whole scene with everything
+
+
+
 //        Group panelsWHouse = addSolarPanel(root);
 //        cameraAndControls(root, panelsWHouse, scene);
 
         entireFrame.getChildren().add(fxmlLoader.load());
-
+       // skyboxPane.getChildren().addAll((Collection<? extends Node>) skyBox);
+       // entireFrame.getChildren().addAll(skyboxPane);
         root.getChildren().addAll(entireFrame);
+        Scene scene = new Scene(root, 1024, 768); // Make the whole scene with everything
         scene.setRoot(root);
 
         /* Uncomment this section to see the difference that happens
@@ -316,7 +339,7 @@ public class SkyBoxApplication extends Application {
 //    }
 //
 ////    //TOOD call to implement, need to rewrite the BOx skybox powrtion and replace with a meshview: consider the 3 various info pieces you need (faces, points, coords or sometihng like that. see mesh example above: Mark-3/11
-//private void modifySkybox() {
+//private void modifySkybox(Group scene) {
 //    // Image back = new Image("skyboxExample.png"); //TODO this is the actual skybox image????
 //    final PhongMaterial skyMaterial = new PhongMaterial();
 //    // skyMaterial.setSpecularColor(Color.TRANSPARENT);
@@ -345,67 +368,131 @@ public class SkyBoxApplication extends Application {
         pl.setTranslateZ(-100);
         root.getChildren().add(pl);
 
-
         //TODO delete this once mesh is implemented -- Mark: 3/11
-
-
-        // Example from JavaFX for Dummies
-        TriangleMesh pyramidMesh = new TriangleMesh();
-        // define (a trivial) texture map
-        pyramidMesh.getTexCoords().addAll(
-                0.5f, 0,
-                0, 0.5f,
-                1, 0.5f,
-                0, 1,
-                1, 1
-        );
-        // define vertices
-        float h = 100;                    // Height
-        float s = 200;                    // Base hypotenuse
-        pyramidMesh.getPoints().addAll(
-                0, 0, 0,            // Point 0 - Top
-                0, h, -s / 2,         // Point 1 - Front
-                -s / 2, h, 0,            // Point 2 - Left
-                s / 2, h, 0,            // Point 3 - Right
-                0, h, s / 2           // Point 4 - Back
-        );
-        // define faces
-        pyramidMesh.getFaces().addAll(
-                0, 0, 2, 1, 1, 2,          // Front left face
-                0, 0, 1, 1, 3, 1,          // Front right face
-                0, 0, 3, 1, 4, 2,          // Back right face
-                0, 0, 4, 1, 2, 2,          // Back left face
-                4, 1, 1, 4, 2, 2,          // Bottom left face
-                4, 1, 3, 3, 1, 4           // Bottom right face
-        );
-        pyramidMesh.getFaceSmoothingGroups().addAll(
-                1, 2, 3, 4, 5, 5);
-        MeshView pyramid = new MeshView(pyramidMesh);
-        //pyramid.setDrawMode(DrawMode.LINE);
-        final PhongMaterial pyrMaterial = new PhongMaterial();
-        //pyrMaterial.setDiffuseMap(new Image("pyr_tex.png")); //TODO missing this image, need to determine the diffuse map
-        pyrMaterial.setDiffuseColor(Color.BLUE);
-        pyrMaterial.setSpecularColor(Color.WHITE);
-        pyramid.setMaterial(pyrMaterial);
-        pyramid.setTranslateX(500);
-        pyramid.setTranslateY(400);
-        pyramid.setTranslateZ(0);
-        root.getChildren().add(pyramid);
-    //TODO delete this once mesh is implemented.
-
         root.getChildren().add(light);
 
-//TODO no can delete this, no need once mesh is implemented, but leaving until then in case i need to reference - Mark 3/11
-//        //Image back = new Image(String.valueOf(SkyBoxApplication.class.getResource("skyboxDesert.png")));
-//        Image back2 = new Image("file:skyboxDesert.png");
-//        final PhongMaterial skyMaterial = new PhongMaterial();
-//        skyMaterial.setDiffuseMap(back2);
-//        Box skybox = new Box(10000, 10000, 10000);
-//        skybox.setMaterial(skyMaterial);
-//        skybox.setCullFace(CullFace.NONE);
-//        root.getChildren().add(skybox);
+
 
     }
+
+    static double width = 200;
+    static double height = 100;
+    static double depth = 100;
+    private final ObservableIntegerArray faces = FXCollections.observableIntegerArray();
+    private final ObservableFloatArray texCords = FXCollections.observableFloatArray();
+    private final ObservableFloatArray points = FXCollections.observableFloatArray();
+    // Example converted from JavaFX for Dummies from triangle mesh to cube mesh
+    public static Group createSkybox(Group root)
+    {
+
+        //TODO NOTE: this is messy since i've been trying a few different approahces.
+
+
+        TriangleMesh cubeMesh= new TriangleMesh();
+
+        cubeMesh.getTexCoords().addAll(0,0); //I think this is where we are adding things to the scene
+        cubeMesh.getFaces().addAll();
+        cubeMesh.getPoints().addAll();
+
+        MeshView cube= new MeshView();
+        cube.setMesh(cubeMesh);
+
+        PhongMaterial skyboxMaterial = new PhongMaterial();
+        Image textureImage = skyboxImage;
+    //    skyboxMaterial.setSpecularColor(Color.TRANSPARENT);
+        skyboxMaterial.setDiffuseMap(textureImage);
+        cube.setMaterial(skyboxMaterial);
+       // cube.setTextureCords();
+        Box box = new Box(width, height, depth);
+//        cube.calculatePoints();
+//        calculateTexCords();
+//        calculateFaces();
+
+         box.setMaterial(skyboxMaterial);
+
+
+        box.setTranslateX(0);
+        box.setTranslateY(200);
+
+        Group skyBox = new Group();
+
+
+        cube.setTranslateX(0);
+        cube.setTranslateY(200);
+        box.setCullFace(CullFace.NONE);
+        cube.setCullFace(CullFace.NONE);
+        skyBox.getChildren().add(cube);
+        skyBox.getChildren().add(box);
+
+        return skyBox;
+    }
+
+
+    //skybox meshview implementation pulled and made specific from https://www.demo2s.com/java/javafx-trianglemesh-tutorial-with-examples.htm
+//
+
+//
+//
+//    public SkyBoxApplication(double width, double height, double depth, Image skyboxImage)
+//    {
+//
+//
+//
+//
+//
+//    }
+//
+//
+//    private static void calculatePoints() {
+//        float hw = (float) WIDTH / 2f;
+//        float hh = (float) HEIGHT / 2f;
+//        float hd = (float) DEPTH / 2f;
+//
+//        points.addAll(hw, hh, hd, hw, hh, -hd, hw, -hh, hd, hw, -hh, -hd, -hw, hh, hd, -hw, hh, -hd, -hw, -hh, hd,
+//                -hw, -hh, -hd);
+//        cube.getPoints().addAll(points);
+//
+//    }
+//
+//    private static void calculateFaces() {
+//        faces.addAll(0, 10, 2, 5, 1, 9, 2, 5, 3, 4, 1, 9, 4, 7, 5, 8, 6, 2, 6, 2, 5, 8, 7, 3, 0, 13, 1, 9, 4, 12, 4,
+//                12, 1, 9, 5, 8, 2, 1, 6, 0, 3, 4, 3, 4, 6, 0, 7, 3, 0, 10, 4, 11, 2, 5, 2, 5, 4, 11, 6, 6, 1, 9, 3,
+//                4, 5, 8, 5, 8, 3, 4, 7, 3);
+//        cube.getFaces().addAll(faces);
+//    }
+//
+//    private static void calculateTexCords() {
+//        x0 = 0f;
+//        x1 = 1 / 4f;
+//        x2 = 2 / 4f;
+//        x3 = 3 / 4f;
+//        x4 = 1f;
+//        y0 = 0f;
+//        y1 = 1 / 3f;
+//        y2 = 2 / 3f;
+//        y3 = 1f;
+//        // x4 = 0; x3 = iw * 0.25f; x2 = iw / 2.0f; x1 = iw * 0.75f; x0 = iw;
+//        // y3 = 0; y2 = ih * 0.33f; y1 = ih * 0.66f; y0 = ih;
+//
+//        texCords.addAll((x1 + 0.001f), (y0 + 0.001f), (x2 - 0.001f), y0, (x0), (y1 + 0.001f), (x1 + 0.001f),
+//                (y1 + 0.001f), (x2 - 0.001f), (y1 + 0.001f), x3, (y1 + 0.001f), (x4), (y1 + 0.001f), (x0),
+//                (y2 - 0.001f), (x1 + 0.001f), (y2 - 0.001f), x2, (y2 - 0.001f), x3, (y2 - 0.001f), (x4),
+//                (y2 - 0.001f), (x1 + 0.001f), (y3 - 0.001f), x2, (y3 - 0.001f));
+//        cube.getTexCoords().addAll(texCords);
+//    }
+//
+//    public double getWidth() {
+//        return WIDTH;
+//    }
+//
+//    public double getHeight() {
+//        return HEIGHT;
+//    }
+//
+//    public double getDepth() {
+//        return DEPTH;
+//    }
+
 
     private static Group setHouse() {
         TdsModelImporter modelImporter = new TdsModelImporter(); //Model Importer
@@ -670,7 +757,7 @@ public class SkyBoxApplication extends Application {
     }
 
     //helper methods for most optimal
-    public static double distancecalc(Box box, Group sun) {
+    public static double distanceCalc(Box box, Group sun) {
         Point3D point1 = new Point3D(box.getTranslateX(), box.getTranslateY(), box.getTranslateZ());
         Point3D point2 = new Point3D(sun.getTranslateX(), sun.getTranslateY(), sun.getTranslateZ());
         Double distance = Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2) + Math.pow(point1.getZ() - point2.getZ(), 2));
@@ -678,10 +765,10 @@ public class SkyBoxApplication extends Application {
     }
 
     public static void colorSetOpt(Group sunOb) {
-        Double b1d = distancecalc((Box) solarPanelOnewR.getChildren().get(1), sunOb);
-        Double b2d = distancecalc((Box) solarPanelTwowR.getChildren().get(1), sunOb);
-        Double b3d = distancecalc((Box) solarPanelThreewR.getChildren().get(1), sunOb);
-        Double b4d = distancecalc((Box) solarPanelFourwR.getChildren().get(1), sunOb);
+        Double b1d = distanceCalc((Box) solarPanelOnewR.getChildren().get(1), sunOb);
+        Double b2d = distanceCalc((Box) solarPanelTwowR.getChildren().get(1), sunOb);
+        Double b3d = distanceCalc((Box) solarPanelThreewR.getChildren().get(1), sunOb);
+        Double b4d = distanceCalc((Box) solarPanelFourwR.getChildren().get(1), sunOb);
         box1closest = true;
         box2closest = false;
         box3closest = false;
@@ -735,8 +822,8 @@ public class SkyBoxApplication extends Application {
 
 
     public static void gColorSetOpt(Group sunOb){
-        Double b1d = distancecalc((Box) gPanelOneBox.getChildren().get(1), sunOb);
-        Double b2d = distancecalc((Box) gPanelTwoBox.getChildren().get(1), sunOb);
+        Double b1d = distanceCalc((Box) gPanelOneBox.getChildren().get(1), sunOb);
+        Double b2d = distanceCalc((Box) gPanelTwoBox.getChildren().get(1), sunOb);
         gbox1closest = true;
         gbox2closest=false;
 
