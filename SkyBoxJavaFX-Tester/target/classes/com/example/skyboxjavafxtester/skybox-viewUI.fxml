@@ -94,8 +94,7 @@
             <ImageInput>
                <source>
 
-                  <Image url="file:/C:/Users/Mark%20Capka/Downloads/SeniorCapstone-GroupB-UIConnected/SeniorCapstone-GroupB-UIConnected/SkyBoxJavaFX-Tester/src/main/resources/skyboxExample.png" backgroundLoading="true"/>
-               </source>
+                </source>
             </ImageInput>
          </effect>
       </Pane>

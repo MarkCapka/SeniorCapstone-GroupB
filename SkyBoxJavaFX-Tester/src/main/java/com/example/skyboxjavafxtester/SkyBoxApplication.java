@@ -1,14 +1,17 @@
 package com.example.skyboxjavafxtester;
 
 import javafx.application.Application;
+import javafx.collections.ObservableIntegerArray;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point3D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Affine;
+import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
 import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
 import com.luckycatlabs.sunrisesunset.*;
@@ -33,16 +36,23 @@ import java.util.Date;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableFloatArray;
-import javafx.collections.ObservableIntegerArray;
+
 
 
 public class SkyBoxApplication extends Application {
 
 
+    static Group skybox = new Group();
+
+    private static Image skyboxImage;
+    private static TriangleMesh cubeMesh;
     //camera controls and scene settings declarations
     private PerspectiveCamera camera;
     private Group cameraDolly;
     private final double cameraQuantity = 10.0;
+    private static final int WIDTH = 678;
+    private static final int HEIGHT = 847;
+    private static final int DEPTH = 700;
 
     //Mouse control variable declarations
     private double mousePosX;
@@ -132,17 +142,28 @@ public class SkyBoxApplication extends Application {
 
 
     //private final double WIDTH, HEIGHT, DEPTH;
-    private TriangleMesh cube;
+    private static TriangleMesh cube;
     private MeshView skyBox;
-    private float x0, x1, x2, x3, x4, y0, y1, y2, y3; //values for points of skybox
-    public static Image skyboxImage;
+    private static float x0;
+    private static float x1;
+    private static float x2;
+    private static float x3;
+    private static float x4;
+    private static float y0;
+    private static float y1;
+    private static float y2;
+    private static float y3; //values for points of skybox
+
     //private final Image textureImage;
 
 
 
 
 
-
+    //private static final double depth = skyboxImage.getDepth(); //MAY NOT NEED FOR cube since shoudl scale evenly
+    private static final ObservableIntegerArray faces = FXCollections.observableIntegerArray();
+    private static final ObservableFloatArray texCords = FXCollections.observableFloatArray();
+    private static final ObservableFloatArray points = FXCollections.observableFloatArray();
 
 
 
@@ -150,31 +171,33 @@ public class SkyBoxApplication extends Application {
     {
         try {
             skyboxImage = new Image(new FileInputStream("C:\\skyboxExample.png"));
-            skyboxImage.isSmooth(); //TODO confirm if I need this, I THINK it helps with blending the photo together for the skybox corners .
-
+            //TODO confirm if I need this, I THINK it helps with blending the photo together for the skybox corners .
+//           final double width = skyboxImage.getWidth();
+//            final double height = skyboxImage.getHeight();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
 
+
+
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(SkyBoxApplication.class.getResource("skybox-viewUI.fxml"));
         Pane entireFrame = new Pane();
+        Pane skyboxPane = new Pane();
+        try {
+            skyboxPane = SkyBoxController.setSkyboxPane();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
 
-     //   Pane skyboxPane = new Pane();
-        //Pane skyboxPane = new Pane();
-        //SkyBoxApplication skyBox = new SkyBoxApplication((skyboxImage));
-        //set up panes          //believe i need to declare the panes here for grouping, but confirm if that is the cas.e
-            //entireFrame
-            //skyboxPane
-            //UI Pane
         //TODO: make thie borderpane the root, but load the fxml
 //        double width = skyboxImage.getWidth();
 //        double height = skyboxImage.getHeight();
-        //skyboxPane.getChildren().add(skyBox);
+        //
         //  createSkybox(root);
            //constructWorld(root); //lights
 
@@ -184,44 +207,45 @@ public class SkyBoxApplication extends Application {
         //    modifySkybox(root);
 
 
-
-
-
-
 //        Group panelsWHouse = addSolarPanel(root);
 //        cameraAndControls(root, panelsWHouse, scene);
 
         entireFrame.getChildren().add(fxmlLoader.load());
        // skyboxPane.getChildren().addAll((Collection<? extends Node>) skyBox);
        // entireFrame.getChildren().addAll(skyboxPane);
-        root.getChildren().addAll(entireFrame);
+
+
+//        SubScene subScene = new SubScene(skyBox, 768, 600);
+//
+//
+//        PerspectiveCamera camera = new PerspectiveCamera();
+//        camera.setNearClip(0.1);
+//        camera.setFarClip(30000.0);
+
+//        subScene.setCamera(camera);
+//        subScene.setRoot(skyBox);
+
+        root.getChildren().addAll(entireFrame, skyboxPane);
+
+
+
+
         Scene scene = new Scene(root, 1024, 768); // Make the whole scene with everything
         scene.setRoot(root);
+
 
         /* Uncomment this section to see the difference that happens
 
         // This needs to set up the inside of the skyboxPane?
-        scene.setFill(new ImagePattern(skyboxImage)); //THIS causes whole UI to get filled over
+        scene.setFill(new ImagePattern(skyboxImage)); //THIS causes whole UI to get filled over, because we are adding it to the scene which encompassdes everything, could translate or
+      *(
         camera = new PerspectiveCamera(true);
         camera.setNearClip(0.1);
         camera.setFarClip(30000.0);
         //sceneRoot.getScene().setCamera(camera);
         root.getScene().setCamera(camera);
         // translations through dolly
-        cameraDolly = new Group();
-        cameraDolly.setTranslateZ(-1000);
-        cameraDolly.setTranslateX(200);
-        // rotation transforms
-        Group turn = new Group();
-        Rotate xRotate = new Rotate(0, 0, 0, 0, Rotate.X_AXIS);
-        Rotate yRotate = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);
-        camera.getTransforms().addAll(xRotate);
-        turn.getTransforms().addAll(yRotate);
 
-        //sceneRoot.getChildren().add(cameraDolly);
-        root.getChildren().add(cameraDolly);
-        cameraDolly.getChildren().add(turn);
-        turn.getChildren().add(camera);
 
          */
 
@@ -235,242 +259,246 @@ public class SkyBoxApplication extends Application {
         stage.setScene(scene);
         stage.show();
     }
-//
-//    private void cameraAndControls(Group root, Group panelsWHouse, Scene scene) {
-//        camera = new PerspectiveCamera(true);
-//        camera.setNearClip(0.1);
-//        camera.setFarClip(30000.0);
-//        scene.setCamera(camera);
-//        // translations through dolly
-//        cameraDolly = new Group();
-//        cameraDolly.setTranslateZ(-1000);
-//        cameraDolly.setTranslateX(200);
-//        // rotation transforms
-//        Group turn = new Group();
-//        Rotate xRotate = new Rotate(0, 0, 0, 0, Rotate.X_AXIS);
-//        Rotate yRotate = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);
-//        camera.getTransforms().addAll(xRotate);
-//        turn.getTransforms().addAll(yRotate);
-//            //TODO we do have combo of
-//        root.getChildren().add(cameraDolly);
-//        cameraDolly.getChildren().add(turn);
-//        turn.getChildren().add(camera);
-//        //-------------END of Scene and Camera set up----------------------------//
-//        //----------------Controls & Camera Controls Section----------------------------//
-//        //TODO methodize out controls //NOTE i did try to split this from the scene and camera setup, but they were too intertwined at the time.
-//        // Use keyboard to control camera position
-//        scene.setOnKeyPressed(event -> {
-//            double change = cameraQuantity;
-//            // What key did the user press?
-//            KeyCode keycode = event.getCode();
-//            Rotate r;
-//            Transform t = new Rotate();
-//            // Translate pivot = new Translate(); //TODO could use for a more elegant rotation of the camera
-//            Point3D delta = null;
-//
-//            if (keycode == KeyCode.COMMA) {
-//                delta = new Point3D(0, 0, change);
-//            }
-//            if (keycode == KeyCode.PERIOD) {
-//                delta = new Point3D(0, 0, -change);
-//            }
-//            if (keycode == KeyCode.A) {
-//                delta = new Point3D(-change, 0, 0);
-//            }
-//            if (keycode == KeyCode.D) {
-//                delta = new Point3D(change, 0, 0);
-//            }
-//            if (keycode == KeyCode.W) {
-//                delta = new Point3D(0, -change, 0);
-//            }
-//            if (keycode == KeyCode.S) {
-//                delta = new Point3D(0, change, 0);
-//            }
-//            //TODO make a path for the camera to follow in a sphere around the house based on current distance
-//            if (keycode == KeyCode.Q) {                     //rotate camera clockwise
-//                r = new Rotate(-1, Rotate.Y_AXIS);
-//                t = t.createConcatenation(r);
-//                camera.getTransforms().addAll(t);
-//            }
-//            //TODO make a path for the camera to follow in a sphere around the house based on current distance, opposite direction of Q
-//            if (keycode == KeyCode.E) {                     //rotate camera counterclockwise
-//                r = new Rotate(+1, Rotate.Y_AXIS);
-//                t = t.createConcatenation(r);
-//                camera.getTransforms().addAll(t);
-//            }
-//            if (keycode == KeyCode.M) {
-//                r = new Rotate(1, Rotate.Y_AXIS); // Rotate House and Panels on/around Left
-//                t = t.createConcatenation(r);
-//                panelsWHouse.getTransforms().addAll(t);
-//            }
-//            if (keycode == KeyCode.N) { // Rotate House and Panels on/around Right
-//                r = new Rotate(-1, Rotate.Y_AXIS);
-//                t = t.createConcatenation(r);
-//                panelsWHouse.getTransforms().addAll(t);
-//            }
-//
-//            if (delta != null) {
-//                Point3D delta2 = camera.localToParent(delta);
-//                cameraDolly.setTranslateX(cameraDolly.getTranslateX() + delta2.getX());
-//                cameraDolly.setTranslateY(cameraDolly.getTranslateY() + delta2.getY());
-//                cameraDolly.setTranslateZ(cameraDolly.getTranslateZ() + delta2.getZ());
-//
-//            }
-//        });
-//
-//        // Use mouse to control camera rotation
-//        scene.setOnMousePressed(me -> {
-//            mousePosX = me.getSceneX();
-//            mousePosY = me.getSceneY();
-//        });
-//
-//
-//        scene.setOnMouseDragged(me -> {
-//            mouseOldX = mousePosX;
-//            mouseOldY = mousePosY;
-//            mousePosX = me.getSceneX();
-//            mousePosY = me.getSceneY();
-//            mouseDeltaX = (mousePosX - mouseOldX);
-//            mouseDeltaY = (mousePosY - mouseOldY);
-//
-//            yRotate.setAngle(((yRotate.getAngle() - mouseDeltaX * 0.2) % 360 + 540) % 360 - 180); // +
-//            xRotate.setAngle(((xRotate.getAngle() + mouseDeltaY * 0.2) % 360 + 540) % 360 - 180); // -
-//        });
-//    }
-//
-////    //TOOD call to implement, need to rewrite the BOx skybox powrtion and replace with a meshview: consider the 3 various info pieces you need (faces, points, coords or sometihng like that. see mesh example above: Mark-3/11
-//private void modifySkybox(Group scene) {
-//    // Image back = new Image("skyboxExample.png"); //TODO this is the actual skybox image????
-//    final PhongMaterial skyMaterial = new PhongMaterial();
-//    // skyMaterial.setSpecularColor(Color.TRANSPARENT);
-//    skyMaterial.setDiffuseMap(skyboxImage);
-//    //TriangleMesh cube = new TriangleMesh();
-//    // skyMaterial.setDiffuseColor(Color.TRANSPARENT);
-//    //MeshView meshView = new MeshView();
-//    //cube = new TriangleMesh(skyboxImage)
-//    //TODO may change from box to a mesh cube since we can easily make that transparent
-//    Box skybox = new Box(10000, 10000, 10000);
-//    skybox.setMaterial(skyMaterial);
-//
-//    skybox.setCullFace(CullFace.NONE);
-//    scene.getChildren().add(skybox);
-//
-//}
+
+    private void cameraAndControls(Group root, Group panelsWHouse, Scene scene) {
+        camera = new PerspectiveCamera(true);
+        camera.setNearClip(0.1);
+        camera.setFarClip(30000.0);
+        scene.setCamera(camera);
+        // translations through dolly
+        cameraDolly = new Group();
+        cameraDolly.setTranslateZ(-1000);
+        cameraDolly.setTranslateX(200);
+        // rotation transforms
+        Group turn = new Group();
+        Rotate xRotate = new Rotate(0, 0, 0, 0, Rotate.X_AXIS);
+        Rotate yRotate = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);
+        camera.getTransforms().addAll(xRotate);
+        turn.getTransforms().addAll(yRotate);
+            //TODO we do have combo of
+        root.getChildren().add(cameraDolly);
+        cameraDolly.getChildren().add(turn);
+        turn.getChildren().add(camera);
+        //-------------END of Scene and Camera set up----------------------------//
+        //----------------Controls & Camera Controls Section----------------------------//
+        //TODO methodize out controls //NOTE i did try to split this from the scene and camera setup, but they were too intertwined at the time.
+        // Use keyboard to control camera position
+        scene.setOnKeyPressed(event -> {
+            double change = cameraQuantity;
+            // What key did the user press?
+            KeyCode keycode = event.getCode();
+            Rotate r;
+            Transform t = new Rotate();
+            // Translate pivot = new Translate(); //TODO could use for a more elegant rotation of the camera
+            Point3D delta = null;
+
+            if (keycode == KeyCode.COMMA) {
+                delta = new Point3D(0, 0, change);
+            }
+            if (keycode == KeyCode.PERIOD) {
+                delta = new Point3D(0, 0, -change);
+            }
+            if (keycode == KeyCode.A) {
+                delta = new Point3D(-change, 0, 0);
+            }
+            if (keycode == KeyCode.D) {
+                delta = new Point3D(change, 0, 0);
+            }
+            if (keycode == KeyCode.W) {
+                delta = new Point3D(0, -change, 0);
+            }
+            if (keycode == KeyCode.S) {
+                delta = new Point3D(0, change, 0);
+            }
+            //TODO make a path for the camera to follow in a sphere around the house based on current distance
+            if (keycode == KeyCode.Q) {                     //rotate camera clockwise
+                r = new Rotate(-1, Rotate.Y_AXIS);
+                t = t.createConcatenation(r);
+                camera.getTransforms().addAll(t);
+            }
+            //TODO make a path for the camera to follow in a sphere around the house based on current distance, opposite direction of Q
+            if (keycode == KeyCode.E) {                     //rotate camera counterclockwise
+                r = new Rotate(+1, Rotate.Y_AXIS);
+                t = t.createConcatenation(r);
+                camera.getTransforms().addAll(t);
+            }
+            if (keycode == KeyCode.M) {
+                r = new Rotate(1, Rotate.Y_AXIS); // Rotate House and Panels on/around Left
+                t = t.createConcatenation(r);
+                panelsWHouse.getTransforms().addAll(t);
+            }
+            if (keycode == KeyCode.N) { // Rotate House and Panels on/around Right
+                r = new Rotate(-1, Rotate.Y_AXIS);
+                t = t.createConcatenation(r);
+                panelsWHouse.getTransforms().addAll(t);
+            }
+
+            if (delta != null) {
+                Point3D delta2 = camera.localToParent(delta);
+                cameraDolly.setTranslateX(cameraDolly.getTranslateX() + delta2.getX());
+                cameraDolly.setTranslateY(cameraDolly.getTranslateY() + delta2.getY());
+                cameraDolly.setTranslateZ(cameraDolly.getTranslateZ() + delta2.getZ());
+
+            }
+        });
+
+        // Use mouse to control camera rotation
+        scene.setOnMousePressed(me -> {
+            mousePosX = me.getSceneX();
+            mousePosY = me.getSceneY();
+        });
 
 
-    static void constructWorld(Group root) {
+        scene.setOnMouseDragged(me -> {
+            mouseOldX = mousePosX;
+            mouseOldY = mousePosY;
+            mousePosX = me.getSceneX();
+            mousePosY = me.getSceneY();
+            mouseDeltaX = (mousePosX - mouseOldX);
+            mouseDeltaY = (mousePosY - mouseOldY);
+
+            yRotate.setAngle(((yRotate.getAngle() - mouseDeltaX * 0.2) % 360 + 540) % 360 - 180); // +
+            xRotate.setAngle(((xRotate.getAngle() + mouseDeltaY * 0.2) % 360 + 540) % 360 - 180); // -
+        });
+    }
+//
+
+
+
+    static void constructWorld(Group skyBox) {
         // AmbientLight light = new AmbientLight();
         AmbientLight light = new AmbientLight(Color.rgb(160, 160, 160));
 
         PointLight pl = new PointLight();
-        pl.setTranslateX(100);
+        pl.setTranslateX(1000);
         pl.setTranslateY(-100);
         pl.setTranslateZ(-100);
-        root.getChildren().add(pl);
+        skyBox.getChildren().add(pl);
 
         //TODO delete this once mesh is implemented -- Mark: 3/11
-        root.getChildren().add(light);
+        skyBox.getChildren().add(light);
 
 
 
     }
 
-    static double width = 200;
-    static double height = 100;
-    static double depth = 100;
-    private final ObservableIntegerArray faces = FXCollections.observableIntegerArray();
-    private final ObservableFloatArray texCords = FXCollections.observableFloatArray();
-    private final ObservableFloatArray points = FXCollections.observableFloatArray();
+
     // Example converted from JavaFX for Dummies from triangle mesh to cube mesh
-    public static Group createSkybox(Group root)
+    public static Group createSkybox(Group skyboxGroup)
     {
-
+       TriangleMesh cube = new TriangleMesh();
         //TODO NOTE: this is messy since i've been trying a few different approahces.
-
-
-        TriangleMesh cubeMesh= new TriangleMesh();
-
-        cubeMesh.getTexCoords().addAll(0,0); //I think this is where we are adding things to the scene
-        cubeMesh.getFaces().addAll();
-        cubeMesh.getPoints().addAll();
-
-        MeshView cube= new MeshView();
-        cube.setMesh(cubeMesh);
-
-        PhongMaterial skyboxMaterial = new PhongMaterial();
         Image textureImage = skyboxImage;
-    //    skyboxMaterial.setSpecularColor(Color.TRANSPARENT);
-        skyboxMaterial.setDiffuseMap(textureImage);
-        cube.setMaterial(skyboxMaterial);
-       // cube.setTextureCords();
-        Box box = new Box(width, height, depth);
-//        cube.calculatePoints();
+
+//        TriangleMesh cube = createMesh(WIDTH, HEIGHT, DEPTH);
+//        calculatePoints();
 //        calculateTexCords();
 //        calculateFaces();
 
-         box.setMaterial(skyboxMaterial);
+
+//        MeshView cubeMesh= new MeshView(cube);
+//        cubeMesh.setOpacity(.75);
 
 
-        box.setTranslateX(0);
-        box.setTranslateY(200);
-
-        Group skyBox = new Group();
+        PhongMaterial skyboxMaterial = new PhongMaterial();
 
 
-        cube.setTranslateX(0);
-        cube.setTranslateY(200);
+        skyboxMaterial.setSpecularColor(Color.TRANSPARENT);
+        skyboxMaterial.setDiffuseMap(textureImage);
+
+
+        Box box = new Box(WIDTH, HEIGHT, DEPTH);
+
+
+        box.setMaterial(skyboxMaterial);
+
+
+        box.setTranslateX(500);
+        box.setTranslateY(400);
+        box.setTranslateZ(200);
+        box.setScaleX(1.5);
+        box.setScaleY(1.5);
+        box.setScaleZ(1.5);
+
+
+
+//        cubeMesh.setTranslateX(1000);
+//        cubeMesh.setTranslateY(400);
+//        cubeMesh.setTranslateZ(200);
         box.setCullFace(CullFace.NONE);
-        cube.setCullFace(CullFace.NONE);
-        skyBox.getChildren().add(cube);
-        skyBox.getChildren().add(box);
+//        cubeMesh.setCullFace(CullFace.NONE);
+//        cubeMesh.setMaterial(skyboxMaterial);
+        //TODO  maybe try something like:
+            //getpoints/add points, etc... then adding into start or initialize?
 
-        return skyBox;
+        //skyboxGroup.getChildren().add(cubeMesh);
+       skyboxGroup.getChildren().add(box);
+
+
+
+        return skyboxGroup;
     }
+
+//    private static TriangleMesh createMesh(int WIDTH, int HEIGHT, int DEPTH) {
+//
+//        calculatePoints();
+//        calculateFaces();
+//        calculateTexCords();
+//
+//        return cubeMesh;
+//    }
 
 
     //skybox meshview implementation pulled and made specific from https://www.demo2s.com/java/javafx-trianglemesh-tutorial-with-examples.htm
-//
 
-//
-//
-//    public SkyBoxApplication(double width, double height, double depth, Image skyboxImage)
-//    {
-//
-//
-//
-//
-//
-//    }
-//
-//
 //    private static void calculatePoints() {
-//        float hw = (float) WIDTH / 2f;
-//        float hh = (float) HEIGHT / 2f;
-//        float hd = (float) DEPTH / 2f;
+//        float hw = (float) WIDTH/2;
+//        float hh = (float) HEIGHT/2;
+//        float hd = (float) DEPTH/2;
 //
-//        points.addAll(hw, hh, hd, hw, hh, -hd, hw, -hh, hd, hw, -hh, -hd, -hw, hh, hd, -hw, hh, -hd, -hw, -hh, hd,
+//
+//    //triangle mesh points: width, height, depth
+//        points.addAll(hw, hh, hd,
+//                hw, hh, -hd,
+//                hw, -hh, hd,
+//                hw, -hh, -hd,
+//                -hw, hh, hd,
+//                -hw, hh, -hd,
+//                -hw, -hh, hd,
 //                -hw, -hh, -hd);
 //        cube.getPoints().addAll(points);
 //
 //    }
-//
+//    //Below is for setting faces for the values of the cubeMesh: uses 6 each, for each of the 6 faces of the cube
 //    private static void calculateFaces() {
-//        faces.addAll(0, 10, 2, 5, 1, 9, 2, 5, 3, 4, 1, 9, 4, 7, 5, 8, 6, 2, 6, 2, 5, 8, 7, 3, 0, 13, 1, 9, 4, 12, 4,
-//                12, 1, 9, 5, 8, 2, 1, 6, 0, 3, 4, 3, 4, 6, 0, 7, 3, 0, 10, 4, 11, 2, 5, 2, 5, 4, 11, 6, 6, 1, 9, 3,
-//                4, 5, 8, 5, 8, 3, 4, 7, 3);
+//        faces.addAll(0, 10, 2, 5, 1, 9,
+//                2, 5, 3, 4, 1, 9,
+//                4, 7, 5, 8, 6, 2,
+//                6, 2, 5, 8, 7, 3,
+//                0, 13, 1, 9, 4, 12,
+//                4, 12, 1, 9, 5, 8,
+//                2, 1, 6, 0, 3, 4,
+//                3, 4, 6, 0, 7, 3,
+//                0, 10, 4, 11, 2, 5,
+//                2, 5, 4, 11, 6, 6,
+//                1, 9, 3, 4, 5, 8,
+//                5, 8, 3, 4, 7, 3);
 //        cube.getFaces().addAll(faces);
 //    }
-//
+//    //texture coords are x,y coords
 //    private static void calculateTexCords() {
-//        x0 = 0f;
-//        x1 = 1 / 4f;
-//        x2 = 2 / 4f;
-//        x3 = 3 / 4f;
-//        x4 = 1f;
-//        y0 = 0f;
-//        y1 = 1 / 3f;
-//        y2 = 2 / 3f;
-//        y3 = 1f;
+//        float x0 = 0f;
+//        float x1 = 1f / 4f;
+//        float x2 = 2f / 4f;
+//        float x3 = 3f / 4f;
+//        float x4 = 1f;
+//        float y0 = 0f;
+//        float y1 = 1f / 3f;
+//        float y2 = 2f / 3f;
+//        float y3 = 1f;
+//
+//
+//
 //        // x4 = 0; x3 = iw * 0.25f; x2 = iw / 2.0f; x1 = iw * 0.75f; x0 = iw;
 //        // y3 = 0; y2 = ih * 0.33f; y1 = ih * 0.66f; y0 = ih;
 //

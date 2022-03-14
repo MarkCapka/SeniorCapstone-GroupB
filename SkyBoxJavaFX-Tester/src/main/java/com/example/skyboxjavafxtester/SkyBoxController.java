@@ -5,7 +5,7 @@ import com.luckycatlabs.sunrisesunset.dto.Location;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
-import javafx.scene.Node;
+import javafx.scene.PerspectiveCamera;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Slider;
@@ -13,9 +13,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
 import javax.swing.JOptionPane;
+
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -23,10 +25,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-
-import static com.example.skyboxjavafxtester.SkyBoxApplication.skyboxImage;
-
 
 public class SkyBoxController{
 
@@ -67,8 +65,9 @@ public class SkyBoxController{
 
     private static String currentTime;
     private Group root;
-
-
+    private static PerspectiveCamera camera = new PerspectiveCamera();
+    private static final Group cameraDolly = new Group();
+    private static final Group skyboxGroup = new Group();
     @FXML
     protected void initialize() throws ParseException, IOException {
         setSkyboxPane();
@@ -93,8 +92,8 @@ public class SkyBoxController{
 
 
     @FXML
-    protected Pane setSkyboxPane() throws ParseException {
-        Group skyboxGroup = new Group();
+    protected static Pane setSkyboxPane() throws ParseException {
+
         Group skyBox = SkyBoxApplication.createSkybox(skyboxGroup);
 
         //TODO pretty sure we need to pull in the details of the skybox in createskybox() and pass them to be added to the skybox pane group below.
@@ -106,9 +105,32 @@ public class SkyBoxController{
         SkyBoxApplication.startParams(); // Setting start date, location, sunset/sunrise times
         Group panelsWHouse = SkyBoxApplication.models(); //Creating all models for the scene
         SkyBoxApplication.constructWorld(skyBox); // Construct the empty SkyBox group
-        skyboxGroup.getChildren().addAll(skyBox, sun, panelsWHouse);
 
-        skyboxPane = new Pane(sun, skyboxGroup);
+
+        //because the javafx scene graphs its on top of your scene and stage objects, any fills or images applied to root nodes will paint OVER The scene
+
+
+        Group cameraGroup = new Group();
+        camera.setNearClip(0.1);
+        camera.setFarClip(30000.0);
+        cameraDolly.setTranslateZ(-1000);
+        cameraDolly.setTranslateX(200);
+         // rotation transforms
+        Group turn = new Group();
+        Rotate xRotate = new Rotate(0, 0, 0, 0, Rotate.X_AXIS);
+        Rotate yRotate = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);
+        turn.getTransforms().addAll(xRotate);
+        turn.getTransforms().addAll(yRotate);
+
+        //sceneRoot.getChildren().add(cameraDolly);
+
+         skyboxGroup.getChildren().addAll(sun, panelsWHouse);
+//        turn.getChildren().add(camera);
+//        cameraDolly.getChildren().add(turn);
+//
+//        cameraGroup.getChildren().addAll(camera, cameraDolly);
+
+        skyboxPane = new Pane(sun, skyboxGroup); //TODO we probably want to call camera in setSkyboxPane
         //THIS causes an error: Duplicate children added so i commented it out. Its being out in skyboxPane above
      //   skyboxPane.getChildren().add(skybox);
 
@@ -118,10 +140,7 @@ public class SkyBoxController{
         //How to convert the things happening from a Scene to A AnchorPane or how to add a new scene into the Pane?
 
         /*
-        skybox.setFill(new ImagePattern(SkyBoxApplication.skyboxImage));
-        camera = new PerspectiveCamera(true);
-        camera.setNearClip(0.1);
-        camera.setFarClip(30000.0);
+
 
          */
 
