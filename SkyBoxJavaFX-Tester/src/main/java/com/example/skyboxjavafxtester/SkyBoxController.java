@@ -87,7 +87,7 @@ public class SkyBoxController{
 
     @FXML
     private void setEntireFrame() {
-        entireFrame.getChildren().addAll(new Pane(skyboxPane), new AnchorPane(uiPane), new AnchorPane(sliderAndDate));
+        entireFrame.getChildren().addAll(new AnchorPane(uiPane), new AnchorPane(sliderAndDate), new Pane(skyboxPane));
     }
 
 
@@ -109,18 +109,18 @@ public class SkyBoxController{
 
         //because the javafx scene graphs its on top of your scene and stage objects, any fills or images applied to root nodes will paint OVER The scene
 
-
-        Group cameraGroup = new Group();
-        camera.setNearClip(0.1);
-        camera.setFarClip(30000.0);
-        cameraDolly.setTranslateZ(-1000);
-        cameraDolly.setTranslateX(200);
-         // rotation transforms
-        Group turn = new Group();
-        Rotate xRotate = new Rotate(0, 0, 0, 0, Rotate.X_AXIS);
-        Rotate yRotate = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);
-        turn.getTransforms().addAll(xRotate);
-        turn.getTransforms().addAll(yRotate);
+//
+//        Group cameraGroup = new Group();
+//        camera.setNearClip(0.1);
+//        camera.setFarClip(30000.0);
+//        cameraDolly.setTranslateZ(-1000);
+//        cameraDolly.setTranslateX(200);
+//         // rotation transforms
+//        Group turn = new Group();
+//        Rotate xRotate = new Rotate(0, 0, 0, 0, Rotate.X_AXIS);
+//        Rotate yRotate = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);
+//        turn.getTransforms().addAll(xRotate);
+//        turn.getTransforms().addAll(yRotate);
 
         //sceneRoot.getChildren().add(cameraDolly);
 

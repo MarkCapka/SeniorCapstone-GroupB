@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.collections.ObservableIntegerArray;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point3D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -50,8 +51,8 @@ public class SkyBoxApplication extends Application {
     private PerspectiveCamera camera;
     private Group cameraDolly;
     private final double cameraQuantity = 10.0;
-    private static final int WIDTH = 678;
-    private static final int HEIGHT = 847;
+    private static final int WIDTH = 680;
+    private static final int HEIGHT = 849;
     private static final int DEPTH = 700;
 
     //Mouse control variable declarations
@@ -62,7 +63,7 @@ public class SkyBoxApplication extends Application {
     private double mouseDeltaX;
     private double mouseDeltaY;
     private final Affine affine = new Affine();
-    //skybox setup
+    //setting up for the folding of our image into a skybox
     private final ImageView
             top   = new ImageView(),
             bottom= new ImageView(),
@@ -70,6 +71,9 @@ public class SkyBoxApplication extends Application {
             right = new ImageView(),
             back  = new ImageView(),
             front = new ImageView();
+    private double size;
+
+
     {
         top.setId("top ");
         bottom.setId("bottom ");
@@ -167,7 +171,7 @@ public class SkyBoxApplication extends Application {
 
 
 
-    Group root = new Group();
+    static Group root = new Group();
     {
         try {
             skyboxImage = new Image(new FileInputStream("C:\\skyboxExample.png"));
@@ -208,11 +212,10 @@ public class SkyBoxApplication extends Application {
 
 
 //        Group panelsWHouse = addSolarPanel(root);
-//        cameraAndControls(root, panelsWHouse, scene);
 
         entireFrame.getChildren().add(fxmlLoader.load());
        // skyboxPane.getChildren().addAll((Collection<? extends Node>) skyBox);
-       // entireFrame.getChildren().addAll(skyboxPane);
+        entireFrame.getChildren().addAll(skyboxPane);
 
 
 //        SubScene subScene = new SubScene(skyBox, 768, 600);
@@ -231,6 +234,8 @@ public class SkyBoxApplication extends Application {
 
 
         Scene scene = new Scene(root, 1024, 768); // Make the whole scene with everything
+        cameraAndControls(root, panelsWHouse, scene);
+
         scene.setRoot(root);
 
 
@@ -389,7 +394,9 @@ public class SkyBoxApplication extends Application {
        TriangleMesh cube = new TriangleMesh();
         //TODO NOTE: this is messy since i've been trying a few different approahces.
         Image textureImage = skyboxImage;
-
+       // loadImageViews(); //folded skybox
+//
+//
 //        TriangleMesh cube = createMesh(WIDTH, HEIGHT, DEPTH);
 //        calculatePoints();
 //        calculateTexCords();
@@ -425,7 +432,7 @@ public class SkyBoxApplication extends Application {
 //        cubeMesh.setTranslateX(1000);
 //        cubeMesh.setTranslateY(400);
 //        cubeMesh.setTranslateZ(200);
-        box.setCullFace(CullFace.NONE);
+        box.setCullFace(CullFace.FRONT);
 //        cubeMesh.setCullFace(CullFace.NONE);
 //        cubeMesh.setMaterial(skyboxMaterial);
         //TODO  maybe try something like:
@@ -868,6 +875,160 @@ public class SkyBoxApplication extends Application {
             ((Box) gPanelTwoBox.getChildren().get(1)).setMaterial(col);
         }
     }
+    //skybox loading and blending of the images to make it look seamless (I think)
+    private void loadImageViews() {
+        for(ImageView imageViews : views)
+        {
+            imageViews.setSmooth(true);
+
+            imageViews.setScaleX(10);
+            imageViews.setScaleY(10);
+            imageViews.setScaleZ(10);
+            imageViews.setPreserveRatio(true);
+        }
+        buildSkyboxFromImage();
+    }
+    //for folding skybox from imported 4x3 image
+
+    //this is what the importing image should look like:
+    /*
+     *              ____
+     *             |top |
+     *         ____|____|____ ____
+     *        |left|fwd |rght|back|
+     *        |____|____|____|____|
+     *             |bot |
+     *             |____|
+     *
+     */
+
+    //loadImageViewPorts - builds skybox
+    public void buildSkyboxFromImage()
+    {
+        //layoutViews(); //top, back, left...
+
+        //TODO consider if the below is an overcomplication and if you NEED to use a constructor.
+        //note that the box we pass in has x,y,z  already there. add diffuse image and call it a day. Assume size is correct?
+
+
+        // Box skyboxBox = new Box(10000, 10000, 10000);
+        //Sphere skybox = new Sphere(5000);
+
+
+
+
+        //4 x 3 image divided by their own ratio should both = 1, validates size of incoming image, we also check when buildingsk=ybox, but what do you do
+//        if(width/4 != height/3)
+//            throw new UnsupportedOperationException("Image needs to be a 4x3 image. Sideways cross, see ");
+        double width = WIDTH;
+        double height = HEIGHT;
+        size = width - height;
+        recalculateSize(size);
+
+        //setting up grids for
+        double
+                topx = size, topy =0,
+                botx = size, boty = size*2,
+                leftx = 0, lefty= size,
+                rightx = size * 2, righty = size,
+                fwdx = size, fwdy= size,
+                backx = size *3, backy = size;
+
+        //add top padding x+, y+, width-, height
+        top.setViewport(new Rectangle2D(topx , topy , size, size ));
+
+        //add left padding x, y+, width, height-
+        left.setViewport(new Rectangle2D(leftx , lefty , size - 1, size - 1));
+
+        //add front padding x+, y+, width-, height
+        back.setViewport(new Rectangle2D(fwdx , fwdy, size , size));
+
+        //add right padding x, y+, width, height-
+        right.setViewport(new Rectangle2D(rightx, righty , size , size ));
+
+        //add back padding x, y+, width, height-
+        front.setViewport(new Rectangle2D(backx + 1, backy - 1, size - 1, size - 1));
+
+        //add bottom padding x+, y, width-, height-
+        bottom.setViewport(new Rectangle2D(botx, boty, size , size));
+
+
+        for(ImageView view : views)
+        {
+            view.setImage(skyboxImage);
+            // System.out.println(view.getId() + view.getViewport() + size);  //TODO just for testing correct outputs
+
+        }
+        final PhongMaterial skyMaterial = new PhongMaterial();
+        skyMaterial.setSpecularColor(Color.TRANSPARENT);
+        skyMaterial.setDiffuseMap(skyboxImage);
+        root.getTransforms().add(affine);
+        // views.setMaterial(skyMaterial);
+        // views.setCullFace(CullFace.NONE);
+        layoutViews();
+        root.getChildren().addAll(views);
+
+    }  //ensuring that our cells for our skybox image are appropriately sized before folding
+    private void recalculateSize(double size)
+    {
+        double factor = Math.floor(getSize()/size);
+        setSize(size * factor);
+    }
+
+    //build the box through translations and folding
+    private void layoutViews()
+    {
+        for(ImageView view : views)
+        {
+            view.setFitWidth(getSize());
+            view.setFitHeight(getSize());
+        }
+
+
+        back.setTranslateX(-0.5 * getSize());
+        back.setTranslateY(-0.5 * getSize());
+        back.setTranslateZ(-0.5 * getSize());
+
+
+        front.setTranslateX(-0.5 * getSize());
+        front.setTranslateY(-0.5 * getSize());
+        front.setTranslateZ(0.5 * getSize());
+        front.setRotationAxis(Rotate.Z_AXIS);
+        front.setRotate(-180);
+        front.getTransforms().add(new Rotate(180,front.getFitHeight() / 2, 0,0, Rotate.X_AXIS));
+        front.setTranslateY(front.getTranslateY() - getSize());
+
+        top.setTranslateX(-0.5 * getSize());
+        top.setTranslateY(-1 * getSize());
+        top.setRotationAxis(Rotate.X_AXIS);
+        top.setRotate(-90);
+
+        bottom.setTranslateX(-0.5 * getSize());
+        bottom.setTranslateY(0);
+        bottom.setRotationAxis(Rotate.X_AXIS);
+        bottom.setRotate(90);
+
+        left.setTranslateX(-1 * getSize());
+        left.setTranslateY(-0.5 * getSize());
+        left.setRotationAxis(Rotate.Y_AXIS);
+        left.setRotate(90);
+
+        right.setTranslateX(0);
+        right.setTranslateY(-0.5 * getSize());
+        right.setRotationAxis(Rotate.Y_AXIS);
+        right.setRotate(-90);
+    }
+
+    public final double getSize()
+    {
+        return size;
+    }
+
+    public final void setSize(double value)
+    {
+        size = value;
+    }
+
 
 
 
