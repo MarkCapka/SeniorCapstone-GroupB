@@ -5,17 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6cee0f4c-ae2b-4f37-92d9-62094ef5f861" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyBoxController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/resources/com/example/skyboxjavafxtester/skyboxDesert.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyBoxApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/resources/com/example/skyboxjavafxtester/skybox-viewUI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/resources/com/example/skyboxjavafxtester/skybox-viewUI.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxController.java" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyboxApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyboxApplication.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyboxController.class" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyboxController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/skybox-viewUI.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/skybox-viewUI.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/module-info.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,7 +155,8 @@
       <workItem from="1645828800517" duration="26573000" />
       <workItem from="1646283573175" duration="869000" />
       <workItem from="1646382819472" duration="22747000" />
-      <workItem from="1646970046628" duration="18387000" />
+      <workItem from="1646970046628" duration="18988000" />
+      <workItem from="1647069487351" duration="25248000" />
     </task>
     <task id="LOCAL-00005" summary="Accurate sunset and sunrise times from location and date">
       <created>1645159193328</created>
@@ -241,7 +235,14 @@
       <option name="project" value="LOCAL" />
       <updated>1646984773424</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Optimal Solar Panels Button functional and correct">
+      <created>1647035826490</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1647035826490</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -279,7 +280,8 @@
     <MESSAGE value="New Controls and cleaner code" />
     <MESSAGE value="Most Up to Date, most of UI working" />
     <MESSAGE value="All UI tools working correctly, Anthonys sun code integrated in but not connected yet" />
-    <option name="LAST_COMMIT_MESSAGE" value="All UI tools working correctly, Anthonys sun code integrated in but not connected yet" />
+    <MESSAGE value="Optimal Solar Panels Button functional and correct" />
+    <option name="LAST_COMMIT_MESSAGE" value="Optimal Solar Panels Button functional and correct" />
   </component>
   <component name="XPathView.XPathProjectComponent">
     <history />

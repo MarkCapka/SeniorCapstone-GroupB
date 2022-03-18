@@ -31,7 +31,7 @@
                <font>
                   <Font name="Georgia Italic" size="15.0" />
                </font></Label>
-            <Button fx:id="returnOnInvestment" layoutX="9.0" layoutY="557.0" mnemonicParsing="false" onAction="#showROI" prefHeight="38.0" prefWidth="159.0" text="Calculate Return On Investment">
+            <Button fx:id="paybackPeriod" layoutX="9.0" layoutY="557.0" mnemonicParsing="false" onAction="#showPP" prefHeight="38.0" prefWidth="159.0" text="Calculate Payback Period">
                <font>
                   <Font size="10.0" />
                </font>
