@@ -87,7 +87,7 @@ public class SkyBoxController {
         slider.setMax(hoursBetweenRiseSet + 1);
 
         //Initialize currentTime and current sun position with the time
-        changeHour(6);
+        changeHour(6, 0);
         sunTrajectory(6.0);
 
         //Create variables to show converted sunrise and sunset strings
@@ -314,153 +314,153 @@ public class SkyBoxController {
         double sliderValue = slider.getValue();
         if(sliderValue == 0)
         {
-            changeHour(0);
+            changeHour(0, 0);
             SkyBoxApplication.sunTrajectory(0.0);
         }
         else if(sliderValue == .5)
         {
-            changeMinute(SkyBoxApplication.sunriseTime, 30, false);
+            changeHour(0, 30);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 1.5)
         {
-            changeMinute(currentTime,30, false);
+            changeHour(1, 30);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 1)
         {
-            changeHour(1);
+            changeHour(1, 0);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 2.5)
         {
-            changeMinute(currentTime,30, false);
+            changeHour(2, 30);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 2)
         {
-            changeHour(2);
+            changeHour(2, 0);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 3.5)
         {
-            changeMinute(currentTime,30, false);
+            changeHour(3, 30);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 3)
         {
-            changeHour(3);
+            changeHour(3, 0);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 4.5)
         {
-            changeMinute(currentTime,30, false);
+            changeHour(4, 30);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 4)
         {
-            changeHour(4);
+            changeHour(4, 0);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 5.5)
         {
-            changeMinute(currentTime,30, false);
+            changeHour(5, 30);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 5)
         {
-            changeHour(5);
+            changeHour(5, 0);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 6.5)
         {
-            changeMinute(currentTime, 30, false);
+            changeHour(6, 30);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 6)
         {
-            changeHour(6);
+            changeHour(6, 0);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 7.5)
         {
-            changeMinute(currentTime,30, false);
+            changeHour(7, 30);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 7)
         {
-            changeHour(7);
+            changeHour(7, 0);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 8.5)
         {
-            changeMinute(currentTime,30, false);
+            changeHour(8, 30);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 8)
         {
-            changeHour(8);
+            changeHour(8, 0);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 9.5)
         {
-            changeMinute(currentTime,30, false);
+            changeHour(9, 30);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 9)
         {
-            changeHour(9);
+            changeHour(9, 0);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 10.5)
         {
-            changeMinute(currentTime,30, false);
+            changeHour(10, 30);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 10)
         {
-            changeHour(10);
+            changeHour(10, 0);
             SkyBoxApplication.sunTrajectory(sliderValue);
 
         }
         else if(sliderValue == 11)
         {
-            changeHour(11);
+            changeHour(11, 0);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 11.5)
         {
-            changeMinute(currentTime,30, false);
+            changeHour(11, 30);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 12)
         {
-            changeHour(12);
+            changeHour(12, 0);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 12.5)
         {
-            changeMinute(currentTime,30,false);
+            changeHour(12, 30);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
         else if(sliderValue == 13)
         {
-            changeHour(13);
+            changeHour(13, 0);
             SkyBoxApplication.sunTrajectory(sliderValue);
         }
 
     }
 
-    public void changeHour(int n){
+    public void changeHour(int currentHour, int minToAdd){
         String startTime = SkyBoxApplication.sunriseTime;
         String[] wholeTime = startTime.split(":");
 
         int hour = Integer.parseInt(wholeTime[0]);
-        int current = hour + n;
+        int current = hour + currentHour;
 
         StringBuilder timeMaker = new StringBuilder(current + ":" + wholeTime[1]);
         currentTime = timeMaker.toString();
-        changeMinute(currentTime, 0, false);
+        changeMinute(currentTime, minToAdd, false);
     }
 
     public void changeMinute(String currentTime, int n, boolean pm){

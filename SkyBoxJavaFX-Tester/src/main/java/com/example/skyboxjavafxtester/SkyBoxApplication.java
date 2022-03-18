@@ -490,7 +490,7 @@ public class SkyBoxApplication extends Application {
         gPanelTwoBox = new Group(gPanelTwo, boxers6);
 
         panelsWHouse = new Group(houseImport, solarPanelOnewR, solarPanelTwowR, solarPanelThreewR, solarPanelFourwR, gPanelOneBox, gPanelTwoBox);
-        //panelsWHouse.setTranslateY(-200); // puts house at 0,0,0... If you comment this it shows models on screen
+        panelsWHouse.setTranslateY(-200); // puts house at 0,0,0... If you comment this it shows models on screen
         return panelsWHouse;
     }
 
