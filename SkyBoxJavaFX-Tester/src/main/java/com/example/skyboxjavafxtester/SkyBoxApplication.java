@@ -697,7 +697,7 @@ public class SkyBoxApplication extends Application {
             sun.setTranslateY(-y * 1000);
             sun.setTranslateZ(0);
         }
-        else if(sliderValue == 7.5)
+        else if(sliderValue == 8.0)
         {
             angle = 120;
             angleRadians = Math.toRadians(angle);
@@ -708,7 +708,7 @@ public class SkyBoxApplication extends Application {
             sun.setTranslateY(-y * 1000);
             sun.setTranslateZ(0);
         }
-        else if(sliderValue == 8.0)
+        else if(sliderValue == 8.5)
         {
             angle = 127.5;
             angleRadians = Math.toRadians(angle);
@@ -719,7 +719,7 @@ public class SkyBoxApplication extends Application {
             sun.setTranslateY(-y * 1000);
             sun.setTranslateZ(0);
         }
-        else if(sliderValue == 8.5)
+        else if(sliderValue == 9.0)
         {
             angle = 135;
             angleRadians = Math.toRadians(angle);
@@ -730,7 +730,7 @@ public class SkyBoxApplication extends Application {
             sun.setTranslateY(-y * 1000);
             sun.setTranslateZ(0);
         }
-        else if(sliderValue == 9.0)
+        else if(sliderValue == 9.5)
         {
             angle = 142.5;
             angleRadians = Math.toRadians(angle);
@@ -741,7 +741,7 @@ public class SkyBoxApplication extends Application {
             sun.setTranslateY(-y * 1000);
             sun.setTranslateZ(0);
         }
-        else if(sliderValue == 9.5)
+        else if(sliderValue == 10.0)
         {
             angle = 150;
             angleRadians = Math.toRadians(angle);
@@ -752,7 +752,7 @@ public class SkyBoxApplication extends Application {
             sun.setTranslateY(-y * 1000);
             sun.setTranslateZ(0);
         }
-        else if(sliderValue == 10)
+        else if(sliderValue == 10.5)
         {
             angle = 157.5;
             angleRadians = Math.toRadians(angle);
@@ -763,7 +763,7 @@ public class SkyBoxApplication extends Application {
             sun.setTranslateY(-y * 1000);
             sun.setTranslateZ(0);
         }
-        else if(sliderValue == 10.5)
+        else if(sliderValue == 11.0)
         {
             angle = 165;
             angleRadians = Math.toRadians(angle);
@@ -774,7 +774,7 @@ public class SkyBoxApplication extends Application {
             sun.setTranslateY(-y * 1000);
             sun.setTranslateZ(0);
         }
-        else if(sliderValue == 11.0)
+        else if(sliderValue == 11.5)
         {
             angle = 172.5;
             angleRadians = Math.toRadians(angle);
@@ -785,18 +785,7 @@ public class SkyBoxApplication extends Application {
             sun.setTranslateY(-y * 1000);
             sun.setTranslateZ(0);
         }
-        else if(sliderValue == 11.5)
-        {
-            angle = 176;
-            angleRadians = Math.toRadians(angle);
-            x = Math.cos(angleRadians);
-            y = Math.sin(angleRadians);
-
-            sun.setTranslateX(x * 1000);
-            sun.setTranslateY(-y * 1000);
-            sun.setTranslateZ(0);
-        }
-        else if(sliderValue == 12)
+        else if(sliderValue == 12.0)
         {
             angle = 178;
             angleRadians = Math.toRadians(angle);
