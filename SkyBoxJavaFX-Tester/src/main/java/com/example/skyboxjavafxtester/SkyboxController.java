@@ -100,7 +100,6 @@ public class SkyBoxController {
         entireFrame.getChildren().addAll(new Pane(skyboxPane), new AnchorPane(uiPane), new AnchorPane(sliderAndDate));
     }
 
-
     @FXML
     protected Pane setSkyboxPane() throws ParseException {
         Group skybox = new Group();

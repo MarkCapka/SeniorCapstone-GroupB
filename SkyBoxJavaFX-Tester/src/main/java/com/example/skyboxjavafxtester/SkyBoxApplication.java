@@ -505,7 +505,6 @@ public class SkyBoxApplication extends Application {
 
         // create a Group
         sun = new Group(sphere, pointlight);
-        // translate the sphere to a position
 
         sphere.setTranslateX(100);
         sphere.setTranslateY(-200);
