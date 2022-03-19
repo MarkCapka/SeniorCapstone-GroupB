@@ -105,17 +105,16 @@ public class SkyBoxController{
 
     @FXML
     protected static Pane setSkyboxPane() throws ParseException {
-
         //*****************QUESTION FOR MARK FROM SEAN BELOW*****************************//
         //Do we need both createSkybox() call and the constructWorld() call below a few lines?
-        //Can we remove the ambient light and point light originally created in the skybox since our sun is creating light?
-        Group skyBox = SkyBoxApplication.createSkybox(skyboxGroup); //create empty skybox
+        //Can we remove the ambient light and point light originally created in the skybox since our sun is creating light now?
+        Group skyBox = SkyBoxApplication.createSkybox(skyboxGroup);
 
         //TODO pretty sure we need to pull in the details of the skybox in createskybox() and pass them to be added to the skybox pane group below.
         SkyBoxApplication.sunCreation(); //creating sun
         SkyBoxApplication.startParams(); // Setting start date, location, sunset/sunrise times
         Group panelsWHouse = SkyBoxApplication.models(); //Creating all models for the scene
-        SkyBoxApplication.constructWorld(skyBox); // Construct the empty SkyBox group
+        SkyBoxApplication.constructWorld(skyBox);
 
 
         //because the javafx scene graphs its on top of your scene and stage objects, any fills or images applied to root nodes will paint OVER The scene

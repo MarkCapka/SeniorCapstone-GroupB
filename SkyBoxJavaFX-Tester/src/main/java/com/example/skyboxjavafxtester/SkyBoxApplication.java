@@ -7,6 +7,8 @@ import javafx.geometry.Point3D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
@@ -706,8 +708,8 @@ public class SkyBoxApplication extends Application {
         pointlight.setTranslateZ(-1000);
         pointlight.setTranslateX(+1000);
         pointlight.setTranslateY(+10);
-        pointlight.setColor(Color.YELLOW);
-
+        pointlight.setColor(Color.rgb(255, 255, 255));
+        pointlight.setLightOn(true);
     }
 
     static void sunTrajectory(Double sliderValue) {
