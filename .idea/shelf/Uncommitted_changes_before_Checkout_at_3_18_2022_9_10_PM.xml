@@ -1,0 +1,14 @@
+<changelist name="Uncommitted_changes_before_Checkout_at_3_18_2022_9_10_PM" date="1647663028838" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_3_18_2022_9_10_PM/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Checkout at 3/18/2022 9:10 PM" />
+  <binary>
+    <option name="BEFORE_PATH" value="SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyBoxController.class" />
+    <option name="AFTER_PATH" value="SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyBoxController.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_3_18_2022_9_10_PM/SkyBoxController.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyBoxApplication.class" />
+    <option name="AFTER_PATH" value="SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyBoxApplication.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_3_18_2022_9_10_PM/SkyBoxApplication.class" />
+  </binary>
+</changelist>

@@ -137,8 +137,8 @@ public class SkyBoxApplication extends Application {
     static boolean box4closest;
     static boolean gbox1closest;
     static boolean gbox2closest;
-    static PhongMaterial col = new PhongMaterial(Color.GREEN);
-    static PhongMaterial col1 = new PhongMaterial(Color.RED);
+    static PhongMaterial optimal = new PhongMaterial(Color.GREEN);
+    static PhongMaterial subOptimal = new PhongMaterial(Color.RED);
 
     private AnchorPane sliderAndDate;
     private AnchorPane uiPane;
@@ -159,9 +159,6 @@ public class SkyBoxApplication extends Application {
     private static float y3; //values for points of skybox
 
     //private final Image textureImage;
-
-
-
 
 
     //private static final double depth = skyboxImage.getDepth(); //MAY NOT NEED FOR cube since shoudl scale evenly
@@ -229,17 +226,12 @@ public class SkyBoxApplication extends Application {
 //        subScene.setRoot(skyBox);
 
         root.getChildren().addAll(entireFrame, skyboxPane);
-
-
-
-
         Scene scene = new Scene(root, 1024, 768); // Make the whole scene with everything
         cameraAndControls(root, panelsWHouse, scene);
-
         scene.setRoot(root);
 
 
-        /* Uncomment this section to see the difference that happens
+        /*
 
         // This needs to set up the inside of the skyboxPane?
         scene.setFill(new ImagePattern(skyboxImage)); //THIS causes whole UI to get filled over, because we are adding it to the scene which encompassdes everything, could translate or
@@ -251,14 +243,7 @@ public class SkyBoxApplication extends Application {
         root.getScene().setCamera(camera);
         // translations through dolly
 
-
-         */
-
-
-        //-------------END of Scene and Camera set up----------------------------//
-
-
-
+        */
 
         stage.setTitle("Solar Optimization Simulator!");
         stage.setScene(scene);
@@ -292,9 +277,21 @@ public class SkyBoxApplication extends Application {
             double change = cameraQuantity;
             // What key did the user press?
             KeyCode keycode = event.getCode();
-            Rotate r;
-            Transform t = new Rotate();
+
             // Translate pivot = new Translate(); //TODO could use for a more elegant rotation of the camera
+
+            Rotate r = new Rotate(-1, Rotate.Y_AXIS); //rotate house right
+            Rotate l = new Rotate(1, Rotate.Y_AXIS); //rotate house left
+            Rotate n = new Rotate(45, Rotate.Y_AXIS); //rotate Ground Panel One
+            Rotate n1 = new Rotate(45, Rotate.Y_AXIS); //rotate Ground Panel Two
+
+            setCenters(r, houseImport); //Get centers to rotate from center
+            setCenters(l, houseImport);
+            setCenters(n, gPanelOne);
+            setCenters(n1, gPanelTwo);
+
+            Transform t = new Rotate();
+
             Point3D delta = null;
 
             if (keycode == KeyCode.COMMA) {
@@ -336,6 +333,62 @@ public class SkyBoxApplication extends Application {
                 r = new Rotate(-1, Rotate.Y_AXIS);
                 t = t.createConcatenation(r);
                 panelsWHouse.getTransforms().addAll(t);
+            }
+            if(keycode == KeyCode.DIGIT0){ //Clears selected panels
+                clearSelected();
+            }
+            if(keycode == KeyCode.DIGIT1){ // Selects ground panel number 1
+                gPanelOneSelected();
+            }
+            if(keycode == KeyCode.DIGIT2) //selects ground panel number 2
+            {
+                gPanelTwoSelected();
+            }
+            if (keycode == KeyCode.RIGHT) { //Move selected ground panel to the right in the screen
+                if(oneSelected == true) {
+                    gPanelOneBox.setTranslateX(gPanelOneBox.getTranslateX() + 1);
+                }
+                else if(twoSelected == true){
+                    gPanelTwoBox.setTranslateX(gPanelTwoBox.getTranslateX() + 1);
+                }
+            }
+
+            if (keycode == KeyCode.LEFT) { //Move selected ground panel to the left in the screen
+                if(oneSelected == true) {
+                    gPanelOneBox.setTranslateX(gPanelOneBox.getTranslateX() - 1);
+                }
+                else if(twoSelected == true){
+                    gPanelTwoBox.setTranslateX(gPanelTwoBox.getTranslateX() - 1);
+                }
+            }
+
+            if (keycode == KeyCode.UP) { // Move selected ground panel back
+                if(oneSelected == true) {
+                    gPanelOneBox.setTranslateZ(gPanelOneBox.getTranslateZ() + 1);
+                }
+                else if(twoSelected == true) {
+                    gPanelTwoBox.setTranslateZ(gPanelTwoBox.getTranslateZ() + 1);
+                }
+            }
+
+            if (keycode == KeyCode.DOWN) { // Move selected ground panel forward
+                if(oneSelected == true) {
+                    gPanelOneBox.setTranslateZ(gPanelOneBox.getTranslateZ() - 1);
+                }
+                else if(twoSelected == true) {
+                    gPanelTwoBox.setTranslateZ(gPanelTwoBox.getTranslateZ() - 1);
+                }
+            }
+
+            if (keycode == KeyCode.SPACE) {  //Rotate selected ground solar panel
+                if(oneSelected == true) {
+                    t = t.createConcatenation(n);
+                    gPanelOneBox.getTransforms().addAll(t);
+                }
+                else if(twoSelected == true) {
+                    t = t.createConcatenation(n1);
+                    gPanelTwoBox.getTransforms().addAll(t);
+                }
             }
 
             if (delta != null) {
@@ -662,10 +715,10 @@ public class SkyBoxApplication extends Application {
         return panelsWHouse;
     }
 
-    static Group sunCreation() {
+    static void sunCreation() {
         Sphere sphere = new Sphere(80.0f);
         PhongMaterial material = new PhongMaterial();
-        material.setDiffuseColor(Color.YELLOWGREEN);
+        material.setDiffuseColor(Color.YELLOW);
         sphere.setMaterial(material);
 
         // create a point light
@@ -673,208 +726,463 @@ public class SkyBoxApplication extends Application {
 
         // create a Group
         sun = new Group(sphere, pointlight);
-        // translate the sphere to a position
 
         sphere.setTranslateX(100);
         sphere.setTranslateY(-200);
         pointlight.setTranslateZ(-1000);
         pointlight.setTranslateX(+1000);
         pointlight.setTranslateY(+10);
-        pointlight.setColor(Color.GREENYELLOW);
+        pointlight.setColor(Color.YELLOW);
 
-        return sun;
     }
 
-    static void sunTrajectory() {
-        Sphere sphere = new Sphere(80.0f);
-        Sphere sphere1 = new Sphere(80.0f);
-        Sphere sphere3 = new Sphere(80.0f);
-        Sphere sphere4 = new Sphere(80.0f);
+    static void sunTrajectory(Double sliderValue) {
+        double x;
+        double y;
+        double angle;
+        double angleRadians;
 
-        PhongMaterial material = new PhongMaterial();
-        material.setDiffuseColor(Color.YELLOWGREEN);
-        sphere.setMaterial(material);
-        //sphere1.setMaterial(material);
+        if(sliderValue == 0)
+        {
+            //Suns start position
+            angle = 0;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
 
-        // create a point light
-        PointLight pointlight = new PointLight();
-        Group sun = new Group(sphere, pointlight);
-        Group sun1 = new Group(sphere1, pointlight);
-        Group sun3 = new Group(sphere3, pointlight);
-        Group sun4 = new Group(sphere4, pointlight);
-
-        pointlight.setColor(Color.YELLOWGREEN);
-
-        Point3D point1 = new Point3D(gPanelOneBox.getTranslateX(), gPanelOneBox.getTranslateY(), gPanelOneBox.getTranslateZ());
-        Point3D point2 = new Point3D(sun.getTranslateX(), sun.getTranslateY(), sun.getTranslateZ());
-
-        Double distance = Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2) + Math.pow(point1.getZ() - point2.getZ(), 2));
-        System.out.println(distance);
-
-        //code for 7:59 current time
-        //199 minutes after sunrise
-        //at 6 am or 0;
-        int totaltime = 720;
-        int slice = totaltime / 6;
-        int currenttime = 720;
-        int sliceofday = 0;
-
-
-        if (slice >= currenttime) {
-            double angle = 30;
-            angle = Math.toRadians(angle);
-            double x33 = Math.cos(angle);
-            double y33 = Math.sin(angle);
-
-            sun.setTranslateX(x33 * 500);
-            sun.setTranslateY(-y33 * 500);
-            //sceneRoot.getChildren().add(sun);
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
             sun.setTranslateZ(0);
-            //sceneRoot.getChildren().add(sun);
+        }
+        else if(sliderValue == 0.5)
+        {
+            angle = 7.5;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
 
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
         }
+        else if(sliderValue == 1.0)
+        {
+            angle = 15;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
 
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 1.5)
+        {
+            angle = 22.5;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
 
-        if (((2 * slice) >= currenttime) && (slice < currenttime)) {
-            double angle1 = 60;
-            angle1 = Math.toRadians(angle1);
-            double x66 = Math.cos(angle1);
-            double y66 = Math.sin(angle1);
-            sun.setTranslateX(x66 * 500);
-            sun.setTranslateY(-y66 * 500);
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
             sun.setTranslateZ(0);
-            //sceneRoot.getChildren().add(sun1);
+        }
+        else if(sliderValue == 2.0)
+        {
+            angle = 30;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
 
-            //sun1.setTranslateZ(0);
-        }
-        if (((4 * slice) >= currenttime) && (3 * slice < currenttime)) {
-            double angle2 = 120;
-            angle2 = Math.toRadians(angle2);
-            double x12 = Math.cos(angle2);
-            double y12 = Math.sin(angle2);
-            sun.setTranslateX(x12 * 500);
-            sun.setTranslateY(-y12 * 500);
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
             sun.setTranslateZ(0);
-            //sceneRoot.getChildren().add(sun3);
         }
-        if (((3 * slice) >= currenttime) && (2 * slice < currenttime)) {
-            double angle3 = 90;
-            angle3 = Math.toRadians(angle3);
-            double x90 = Math.cos(angle3);
-            double y90 = Math.sin(angle3);
-            sun.setTranslateX(x90 * 500);
+        else if(sliderValue == 2.5) {
+            angle = 37.5;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
             sun.setTranslateZ(0);
-            sun.setTranslateY(-y90 * 500);
-            //sceneRoot.getChildren().add(sun4);
         }
-        if (((5 * slice) >= currenttime) && (4 * slice < currenttime)) {
-            double angle3 = 150;
-            angle3 = Math.toRadians(angle3);
-            double x150 = Math.cos(angle3);
-            double y150 = Math.sin(angle3);
-            sun.setTranslateX(x150 * 500);
+        else if(sliderValue == 3.0)
+        {
+            angle = 45;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
             sun.setTranslateZ(0);
-            sun.setTranslateY(-y150 * 500);
-            //sceneRoot.getChildren().add(sun4);
         }
-        if (((6 * slice) >= currenttime) && (5 * slice < currenttime)) {
-            double angle3 = 180;
-            angle3 = Math.toRadians(angle3);
-            double x180 = Math.cos(angle3);
-            double y180 = Math.sin(angle3);
-            sun.setTranslateX(x180 * 500);
+        else if(sliderValue == 3.5)
+        {
+            angle = 52.5;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
             sun.setTranslateZ(0);
-            sun.setTranslateY(-y180 * 500);
-            //sceneRoot.getChildren().add(sun4);
         }
-        //sceneRoot.getChildren().add(sun);
+        else if(sliderValue == 4.0)
+        {
+            angle = 60;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 4.5)
+        {
+            angle = 67.5;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 5.0)
+        {
+            angle = 75;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 5.5)
+        {
+            angle = 82.5;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 6.0)
+        {
+            angle = 90;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 6.5)
+        {
+            angle = 97.5;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 7.0)
+        {
+            angle = 105;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 7.5)
+        {
+            angle = 112.5;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 8.0)
+        {
+            angle = 120;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 8.5)
+        {
+            angle = 127.5;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 9.0)
+        {
+            angle = 135;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 9.5)
+        {
+            angle = 142.5;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 10.0)
+        {
+            angle = 150;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 10.5)
+        {
+            angle = 157.5;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 11.0)
+        {
+            angle = 165;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 11.5)
+        {
+            angle = 172.5;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 12.0)
+        {
+            angle = 178;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 12.5)
+        {
+            angle = 179;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
+        else if(sliderValue == 13)
+        {
+            angle = 180;
+            angleRadians = Math.toRadians(angle);
+            x = Math.cos(angleRadians);
+            y = Math.sin(angleRadians);
+
+            sun.setTranslateX(x * 1000);
+            sun.setTranslateY(-y * 1000);
+            sun.setTranslateZ(0);
+        }
 
     }
 
     //helper methods for most optimal
-    public static double distanceCalc(Box box, Group sun) {
+    public static double distancecalc(Box box, Group sun) {
         Point3D point1 = new Point3D(box.getTranslateX(), box.getTranslateY(), box.getTranslateZ());
         Point3D point2 = new Point3D(sun.getTranslateX(), sun.getTranslateY(), sun.getTranslateZ());
         Double distance = Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2) + Math.pow(point1.getZ() - point2.getZ(), 2));
         return distance;
     }
 
-    public static void colorSetOpt(Group sunOb) {
-        Double b1d = distanceCalc((Box) solarPanelOnewR.getChildren().get(1), sunOb);
-        Double b2d = distanceCalc((Box) solarPanelTwowR.getChildren().get(1), sunOb);
-        Double b3d = distanceCalc((Box) solarPanelThreewR.getChildren().get(1), sunOb);
-        Double b4d = distanceCalc((Box) solarPanelFourwR.getChildren().get(1), sunOb);
-        box1closest = true;
+    public static void colorSetOpt() {
+        double total = 0.0;
+        double averageP1 = 0.0;
+        double averageP2 = 0.0;
+        double averageP3 = 0.0;
+        double averageP4 = 0.0;
+        double averageGP1 = 0.0;
+        double averageGP2 = 0.0;
+        double[] totalHours = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0};
+
+        for(int i = 0; i < totalHours.length; i++){
+            sunTrajectory(totalHours[i]);
+            total += calculateLightIntesity((Box) solarPanelOnewR.getChildren().get(1), sun);
+        }
+        averageP1 = total / 12;
+
+        total = 0;
+        for(int i = 0; i < totalHours.length; i++){
+            sunTrajectory(totalHours[i]);
+            total += calculateLightIntesity((Box) solarPanelTwowR.getChildren().get(1), sun);
+        }
+        averageP2 = total / 12;
+
+        total = 0;
+        for(int i = 0; i < totalHours.length; i++){
+            sunTrajectory(totalHours[i]);
+            total += calculateLightIntesity((Box) solarPanelThreewR.getChildren().get(1), sun);
+        }
+        averageP3 = total / 12;
+
+        total = 0;
+        for(int i = 0; i < totalHours.length; i++){
+            sunTrajectory(totalHours[i]);
+            total += calculateLightIntesity((Box) solarPanelFourwR.getChildren().get(1), sun);
+        }
+        averageP4 = total / 12;
+
+        total = 0;
+        for(int i = 0; i < totalHours.length; i++){
+            sunTrajectory(totalHours[i]);
+            total += calculateLightIntesity((Box) gPanelOneBox.getChildren().get(1), sun);
+        }
+        averageGP1 = total / 12;
+
+        total = 0;
+        for(int i = 0; i < totalHours.length; i++){
+            sunTrajectory(totalHours[i]);
+            total += calculateLightIntesity((Box) gPanelTwoBox.getChildren().get(1), sun);
+        }
+        averageGP2 = total / 12;
+
+        box1closest = false;
         box2closest = false;
         box3closest = false;
         box4closest = false;
+        gbox1closest = false;
+        gbox2closest = false;
 
-        if ((b2d < b1d) && (b2d < b3d) && (b2d < b4d)) {
+        if (averageP1 > averageP2 && averageP1 > averageP3 && averageP1 > averageP4) {
+            box1closest = true;
+            box2closest = false;
+            box3closest = false;
+            box4closest = false;
+        }
+        if (averageP2 > averageP1 && averageP2 > averageP3 && averageP2 > averageP4) {
             box1closest = false;
             box2closest = true;
             box3closest = false;
             box4closest = false;
         }
-        if ((b3d < b2d) && (b3d < b1d) && (b3d < b4d)) {
+        if (averageP3 > averageP1 && averageP3 > averageP2 && averageP3 > averageP4) {
             box1closest = false;
             box2closest = false;
             box3closest = true;
             box4closest = false;
         }
-        if ((b4d < b1d) && (b4d < b3d) && (b4d < b2d)) {
+        if (averageP4 > averageP1 && averageP4 > averageP2 && averageP4 > averageP3) {
             box1closest = false;
             box2closest = false;
             box3closest = false;
             box4closest = true;
         }
+        if (averageGP1 > averageGP2) {
+            gbox1closest = true;
+            gbox2closest = false;
+        }
+        if (averageGP2 > averageGP1) {
+            gbox1closest = false;
+            gbox2closest = true;
+        }
+
         if (box1closest = true) {
-            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col);
-            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col1);
-            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col1);
-            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col1);
+            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(optimal);
+            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(subOptimal);
+            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(subOptimal);
+            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(subOptimal);
         }
         if (box2closest = true) {
-            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col1);
-            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col);
-            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col1);
-            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col1);
+            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(subOptimal);
+            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(optimal);
+            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(subOptimal);
+            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(subOptimal);
 
         }
         if (box3closest = true) {
-            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col1);
-            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col1);
-            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col);
-            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col1);
+            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(subOptimal);
+            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(subOptimal);
+            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(optimal);
+            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(subOptimal);
         }
         if (box4closest = true) {
-            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col1);
-            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col1);
-            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col1);
-            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col);
-
+            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(subOptimal);
+            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(subOptimal);
+            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(subOptimal);
+            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(optimal);
+        }
+        if (gbox1closest = true) {
+            ((Box) gPanelOneBox.getChildren().get(1)).setMaterial(optimal);
+            ((Box) gPanelTwoBox.getChildren().get(1)).setMaterial(subOptimal);
+        }
+        if (gbox2closest = true) {
+            ((Box) gPanelOneBox.getChildren().get(1)).setMaterial(subOptimal);
+            ((Box) gPanelTwoBox.getChildren().get(1)).setMaterial(optimal);
         }
     }
 
-
-    public static void gColorSetOpt(Group sunOb){
-        Double b1d = distanceCalc((Box) gPanelOneBox.getChildren().get(1), sunOb);
-        Double b2d = distanceCalc((Box) gPanelTwoBox.getChildren().get(1), sunOb);
-        gbox1closest = true;
-        gbox2closest=false;
-
-        if((b2d < b1d)){
-            box1closest = false;
-            box2closest = true;
-        }
-        if(gbox1closest = true){
-            ((Box) gPanelOneBox.getChildren().get(1)).setMaterial(col);
-            ((Box) gPanelTwoBox.getChildren().get(1)).setMaterial(col1);
-        }
-        if(gbox2closest = true){
-            ((Box) gPanelOneBox.getChildren().get(1)).setMaterial(col1);
-            ((Box) gPanelTwoBox.getChildren().get(1)).setMaterial(col);
-        }
+    static double calculateLightIntesity(Box box, Group Sun){
+        double distance = Math.abs(distancecalc(box, Sun));
+        double intesity = 1/((distance)*(distance));
+        intesity = intesity*10000000;
+        return intesity;
     }
+
     //skybox loading and blending of the images to make it look seamless (I think)
     private void loadImageViews() {
         for(ImageView imageViews : views)
@@ -1028,8 +1336,6 @@ public class SkyBoxApplication extends Application {
     {
         size = value;
     }
-
-
 
 
     public static void main(String[] args) {

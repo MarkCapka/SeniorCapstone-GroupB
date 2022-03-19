@@ -1,0 +1,556 @@
+Index: SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyBoxController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.skyboxjavafxtester;\r\n\r\nimport com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;\r\nimport com.luckycatlabs.sunrisesunset.dto.Location;\r\nimport javafx.event.ActionEvent;\r\nimport javafx.fxml.FXML;\r\nimport javafx.scene.Group;\r\nimport javafx.scene.Node;\r\nimport javafx.scene.control.Button;\r\nimport javafx.scene.control.DatePicker;\r\nimport javafx.scene.control.Slider;\r\nimport javafx.scene.control.TextField;\r\nimport javafx.scene.control.Label;\r\nimport javafx.scene.layout.AnchorPane;\r\nimport javafx.scene.layout.Pane;\r\nimport javafx.stage.Stage;\r\n\r\nimport javax.swing.JOptionPane;\r\n\r\nimport java.io.IOException;\r\nimport java.text.DateFormat;\r\nimport java.text.ParseException;\r\nimport java.text.SimpleDateFormat;\r\nimport java.time.LocalTime;\r\nimport java.time.temporal.ChronoUnit;\r\nimport java.util.Collection;\r\n\r\nimport static com.example.skyboxjavafxtester.SkyBoxApplication.skyboxImage;\r\n\r\n\r\npublic class SkyBoxController{\r\n\r\n    @FXML\r\n    private static Pane skyboxPane;\r\n    @FXML\r\n    private Pane entireFrame;\r\n    @FXML\r\n    private AnchorPane uiPane;\r\n    @FXML\r\n    private AnchorPane sliderAndDate;\r\n    @FXML\r\n    private DatePicker datePicker;\r\n    @FXML\r\n    private Slider slider;\r\n    @FXML\r\n    private Label locationLabel;\r\n    @FXML\r\n    private Label currentTimeLabel;\r\n    @FXML\r\n    private TextField theLocationPicker;\r\n    @FXML\r\n    private Button returnOnInvestment;\r\n    @FXML\r\n    private Button optimalPanels;\r\n    @FXML\r\n    private Button quit;\r\n    @FXML\r\n    private Button removeAll;\r\n    @FXML\r\n    private Button intensityLevels;\r\n    @FXML\r\n    private Button sunriseSunsetTimes;\r\n    @FXML\r\n    private Button controls;\r\n    @FXML\r\n    private Button addAll;\r\n\r\n    private static String currentTime;\r\n    private Group root;\r\n\r\n\r\n    @FXML\r\n    protected void initialize() throws ParseException, IOException {\r\n        setSkyboxPane();\r\n        setEntireFrame();\r\n\r\n        //Initialize Slider Ticks\r\n        LocalTime start = LocalTime.parse(SkyBoxApplication.sunriseTime);\r\n        LocalTime end =  LocalTime.parse(SkyBoxApplication.sunsetTime);\r\n        Long hours = ChronoUnit.HOURS.between(start, end);//# of mins between\r\n        slider.setMax(hours); //Gives 11 ticks.... 11 hours between sunrise and sunset\r\n\r\n        //Initialize currentTime\r\n        changeHour(6);\r\n        currentTimeLabel.setText(currentTime);\r\n\r\n    }\r\n\r\n    @FXML\r\n    private void setEntireFrame() {\r\n        entireFrame.getChildren().addAll(new Pane(skyboxPane), new AnchorPane(uiPane), new AnchorPane(sliderAndDate));\r\n    }\r\n\r\n\r\n    @FXML\r\n    protected Pane setSkyboxPane() throws ParseException {\r\n        Group skyboxGroup = new Group();\r\n        Group skyBox = SkyBoxApplication.createSkybox(skyboxGroup);\r\n\r\n        //TODO pretty sure we need to pull in the details of the skybox in createskybox() and pass them to be added to the skybox pane group below.\r\n\r\n\r\n\r\n        Group sun = SkyBoxApplication.sunCreation(); //creating sun\r\n\r\n        SkyBoxApplication.startParams(); // Setting start date, location, sunset/sunrise times\r\n        Group panelsWHouse = SkyBoxApplication.models(); //Creating all models for the scene\r\n        SkyBoxApplication.constructWorld(skyBox); // Construct the empty SkyBox group\r\n        skyboxGroup.getChildren().addAll(skyBox, sun, panelsWHouse);\r\n\r\n        skyboxPane = new Pane(sun, skyboxGroup);\r\n        //THIS causes an error: Duplicate children added so i commented it out. Its being out in skyboxPane above\r\n     //   skyboxPane.getChildren().add(skybox);\r\n\r\n\r\n        //Heres where we do the set up camera and background?\r\n        //Could we move it into constructWorld?\r\n        //How to convert the things happening from a Scene to A AnchorPane or how to add a new scene into the Pane?\r\n\r\n        /*\r\n        skybox.setFill(new ImagePattern(SkyBoxApplication.skyboxImage));\r\n        camera = new PerspectiveCamera(true);\r\n        camera.setNearClip(0.1);\r\n        camera.setFarClip(30000.0);\r\n\r\n         */\r\n\r\n\r\n        return skyboxPane;\r\n    }\r\n\r\n\r\n\r\n\r\n    //Methods for buttons\r\n    public void getDate(ActionEvent actionEvent) throws ParseException {\r\n        String newDate = datePicker.getValue().toString();\r\n        DateFormat formatter = new SimpleDateFormat(\"yyyy-MM-dd\"); //Formatter\r\n        SkyBoxApplication.date = formatter.parse(newDate);\r\n\r\n        recalculateSunTimes();\r\n    }\r\n\r\n    public void getLocation(ActionEvent actionEvent) {\r\n        SkyBoxApplication.theLocation = theLocationPicker.getText();\r\n        String[] coords = SkyBoxApplication.theLocation.split(\",\");\r\n        SkyBoxApplication.latitude = Double.parseDouble(coords[0]);\r\n        SkyBoxApplication.longitude = Double.parseDouble(coords[1]);\r\n        System.out.println(SkyBoxApplication.latitude);\r\n        System.out.println(SkyBoxApplication.longitude);\r\n\r\n        recalculateSunTimes();\r\n    }\r\n\r\n    public void showROI(ActionEvent actionEvent) {\r\n    }\r\n\r\n    public void removeAllPanels(ActionEvent actionEvent) {\r\n\r\n        if(SkyBoxApplication.panelsWHouse.getChildren().contains(SkyBoxApplication.solarPanelThreewR)) {\r\n            SkyBoxApplication.panelsWHouse.getChildren().remove(6);\r\n            SkyBoxApplication.panelsWHouse.getChildren().remove(5);\r\n            SkyBoxApplication.panelsWHouse.getChildren().remove(4);\r\n            SkyBoxApplication.panelsWHouse.getChildren().remove(3);\r\n            SkyBoxApplication.panelsWHouse.getChildren().remove(2);\r\n            SkyBoxApplication.panelsWHouse.getChildren().remove(1);\r\n        }\r\n    }\r\n\r\n    public void showIntensityLevels(ActionEvent actionEvent) {\r\n    }\r\n\r\n    public void showSunTimes(ActionEvent actionEvent) {\r\n\r\n        String sunTimes =\r\n                \"On \" + SkyBoxApplication.date.toString() + \"\\n\"\r\n                        + \"at latitude: \" + SkyBoxApplication.latitude + \", and longitude: \" + SkyBoxApplication.longitude + \":\\n\"\r\n                        + \"\\n\"\r\n                        + \"Sunrise: \" + SkyBoxApplication.sunriseTime + \"\\n\"\r\n                        + \"Sunset: \" + SkyBoxApplication.sunsetTime;\r\n\r\n        JOptionPane.showMessageDialog(null, sunTimes, \"Sunrise/Sunset Times\", JOptionPane.PLAIN_MESSAGE);\r\n    }\r\n\r\n    public void showControls(ActionEvent actionEvent) {\r\n        String controls =\r\n                \"Controls:\\n\"\r\n                        + \"\\n\"\r\n                        + \"Rotate Camera: click and drag\\n\"\r\n                        + \"Move Camera Up: w\\n\"\r\n                        + \"Move Camera Left: a\\n\"\r\n                        + \"Move Camera Down: s\\n\"\r\n                        + \"Move Camera Right: d\\n\"\r\n                        + \"Zoom In: ,\\n\"\r\n                        + \"Zoom out: .\\n\"\r\n                        + \"Rotate Model Right: m\\n\"\r\n                        + \"Rotate Model Left: n\\n\"\r\n                        + \"\\n\"\r\n                        + \"Select Solar Panel 1: 1\\n\"\r\n                        + \"Select Solar Panel 2: 2\\n\"\r\n                        + \"Clear Selection: 0\\n\"\r\n                        + \"\\n\"\r\n                        + \"If Panel Is Selected:\\n\"\r\n                        + \"Move Backward: Up Arrow\\n\"\r\n                        + \"Move Forawrd: Down Arrow\\n\"\r\n                        + \"Move Left: Right Arrow\\n\"\r\n                        + \"Move Right: Left Arrow\\n\"\r\n                        + \"Rotate 45 degrees: Spacebar\";\r\n\r\n        JOptionPane.showMessageDialog(null, controls, \"Controls\", JOptionPane.PLAIN_MESSAGE);\r\n    }\r\n\r\n    public void addAllPanels(ActionEvent actionEvent) {\r\n\r\n        if(SkyBoxApplication.panelsWHouse.getChildren().size() < 2) {\r\n            SkyBoxApplication.panelsWHouse.getChildren().add(SkyBoxApplication.solarPanelOnewR);\r\n            SkyBoxApplication.panelsWHouse.getChildren().add(SkyBoxApplication.solarPanelTwowR);\r\n            SkyBoxApplication.panelsWHouse.getChildren().add(SkyBoxApplication.solarPanelThreewR);\r\n            SkyBoxApplication.panelsWHouse.getChildren().add(SkyBoxApplication.solarPanelFourwR);\r\n            SkyBoxApplication.panelsWHouse.getChildren().add(SkyBoxApplication.gPanelOneBox);\r\n            SkyBoxApplication.panelsWHouse.getChildren().add(SkyBoxApplication.gPanelTwoBox);\r\n        }\r\n    }\r\n\r\n    public void exitProgram(ActionEvent aE) {\r\n        Stage stage = (Stage) uiPane.getScene().getWindow();\r\n        stage.close();\r\n    }\r\n\r\n    public void highlightOptimalPanels(ActionEvent actionEvent) {\r\n    }\r\n\r\n    public void getTimeZone(ActionEvent actionEvent) {\r\n        SkyBoxApplication.timeZone = actionEvent.getTarget().toString();\r\n        recalculateSunTimes();\r\n    }\r\n\r\n    //Helper Methods\r\n\r\n    private void recalculateSunTimes() {\r\n\r\n        SkyBoxApplication.cal.setTime(SkyBoxApplication.date); //Calender object given corresponding date\r\n\r\n        SkyBoxApplication.location = new Location(SkyBoxApplication.latitude, SkyBoxApplication.longitude); // Will be entered in coordinates\r\n        SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(SkyBoxApplication.location, SkyBoxApplication.timeZone); // Creates calculator for sun times\r\n\r\n        SkyBoxApplication.sunriseTime = calculator.getOfficialSunriseForDate(SkyBoxApplication.cal); // Gets sunrise based on date and calculator created\r\n        SkyBoxApplication.sunsetTime = calculator.getOfficialSunsetForDate(SkyBoxApplication.cal); // Gets sunset based on date and calculator created\r\n\r\n        LocalTime start = LocalTime.parse(SkyBoxApplication.sunriseTime);\r\n        LocalTime end =  LocalTime.parse(SkyBoxApplication.sunsetTime);\r\n        Long hours = ChronoUnit.HOURS.between(start, end);\r\n        slider.setMax(hours);\r\n    }\r\n\r\n    public void sunMovement() {\r\n        float sliderValue = (float) slider.getValue();\r\n        if(sliderValue == .5)\r\n        {\r\n            changeMinute(SkyBoxApplication.sunriseTime, 30);\r\n            //call method to move sun here\r\n        }\r\n        else if(sliderValue >= 0 && sliderValue < 1)\r\n        {\r\n            //No time changes for hour 0\r\n            changeHour(0);\r\n\r\n            //Sun Stuff:\r\n            //Starting point for sun\r\n        }\r\n        else if(sliderValue == 1.5)\r\n        {\r\n            //change time\r\n            changeMinute(currentTime,30);\r\n\r\n            //change sun\r\n            //sun.translateXY blah blah blah\r\n        }\r\n        else if(sliderValue >= 1 && sliderValue < 2)\r\n        {\r\n            changeHour(1);\r\n        }\r\n        else if(sliderValue == 2.5)\r\n        {\r\n            changeMinute(currentTime,30);\r\n        }\r\n        else if(sliderValue >= 2 && sliderValue < 3)\r\n        {\r\n            changeHour(2);\r\n        }\r\n        else if(sliderValue == 3.5)\r\n        {\r\n            changeMinute(currentTime,30);\r\n        }\r\n        else if(sliderValue >= 3 && sliderValue < 4)\r\n        {\r\n            changeHour(3);\r\n        }\r\n        else if(sliderValue == 4.5)\r\n        {\r\n            changeMinute(currentTime,30);\r\n        }\r\n        else if(sliderValue >= 4 && sliderValue < 5)\r\n        {\r\n            changeHour(4);\r\n        }\r\n        else if(sliderValue == 5.5)\r\n        {\r\n            changeMinute(currentTime,30);\r\n        }\r\n        else if(sliderValue >= 5 && sliderValue < 6)\r\n        {\r\n            changeHour(5);\r\n        }\r\n        else if(sliderValue == 6.5)\r\n        {\r\n            changeMinute(currentTime, 30);\r\n        }\r\n        else if(sliderValue >= 6 && sliderValue < 7)\r\n        {\r\n            changeHour(6);\r\n        }\r\n        else if(sliderValue == 7.5)\r\n        {\r\n            changeMinute(currentTime,30);\r\n        }\r\n        else if(sliderValue >= 7 && sliderValue < 8)\r\n        {\r\n            changeHour(7);\r\n        }\r\n        else if(sliderValue == 8.5)\r\n        {\r\n            changeMinute(currentTime,30);\r\n        }\r\n        else if(sliderValue >= 8 && sliderValue < 9)\r\n        {\r\n            changeHour(8);\r\n        }\r\n        else if(sliderValue == 9.5)\r\n        {\r\n            changeMinute(currentTime,30);\r\n        }\r\n        else if(sliderValue >= 9 && sliderValue < 10)\r\n        {\r\n            changeHour(9);\r\n        }\r\n        else if(sliderValue == 10.5)\r\n        {\r\n            changeMinute(currentTime,30);\r\n        }\r\n        else if(sliderValue >= 10 && sliderValue < 11)\r\n        {\r\n            changeHour(10);\r\n\r\n        }\r\n        else if(sliderValue == 11)\r\n        {\r\n            changeHour(11);\r\n        }\r\n        System.out.println(sliderValue + \" \");\r\n\r\n    }\r\n\r\n    public void changeHour(int n){\r\n        String startTime = SkyBoxApplication.sunriseTime;\r\n        String[] wholeTime = startTime.split(\":\");\r\n        int hour = Integer.parseInt(wholeTime[0]);\r\n        int current = hour + n;\r\n        StringBuilder timeMaker = new StringBuilder(current + \":\" + wholeTime[1]);\r\n        currentTime = timeMaker.toString();\r\n        currentTimeLabel.setText(currentTime);\r\n        System.out.println(currentTime);\r\n    }\r\n\r\n    public void changeMinute(String currentTime, int n){\r\n        String[] wholeTime = currentTime.split(\":\");\r\n        int mins = Integer.parseInt(wholeTime[1]);\r\n        int current = mins + n;\r\n        StringBuilder timeMaker = new StringBuilder(wholeTime[0] + \":\" + current);\r\n        currentTime = timeMaker.toString();\r\n        currentTimeLabel.setText(currentTime);\r\n        System.out.println(currentTime);\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyBoxController.java b/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyBoxController.java
+--- a/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyBoxController.java	(revision 3248ad92e3de43d2f50df327dba8c8ebf59390ac)
++++ b/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyBoxController.java	(date 1647568949183)
+@@ -5,7 +5,6 @@
+ import javafx.event.ActionEvent;
+ import javafx.fxml.FXML;
+ import javafx.scene.Group;
+-import javafx.scene.Node;
+ import javafx.scene.control.Button;
+ import javafx.scene.control.DatePicker;
+ import javafx.scene.control.Slider;
+@@ -13,22 +12,26 @@
+ import javafx.scene.control.Label;
+ import javafx.scene.layout.AnchorPane;
+ import javafx.scene.layout.Pane;
++import javafx.scene.paint.Color;
++import javafx.scene.paint.PhongMaterial;
++import javafx.scene.shape.Box;
+ import javafx.stage.Stage;
+ 
+ import javax.swing.JOptionPane;
+ 
+ import java.io.IOException;
+ import java.text.DateFormat;
++import java.text.DecimalFormat;
+ import java.text.ParseException;
+ import java.text.SimpleDateFormat;
+ import java.time.LocalTime;
+ import java.time.temporal.ChronoUnit;
+-import java.util.Collection;
+ 
+-import static com.example.skyboxjavafxtester.SkyBoxApplication.skyboxImage;
++import static com.example.skyboxjavafxtester.SkyBoxApplication.clear;
++import static com.example.skyboxjavafxtester.SkyBoxApplication.sunTrajectory;
+ 
+ 
+-public class SkyBoxController{
++public class SkyBoxController {
+ 
+     @FXML
+     private static Pane skyboxPane;
+@@ -49,7 +52,7 @@
+     @FXML
+     private TextField theLocationPicker;
+     @FXML
+-    private Button returnOnInvestment;
++    private Button paybackPeriod;
+     @FXML
+     private Button optimalPanels;
+     @FXML
+@@ -66,7 +69,10 @@
+     private Button addAll;
+ 
+     private static String currentTime;
+-    private Group root;
++    private static String convertedSunrise;
++    private static String convertedSunset;
++    private static Boolean pressed = false;
++    private static Boolean pm = false;
+ 
+ 
+     @FXML
+@@ -77,12 +83,15 @@
+         //Initialize Slider Ticks
+         LocalTime start = LocalTime.parse(SkyBoxApplication.sunriseTime);
+         LocalTime end =  LocalTime.parse(SkyBoxApplication.sunsetTime);
+-        Long hours = ChronoUnit.HOURS.between(start, end);//# of mins between
+-        slider.setMax(hours); //Gives 11 ticks.... 11 hours between sunrise and sunset
++        Long hoursBetweenRiseSet = ChronoUnit.HOURS.between(start, end);
++        slider.setMax(hoursBetweenRiseSet + 1);
+ 
+-        //Initialize currentTime
+-        changeHour(6);
+-        currentTimeLabel.setText(currentTime);
++        //Initialize currentTime and current sun position with the time
++        changeHour(6, 0);
++        sunTrajectory(6.0);
++
++        //Create variables to show converted sunrise and sunset strings
++        convertTimes();
+ 
+     }
+ 
+@@ -91,26 +100,19 @@
+         entireFrame.getChildren().addAll(new Pane(skyboxPane), new AnchorPane(uiPane), new AnchorPane(sliderAndDate));
+     }
+ 
+-
+     @FXML
+     protected Pane setSkyboxPane() throws ParseException {
+-        Group skyboxGroup = new Group();
+-        Group skyBox = SkyBoxApplication.createSkybox(skyboxGroup);
+-
+-        //TODO pretty sure we need to pull in the details of the skybox in createskybox() and pass them to be added to the skybox pane group below.
+-
+-
+-
+-        Group sun = SkyBoxApplication.sunCreation(); //creating sun
+-
++        Group skybox = new Group();
++        SkyBoxApplication.sunCreation(); //creating sun
++        skyboxPane = new Pane(SkyBoxApplication.sun, skybox);
+         SkyBoxApplication.startParams(); // Setting start date, location, sunset/sunrise times
+         Group panelsWHouse = SkyBoxApplication.models(); //Creating all models for the scene
+-        SkyBoxApplication.constructWorld(skyBox); // Construct the empty SkyBox group
+-        skyboxGroup.getChildren().addAll(skyBox, sun, panelsWHouse);
+ 
+-        skyboxPane = new Pane(sun, skyboxGroup);
++        skybox.getChildren().addAll(SkyBoxApplication.sun, panelsWHouse);
++        SkyBoxApplication.constructWorld(skybox); // Construct the empty SkyBox group
++
+         //THIS causes an error: Duplicate children added so i commented it out. Its being out in skyboxPane above
+-     //   skyboxPane.getChildren().add(skybox);
++        //skyboxPane.getChildren().add(skybox);
+ 
+ 
+         //Heres where we do the set up camera and background?
+@@ -129,9 +131,6 @@
+         return skyboxPane;
+     }
+ 
+-
+-
+-
+     //Methods for buttons
+     public void getDate(ActionEvent actionEvent) throws ParseException {
+         String newDate = datePicker.getValue().toString();
+@@ -152,7 +151,20 @@
+         recalculateSunTimes();
+     }
+ 
+-    public void showROI(ActionEvent actionEvent) {
++    public void showPP(ActionEvent actionEvent) {
++        DecimalFormat dc = new DecimalFormat("0.00");
++        int panelCost = 550; //Price of each solar panel
++        int groundPanelCost = 1100; //Price of each Ground solar panel
++        int maintenance = 200; //Cost of maintenance, should me serviced 2x a year
++        int installCost = 4000; //Labor cost
++        int costPerMonth = 100; //Cost per month to spend
++        double averageMonthlyElectricBill = 115.49; // Price of average US Electric bill
++
++        double pp = ((panelCost * 4) + (groundPanelCost * 2) + installCost + (costPerMonth * 12) + (maintenance * 2)) / (averageMonthlyElectricBill * 12);
++
++        String result = "The Payback Period is: " + dc.format(pp) + " Years";
++        JOptionPane.showMessageDialog(null, result, "Payback Period", JOptionPane.PLAIN_MESSAGE);
++
+     }
+ 
+     public void removeAllPanels(ActionEvent actionEvent) {
+@@ -168,6 +180,33 @@
+     }
+ 
+     public void showIntensityLevels(ActionEvent actionEvent) {
++        double solarP1Intensity, solarP2Intensity, solarP3Intensity, solarP4Intensity, solarGP1Intensity, solarGP2Intensity;
++        solarP1Intensity = SkyBoxApplication.calculateLightIntesity((Box) SkyBoxApplication.solarPanelOnewR.getChildren().get(1), SkyBoxApplication.sun);
++        solarP2Intensity = SkyBoxApplication.calculateLightIntesity((Box) SkyBoxApplication.solarPanelTwowR.getChildren().get(1), SkyBoxApplication.sun);
++        solarP3Intensity = SkyBoxApplication.calculateLightIntesity((Box) SkyBoxApplication.solarPanelThreewR.getChildren().get(1), SkyBoxApplication.sun);
++        solarP4Intensity = SkyBoxApplication.calculateLightIntesity((Box) SkyBoxApplication.solarPanelFourwR.getChildren().get(1), SkyBoxApplication.sun);
++        solarGP1Intensity = SkyBoxApplication.calculateLightIntesity((Box) SkyBoxApplication.gPanelOneBox.getChildren().get(1), SkyBoxApplication.sun);
++        solarGP2Intensity = SkyBoxApplication.calculateLightIntesity((Box) SkyBoxApplication.gPanelTwoBox.getChildren().get(1), SkyBoxApplication.sun);
++        if(pressed == false)
++        {
++            getLevels(solarP1Intensity, (Box) SkyBoxApplication.solarPanelOnewR.getChildren().get(1));
++            getLevels(solarP2Intensity, (Box) SkyBoxApplication.solarPanelTwowR.getChildren().get(1));
++            getLevels(solarP3Intensity, (Box) SkyBoxApplication.solarPanelThreewR.getChildren().get(1));
++            getLevels(solarP4Intensity, (Box) SkyBoxApplication.solarPanelFourwR.getChildren().get(1));
++            getLevels(solarGP1Intensity, (Box) SkyBoxApplication.gPanelOneBox.getChildren().get(1));
++            getLevels(solarGP2Intensity, (Box) SkyBoxApplication.gPanelTwoBox.getChildren().get(1));
++            pressed = true;
++        }
++        if(pressed == true) {
++            ((Box) SkyBoxApplication.solarPanelOnewR.getChildren().get(1)).setMaterial(clear);
++            ((Box) SkyBoxApplication.solarPanelTwowR.getChildren().get(1)).setMaterial(clear);
++            ((Box) SkyBoxApplication.solarPanelThreewR.getChildren().get(1)).setMaterial(clear);
++            ((Box) SkyBoxApplication.solarPanelFourwR.getChildren().get(1)).setMaterial(clear);
++            ((Box) SkyBoxApplication.gPanelOneBox.getChildren().get(1)).setMaterial(clear);
++            ((Box) SkyBoxApplication.gPanelTwoBox.getChildren().get(1)).setMaterial(clear);
++
++            pressed = false;
++        }
+     }
+ 
+     public void showSunTimes(ActionEvent actionEvent) {
+@@ -176,8 +215,8 @@
+                 "On " + SkyBoxApplication.date.toString() + "\n"
+                         + "at latitude: " + SkyBoxApplication.latitude + ", and longitude: " + SkyBoxApplication.longitude + ":\n"
+                         + "\n"
+-                        + "Sunrise: " + SkyBoxApplication.sunriseTime + "\n"
+-                        + "Sunset: " + SkyBoxApplication.sunsetTime;
++                        + "Sunrise: " + convertedSunrise + "\n"
++                        + "Sunset: " + convertedSunset;
+ 
+         JOptionPane.showMessageDialog(null, sunTimes, "Sunrise/Sunset Times", JOptionPane.PLAIN_MESSAGE);
+     }
+@@ -228,6 +267,22 @@
+     }
+ 
+     public void highlightOptimalPanels(ActionEvent actionEvent) {
++
++        if(pressed == false)
++        {
++            SkyBoxApplication.colorSetOpt(); //Need to figure out a way to toggle on/off. Just toggles on
++            pressed = true;
++        }
++        else if(pressed = true) {
++            ((Box) SkyBoxApplication.solarPanelOnewR.getChildren().get(1)).setMaterial(clear);
++            ((Box) SkyBoxApplication.solarPanelTwowR.getChildren().get(1)).setMaterial(clear);
++            ((Box) SkyBoxApplication.solarPanelThreewR.getChildren().get(1)).setMaterial(clear);
++            ((Box) SkyBoxApplication.solarPanelFourwR.getChildren().get(1)).setMaterial(clear);
++            ((Box) SkyBoxApplication.gPanelOneBox.getChildren().get(1)).setMaterial(clear);
++            ((Box) SkyBoxApplication.gPanelTwoBox.getChildren().get(1)).setMaterial(clear);
++
++            pressed = false;
++        }
+     }
+ 
+     public void getTimeZone(ActionEvent actionEvent) {
+@@ -254,132 +309,240 @@
+     }
+ 
+     public void sunMovement() {
+-        float sliderValue = (float) slider.getValue();
+-        if(sliderValue == .5)
++
++        double sliderValue = slider.getValue();
++        if(sliderValue == 0)
+         {
+-            changeMinute(SkyBoxApplication.sunriseTime, 30);
+-            //call method to move sun here
++            changeHour(0, 0);
++            SkyBoxApplication.sunTrajectory(0.0);
+         }
+-        else if(sliderValue >= 0 && sliderValue < 1)
++        else if(sliderValue == .5)
+         {
+-            //No time changes for hour 0
+-            changeHour(0);
+-
+-            //Sun Stuff:
+-            //Starting point for sun
++            changeHour(0, 30);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+         else if(sliderValue == 1.5)
+         {
+-            //change time
+-            changeMinute(currentTime,30);
+-
+-            //change sun
+-            //sun.translateXY blah blah blah
++            changeHour(1, 30);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+-        else if(sliderValue >= 1 && sliderValue < 2)
++        else if(sliderValue == 1)
+         {
+-            changeHour(1);
++            changeHour(1, 0);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+         else if(sliderValue == 2.5)
+         {
+-            changeMinute(currentTime,30);
++            changeHour(2, 30);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+-        else if(sliderValue >= 2 && sliderValue < 3)
++        else if(sliderValue == 2)
+         {
+-            changeHour(2);
++            changeHour(2, 0);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+         else if(sliderValue == 3.5)
+         {
+-            changeMinute(currentTime,30);
++            changeHour(3, 30);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+-        else if(sliderValue >= 3 && sliderValue < 4)
++        else if(sliderValue == 3)
+         {
+-            changeHour(3);
++            changeHour(3, 0);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+         else if(sliderValue == 4.5)
+         {
+-            changeMinute(currentTime,30);
++            changeHour(4, 30);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+-        else if(sliderValue >= 4 && sliderValue < 5)
++        else if(sliderValue == 4)
+         {
+-            changeHour(4);
++            changeHour(4, 0);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+         else if(sliderValue == 5.5)
+         {
+-            changeMinute(currentTime,30);
++            changeHour(5, 30);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+-        else if(sliderValue >= 5 && sliderValue < 6)
++        else if(sliderValue == 5)
+         {
+-            changeHour(5);
++            changeHour(5, 0);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+         else if(sliderValue == 6.5)
+         {
+-            changeMinute(currentTime, 30);
++            changeHour(6, 30);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+-        else if(sliderValue >= 6 && sliderValue < 7)
++        else if(sliderValue == 6)
+         {
+-            changeHour(6);
++            changeHour(6, 0);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+         else if(sliderValue == 7.5)
+         {
+-            changeMinute(currentTime,30);
++            changeHour(7, 30);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+-        else if(sliderValue >= 7 && sliderValue < 8)
++        else if(sliderValue == 7)
+         {
+-            changeHour(7);
++            changeHour(7, 0);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+         else if(sliderValue == 8.5)
+         {
+-            changeMinute(currentTime,30);
++            changeHour(8, 30);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+-        else if(sliderValue >= 8 && sliderValue < 9)
++        else if(sliderValue == 8)
+         {
+-            changeHour(8);
++            changeHour(8, 0);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+         else if(sliderValue == 9.5)
+         {
+-            changeMinute(currentTime,30);
++            changeHour(9, 30);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+-        else if(sliderValue >= 9 && sliderValue < 10)
++        else if(sliderValue == 9)
+         {
+-            changeHour(9);
++            changeHour(9, 0);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+         else if(sliderValue == 10.5)
+         {
+-            changeMinute(currentTime,30);
++            changeHour(10, 30);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+-        else if(sliderValue >= 10 && sliderValue < 11)
++        else if(sliderValue == 10)
+         {
+-            changeHour(10);
++            changeHour(10, 0);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+ 
+         }
+         else if(sliderValue == 11)
+         {
+-            changeHour(11);
++            changeHour(11, 0);
++            SkyBoxApplication.sunTrajectory(sliderValue);
++        }
++        else if(sliderValue == 11.5)
++        {
++            changeHour(11, 30);
++            SkyBoxApplication.sunTrajectory(sliderValue);
++        }
++        else if(sliderValue == 12)
++        {
++            changeHour(12, 0);
++            SkyBoxApplication.sunTrajectory(sliderValue);
++        }
++        else if(sliderValue == 12.5)
++        {
++            changeHour(12, 30);
++            SkyBoxApplication.sunTrajectory(sliderValue);
+         }
+-        System.out.println(sliderValue + " ");
++        else if(sliderValue == 13)
++        {
++            changeHour(13, 0);
++            SkyBoxApplication.sunTrajectory(sliderValue);
++        }
+ 
+     }
+ 
+-    public void changeHour(int n){
++    public void changeHour(int currentHour, int minToAdd){
+         String startTime = SkyBoxApplication.sunriseTime;
+         String[] wholeTime = startTime.split(":");
++
+         int hour = Integer.parseInt(wholeTime[0]);
+-        int current = hour + n;
++        int current = hour + currentHour;
++
+         StringBuilder timeMaker = new StringBuilder(current + ":" + wholeTime[1]);
+         currentTime = timeMaker.toString();
+-        currentTimeLabel.setText(currentTime);
+-        System.out.println(currentTime);
++        changeMinute(currentTime, minToAdd, false);
+     }
+ 
+-    public void changeMinute(String currentTime, int n){
++    public void changeMinute(String currentTime, int n, boolean pm){
+         String[] wholeTime = currentTime.split(":");
++        int hour = Integer.parseInt(wholeTime[0]);
++        if(hour > 11){
++            pm = true;
++        }
+         int mins = Integer.parseInt(wholeTime[1]);
+         int current = mins + n;
+-        StringBuilder timeMaker = new StringBuilder(wholeTime[0] + ":" + current);
+-        currentTime = timeMaker.toString();
+-        currentTimeLabel.setText(currentTime);
+-        System.out.println(currentTime);
++        if(!pm) {
++            StringBuilder timeMaker = new StringBuilder(wholeTime[0] + ":" + current + " AM");
++            currentTime = timeMaker.toString();
++            currentTimeLabel.setText(currentTime);
++        }
++        else {
++            if(hour > 12) { //Converting to clock time
++                hour = hour - 12;
++                StringBuilder timeMaker = new StringBuilder(hour + ":" + current + " PM");
++                currentTime = timeMaker.toString();
++                currentTimeLabel.setText(currentTime);
++            }
++            else {
++                StringBuilder timeMaker = new StringBuilder(wholeTime[0] + ":" + current + " PM");
++                currentTime = timeMaker.toString();
++                currentTimeLabel.setText(currentTime);
++            }
++        }
+     }
+ 
++    private void convertTimes(){
++        String startTime = SkyBoxApplication.sunriseTime;
++        String[] wholeTime = startTime.split(":");
++
++        String endTime = SkyBoxApplication.sunsetTime;
++        String[] wholeTimeTwo = endTime.split(":");
++
++        int hourStart = Integer.parseInt(wholeTime[0]);
++        int minsStart = Integer.parseInt(wholeTime[1]);
++
++        int hourEnd = Integer.parseInt(wholeTimeTwo[0]);
++        int minsEnd = Integer.parseInt(wholeTimeTwo[1]);
++
++        if(hourStart > 12) { //Converting to clock time
++            hourStart = hourStart - 12;
++            StringBuilder timeMaker = new StringBuilder(hourStart + ":" + minsStart + " AM");
++            convertedSunrise = timeMaker.toString();
++        }
++        else{
++            StringBuilder timeMaker = new StringBuilder(wholeTime[0] + ":" + minsStart + " AM");
++            convertedSunrise = timeMaker.toString();
++        }
++        if(hourEnd > 12) { //Converting to clock time
++            hourEnd = hourEnd - 12;
++            StringBuilder timeMaker = new StringBuilder(hourEnd + ":" + minsEnd + " PM");
++            convertedSunset = timeMaker.toString();
++        }
++        else{
++            StringBuilder timeMaker = new StringBuilder(wholeTimeTwo[0] + ":" + minsEnd + " PM");
++            convertedSunset = timeMaker.toString();
++        }
++
++    }
++
++    private void getLevels(double intensity, Box box){
++
++        PhongMaterial low = new PhongMaterial(Color.GREEN);
++        PhongMaterial medium = new PhongMaterial(Color.ORANGE);
++        PhongMaterial high = new PhongMaterial(Color.RED);
++        PhongMaterial veryHigh = new PhongMaterial(Color.DARKRED);
++
++        if(intensity < 10){
++            box.setMaterial(low);
++        }
++        else if(intensity > 10 && intensity < 20) {
++            box.setMaterial(medium);
++        }
++        else if(intensity > 20 && intensity < 30) {
++            box.setMaterial(high);
++        }
++        else if(intensity > 30) {
++            box.setMaterial(veryHigh);
++        }
++
++    }
+ }
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"6cee0f4c-ae2b-4f37-92d9-62094ef5f861\" name=\"Changes\" comment=\"\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxController.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxController.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyboxApplication.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyboxApplication.class\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyboxController.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyboxController.class\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Kotlin Class\" />\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"UIConnected\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitSEFilterConfiguration\">\r\n    <file-type-list>\r\n      <filtered-out-file-type name=\"LOCAL_BRANCH\" />\r\n      <filtered-out-file-type name=\"REMOTE_BRANCH\" />\r\n      <filtered-out-file-type name=\"TAG\" />\r\n      <filtered-out-file-type name=\"COMMIT_BY_MESSAGE\" />\r\n    </file-type-list>\r\n  </component>\r\n  <component name=\"HighlightingSettingsPerFile\">\r\n    <setting file=\"file://$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyBoxApplication.java\" root0=\"FORCE_HIGHLIGHTING\" />\r\n    <setting file=\"file://$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/module-info.java\" root0=\"FORCE_HIGHLIGHTING\" />\r\n    <setting file=\"file://$PROJECT_DIR$/SkyBoxJavaFX-Tester/pom.xml\" root0=\"FORCE_HIGHLIGHTING\" />\r\n  </component>\r\n  <component name=\"MarkdownSettingsMigration\">\r\n    <option name=\"stateVersion\" value=\"1\" />\r\n  </component>\r\n  <component name=\"MavenImportPreferences\">\r\n    <option name=\"generalSettings\">\r\n      <MavenGeneralSettings>\r\n        <option name=\"useMavenConfig\" value=\"true\" />\r\n      </MavenGeneralSettings>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"25Cu3oqloPjbZ4OsgWQGP9tBJBe\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\">\r\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">\r\n    <property name=\"ASKED_ADD_EXTERNAL_FILES\" value=\"true\" />\r\n    <property name=\"ASKED_SHARE_PROJECT_CONFIGURATION_FILES\" value=\"true\" />\r\n    <property name=\"GitStage.ChangesTree.GroupingKeys\" value=\"directory&#10;module&#10;repository\" />\r\n    <property name=\"RunOnceActivity.OpenProjectViewOnStart\" value=\"true\" />\r\n    <property name=\"RunOnceActivity.ShowReadmeOnStart\" value=\"true\" />\r\n    <property name=\"SHARE_PROJECT_CONFIGURATION_FILES\" value=\"true\" />\r\n    <property name=\"WebServerToolWindowFactoryState\" value=\"false\" />\r\n    <property name=\"last_opened_file_path\" value=\"$PROJECT_DIR$/../SolarOptimization/src/main/resources/com/example/solaroptimization/skybox-viewUI.fxml\" />\r\n    <property name=\"node.js.detected.package.eslint\" value=\"true\" />\r\n    <property name=\"node.js.detected.package.tslint\" value=\"true\" />\r\n    <property name=\"node.js.selected.package.eslint\" value=\"(autodetect)\" />\r\n    <property name=\"node.js.selected.package.tslint\" value=\"(autodetect)\" />\r\n    <property name=\"project.structure.last.edited\" value=\"Modules\" />\r\n    <property name=\"project.structure.proportion\" value=\"0.15\" />\r\n    <property name=\"project.structure.side.proportion\" value=\"0.2\" />\r\n    <property name=\"settings.editor.selected.configurable\" value=\"reference.settings.project.maven.importing\" />\r\n  </component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CreateClassDialog.RecentsKey\">\r\n      <recent name=\"com.example.skyboxjavafxtester\" />\r\n    </key>\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\seanz\\workspace\\SeniorCapstone-GroupB\\SkyBoxJavaFX-Tester\\src\\main\\resources\\com\\example\\skyboxjavafxtester\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\">\r\n    <configuration name=\"SkyboxApplication\" type=\"Application\" factoryName=\"Application\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"com.example.skyboxjavafxtester.SkyBoxApplication\" />\r\n      <module name=\"SkyBoxJavaFX-Tester\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration default=\"true\" type=\"JetRunConfigurationType\">\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration default=\"true\" type=\"KotlinStandaloneScriptRunConfigurationType\">\r\n      <option name=\"filePath\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task id=\"LOCAL-00001\" summary=\"UI file started/uploaded. House rotation with everything on/around the house.\">\r\n      <created>1644824743654</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1644824743654</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"UI file started/uploaded. House rotation with everything on/around the house.\">\r\n      <created>1644899137691</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1644899137691</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"House rotate controls. New GroundSolarPanel.3DS file\">\r\n      <created>1644904645932</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1644904645932</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"Code Cleaned and integrated with Anthony patch2\">\r\n      <created>1644963039219</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1644963039219</updated>\r\n    </task>\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"6cee0f4c-ae2b-4f37-92d9-62094ef5f861\" name=\"Changes\" comment=\"\" />\r\n      <created>1645043203204</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1645043203204</updated>\r\n      <workItem from=\"1645043206220\" duration=\"3517000\" />\r\n      <workItem from=\"1645047426714\" duration=\"1272000\" />\r\n      <workItem from=\"1645049055802\" duration=\"219000\" />\r\n      <workItem from=\"1645049338668\" duration=\"113000\" />\r\n      <workItem from=\"1645057272177\" duration=\"4358000\" />\r\n      <workItem from=\"1645156921694\" duration=\"17781000\" />\r\n      <workItem from=\"1645561605767\" duration=\"1078000\" />\r\n      <workItem from=\"1645563715808\" duration=\"664000\" />\r\n      <workItem from=\"1645828800517\" duration=\"26573000\" />\r\n      <workItem from=\"1646283573175\" duration=\"869000\" />\r\n      <workItem from=\"1646382819472\" duration=\"22747000\" />\r\n      <workItem from=\"1646970046628\" duration=\"18988000\" />\r\n      <workItem from=\"1647069487351\" duration=\"26978000\" />\r\n      <workItem from=\"1647568847901\" duration=\"2894000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00005\" summary=\"Accurate sunset and sunrise times from location and date\">\r\n      <created>1645159193328</created>\r\n      <option name=\"number\" value=\"00005\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1645159193328</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00006\" summary=\"Accurate sunset and sunrise times from location and date\">\r\n      <created>1645172071909</created>\r\n      <option name=\"number\" value=\"00006\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00006\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1645172071909</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00007\" summary=\"New Controls and cleaner code\">\r\n      <created>1646213992855</created>\r\n      <option name=\"number\" value=\"00007\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00007\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1646213992855</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00008\" summary=\"New Controls and cleaner code\">\r\n      <created>1646214118286</created>\r\n      <option name=\"number\" value=\"00008\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00008\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1646214118286</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00009\" summary=\"Most Up to Date, most of UI working\">\r\n      <created>1646970082759</created>\r\n      <option name=\"number\" value=\"00009\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00009\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1646970082759</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00010\" summary=\"All UI tools working correctly, Anthonys sun code integrated in but not connected yet\">\r\n      <created>1646975219046</created>\r\n      <option name=\"number\" value=\"00010\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00010\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1646975219046</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00011\" summary=\"All UI tools working correctly, Anthonys sun code integrated in but not connected yet\">\r\n      <created>1646975232510</created>\r\n      <option name=\"number\" value=\"00011\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00011\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1646975232510</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00012\" summary=\"All UI tools working correctly, Anthonys sun code integrated in but not connected yet\">\r\n      <created>1646984092859</created>\r\n      <option name=\"number\" value=\"00012\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00012\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1646984092859</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00013\" summary=\"All UI tools working correctly, Anthonys sun code integrated in but not connected yet\">\r\n      <created>1646984104666</created>\r\n      <option name=\"number\" value=\"00013\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00013\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1646984104666</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00014\" summary=\"All UI tools working correctly, Anthonys sun code integrated in but not connected yet\">\r\n      <created>1646984486988</created>\r\n      <option name=\"number\" value=\"00014\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00014\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1646984486988</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00015\" summary=\"All UI tools working correctly, Anthonys sun code integrated in but not connected yet\">\r\n      <created>1646984773424</created>\r\n      <option name=\"number\" value=\"00015\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00015\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1646984773424</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00016\" summary=\"Optimal Solar Panels Button functional and correct\">\r\n      <created>1647035826490</created>\r\n      <option name=\"number\" value=\"00016\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00016\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1647035826490</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00017\" summary=\"All code integrated and cleaned up\">\r\n      <created>1647567062998</created>\r\n      <option name=\"number\" value=\"00017\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00017\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1647567062999</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00018\" summary=\"Everything working great\">\r\n      <created>1647568074516</created>\r\n      <option name=\"number\" value=\"00018\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00018\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1647568074516</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00019\" summary=\"Everything working great\">\r\n      <created>1647568988733</created>\r\n      <option name=\"number\" value=\"00019\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00019\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1647568988733</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00020\" summary=\"Everything working great\">\r\n      <created>1647570582553</created>\r\n      <option name=\"number\" value=\"00020\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00020\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1647570582553</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"21\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State>\r\n              <option name=\"FILTERS\">\r\n                <map>\r\n                  <entry key=\"branch\">\r\n                    <value>\r\n                      <list>\r\n                        <option value=\"SeanZ-UIStart\" />\r\n                      </list>\r\n                    </value>\r\n                  </entry>\r\n                </map>\r\n              </option>\r\n            </State>\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <option name=\"ADD_EXTERNAL_FILES_SILENTLY\" value=\"true\" />\r\n    <MESSAGE value=\"UI file started/uploaded. House rotation with everything on/around the house.\" />\r\n    <MESSAGE value=\"House rotate controls. New GroundSolarPanel.3DS file\" />\r\n    <MESSAGE value=\"Code Cleaned and integrated with Anthony patch2\" />\r\n    <MESSAGE value=\"Accurate sunset and sunrise times from location and date\" />\r\n    <MESSAGE value=\"New Controls and cleaner code\" />\r\n    <MESSAGE value=\"Most Up to Date, most of UI working\" />\r\n    <MESSAGE value=\"All UI tools working correctly, Anthonys sun code integrated in but not connected yet\" />\r\n    <MESSAGE value=\"Optimal Solar Panels Button functional and correct\" />\r\n    <MESSAGE value=\"All code integrated and cleaned up\" />\r\n    <MESSAGE value=\"Everything working great\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Everything working great\" />\r\n  </component>\r\n  <component name=\"XPathView.XPathProjectComponent\">\r\n    <history />\r\n    <find-history />\r\n  </component>\r\n  <component name=\"XSLT-Support.FileAssociations.UIState\">\r\n    <expand />\r\n    <select />\r\n  </component>\r\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\r\n    <SUITE FILE_PATH=\"coverage/SeniorCapstone_GroupB$SkyboxApplication.ic\" NAME=\"SkyboxApplication Coverage Results\" MODIFIED=\"1642394879393\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"idea\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\">\r\n      <FILTER>com.capstone.skyboxjavafx.*</FILTER>\r\n    </SUITE>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 3248ad92e3de43d2f50df327dba8c8ebf59390ac)
++++ b/.idea/workspace.xml	(date 1647662955740)
+@@ -157,7 +157,7 @@
+       <workItem from="1646382819472" duration="22747000" />
+       <workItem from="1646970046628" duration="18988000" />
+       <workItem from="1647069487351" duration="26978000" />
+-      <workItem from="1647568847901" duration="2894000" />
++      <workItem from="1647568847901" duration="5245000" />
+     </task>
+     <task id="LOCAL-00005" summary="Accurate sunset and sunrise times from location and date">
+       <created>1645159193328</created>
+@@ -271,7 +271,14 @@
+       <option name="project" value="LOCAL" />
+       <updated>1647570582553</updated>
+     </task>
+-    <option name="localTasksCounter" value="21" />
++    <task id="LOCAL-00021" summary="Everything working great">
++      <created>1647574474233</created>
++      <option name="number" value="00021" />
++      <option name="presentableId" value="LOCAL-00021" />
++      <option name="project" value="LOCAL" />
++      <updated>1647574474233</updated>
++    </task>
++    <option name="localTasksCounter" value="22" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
