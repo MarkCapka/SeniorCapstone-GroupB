@@ -1,11 +1,18 @@
 package com.example.skyboxjavafxtester;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableFloatArray;
+import javafx.collections.ObservableIntegerArray;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point3D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
 import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
@@ -33,6 +40,17 @@ import java.util.Date;
 public class SkyBoxApplication extends Application {
 
     private static Image skyboxImage;
+    static Group root = new Group();
+    {
+        try {
+            skyboxImage = new Image(new FileInputStream("C:\\skyboxExample.png"));
+            //TODO confirm if I need this, I THINK it helps with blending the photo together for the skybox corners .
+//           final double width = skyboxImage.getWidth();
+//            final double height = skyboxImage.getHeight();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
     //camera controls and scene settings declarations
     private PerspectiveCamera camera;
     private Group cameraDolly;
@@ -48,6 +66,42 @@ public class SkyBoxApplication extends Application {
     private double mouseOldY;
     private double mouseDeltaX;
     private double mouseDeltaY;
+
+    //setting up for the folding of our image into a skybox
+    private static final Affine affine = new Affine();
+    private static final ImageView
+            top   = new ImageView();
+    private static final ImageView bottom= new ImageView();
+    private static final ImageView left  = new ImageView();
+    private static final ImageView right = new ImageView();
+    private static final ImageView back  = new ImageView();
+    private static final ImageView front = new ImageView();
+    private static double size;
+
+
+    {
+        top.setId("top ");
+        bottom.setId("bottom ");
+        left.setId("left ");
+        right.setId("right ");
+        back.setId("back ");
+        front.setId("front ");
+    }
+
+    //aggregating these views into a list
+    private static final ImageView[] views = new ImageView[]
+            {
+                    top, left, back, right, front, bottom
+            };
+    private Image topImg, bottomImg, leftImg, rightImg, frontImg, backImg, singleImg;
+
+
+    //private static final double depth = skyboxImage.getDepth(); //MAY NOT NEED FOR cube since shoudl scale evenly
+    private static final ObservableIntegerArray faces = FXCollections.observableIntegerArray();
+    private static final ObservableFloatArray texCords = FXCollections.observableFloatArray();
+    private static final ObservableFloatArray points = FXCollections.observableFloatArray();
+
+
 
     //Model Import Declaration
     private static final File house = new File("C:\\House.3ds");
@@ -91,20 +145,70 @@ public class SkyBoxApplication extends Application {
     static PhongMaterial optimal = new PhongMaterial(Color.GREEN);
     static PhongMaterial subOptimal = new PhongMaterial(Color.RED);
 
-    static Group root = new Group(); //TODO: make thie borderpane the root, but load the fxmlL
 
-    public static void constructWorld(Group skyBox) {
-        AmbientLight light = new AmbientLight(Color.rgb(160, 160, 160));
-
-        PointLight pl = new PointLight();
-        pl.setTranslateX(1000);
-        pl.setTranslateY(-100);
-        pl.setTranslateZ(-100);
-        skyBox.getChildren().add(pl);
-
-        //TODO delete this once mesh is implemented -- Mark: 3/11
-        skyBox.getChildren().add(light);
+    private static void recalculateSize(double size) {
+        double factor = Math.floor(getSize()/size);
+        setSize(size * factor);
     }
+    //build the box through translations and folding
+    protected static Group layoutViews()
+    {
+        for(ImageView view : views)
+        {
+            view.setFitWidth(getSize());
+            view.setFitHeight(getSize());
+        }
+
+
+        back.setTranslateX(-0.5 * getSize());
+        back.setTranslateY(-0.5 * getSize());
+        back.setTranslateZ(-0.5 * getSize());
+
+
+        front.setTranslateX(-0.5 * getSize());
+        front.setTranslateY(-0.5 * getSize());
+        front.setTranslateZ(0.5 * getSize());
+        front.setRotationAxis(Rotate.Z_AXIS);
+        front.setRotate(-180);
+        front.getTransforms().add(new Rotate(180,front.getFitHeight() / 2, 0,0, Rotate.X_AXIS));
+        front.setTranslateY(front.getTranslateY() - getSize());
+
+        top.setTranslateX(-0.5 * getSize());
+        top.setTranslateY(-1 * getSize());
+        top.setRotationAxis(Rotate.X_AXIS);
+        top.setRotate(-90);
+
+        bottom.setTranslateX(-0.5 * getSize());
+        bottom.setTranslateY(0);
+        bottom.setRotationAxis(Rotate.X_AXIS);
+        bottom.setRotate(90);
+
+        left.setTranslateX(-1 * getSize());
+        left.setTranslateY(-0.5 * getSize());
+        left.setRotationAxis(Rotate.Y_AXIS);
+        left.setRotate(90);
+
+        right.setTranslateX(0);
+        right.setTranslateY(-0.5 * getSize());
+        right.setRotationAxis(Rotate.Y_AXIS);
+        right.setRotate(-90);
+
+        Group layout = new Group();
+        layout.getChildren().addAll(views);
+
+        return layout;
+    }
+
+    public static final double getSize()
+    {
+        return size;
+    }
+
+    public static final void setSize(double value)
+    {
+        size = value;
+    }
+
 
     @Override
     public void start(Stage stage) throws IOException, ParseException {
@@ -112,38 +216,40 @@ public class SkyBoxApplication extends Application {
         Pane entireFrame = new Pane();
         Pane skyboxPane = new Pane();
         // This needs to set up the inside of the skyboxPane?
-        camera = new PerspectiveCamera(true);
-        camera.setNearClip(0.1);
-        camera.setFarClip(30000.0);
 
+
+        // translations dolly, moves camera, rotates, etc
+
+        // rotation transforms
 
 
         try {
             skyboxPane = SkyBoxController.setSkyboxPane();
+            cameraDolly = new Group();
+            cameraDolly.setTranslateZ(-1500);
+            cameraDolly.setTranslateY(400);
+            cameraDolly.setTranslateX(500);            camera = new PerspectiveCamera(true); //TODO could make into skyboxCamera and regular perspective camera to make sure it is adjusting visuals corretly
+            camera.setNearClip(0.1);
+            camera.setFarClip(30000.0);
+            skyboxPane.getChildren().addAll(cameraDolly);
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
 
 
-        skyboxPane.getChildren().addAll(camera);
+
         entireFrame.getChildren().addAll(skyboxPane);
-        entireFrame.getChildren().add( fxmlLoader.load());
+
 
 
         //sceneRoot.getScene().setCamera(camera);
 
-        // translations dolly, moves camera, rotates, etc
-        cameraDolly = new Group();
-        cameraDolly.setTranslateZ(-1500);
-        cameraDolly.setTranslateY(200);
-        cameraDolly.setTranslateX(200);
-        // rotation transforms
 
         Group turn = new Group();
         Rotate xRotate = new Rotate(0, 0, 0, 0, Rotate.X_AXIS);
         Rotate yRotate = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);
-        camera.getTransforms().addAll(xRotate);
+        cameraDolly.getTransforms().addAll(xRotate);
         turn.getTransforms().addAll(yRotate);
 
 
@@ -286,6 +392,8 @@ public class SkyBoxApplication extends Application {
             yRotate.setAngle(((yRotate.getAngle() - mouseDeltaX * 0.2) % 360 + 540) % 360 - 180); // +
             xRotate.setAngle(((xRotate.getAngle() + mouseDeltaY * 0.2) % 360 + 540) % 360 - 180); // -
         });
+
+        entireFrame.getChildren().add( fxmlLoader.load());
         root.getScene().setCamera(camera);
         root.getChildren().add(cameraDolly);
         cameraDolly.getChildren().add(turn);
@@ -352,13 +460,15 @@ public class SkyBoxApplication extends Application {
         return box;
     }  // Example converted from JavaFX for Dummies from triangle mesh to cube mesh
 
-    public static Group createSkybox(Group skyboxGroup)
+
+
+    public static Group createSkybox(Group layoutViews)
     {
         TriangleMesh cube = new TriangleMesh();
         //TODO NOTE: this is messy since i've been trying a few different approahces.
-        Image textureImage = skyboxImage;
+        Image textureImage = skyboxImage;//layoutViews(skyboxImage);
         // loadImageViews(); //folded skybox
-//
+        //layoutViews();
 //
 //        TriangleMesh cube = createMesh(WIDTH, HEIGHT, DEPTH);
 //        calculatePoints();
@@ -385,29 +495,31 @@ public class SkyBoxApplication extends Application {
 
         box.setTranslateX(300);
         box.setTranslateY(100);
-       // box.setTranslateZ(500);
-        box.setScaleX(5);
-        box.setScaleY(5);
-        box.setScaleZ(5);
+        box.setTranslateZ(-500);
+        box.setScaleX(1.5);
+        box.setScaleY(1.5);
+        box.setScaleZ(1.5);
 
 
 
 //        cubeMesh.setTranslateX(1000);
 //        cubeMesh.setTranslateY(400);
 //        cubeMesh.setTranslateZ(200);
-        box.setCullFace(CullFace.FRONT);
+        box.setCullFace(CullFace.NONE);
 //        cubeMesh.setCullFace(CullFace.NONE);
 //        cubeMesh.setMaterial(skyboxMaterial);
         //TODO  maybe try something like:
         //getpoints/add points, etc... then adding into start or initialize?
 
         //skyboxGroup.getChildren().add(cubeMesh);
-        skyboxGroup.getChildren().add(box);
+       layoutViews.getChildren().add(box);
 
 
 
-        return skyboxGroup;
+        return layoutViews;
     }
+
+
 
     private void setCenters(Rotate r, Group beingRotated) {
         r.setPivotX(beingRotated.getBoundsInLocal().getCenterX());
@@ -498,10 +610,10 @@ public class SkyBoxApplication extends Application {
         sphere.setMaterial(material);
 
         // create a point light
-        PointLight pointlight = new PointLight();
+//        PointLight pointlight = new PointLight();
 
         // create a Group
-        sun = new Group(sphere, pointlight);
+
         // translate the sphere to a position
         AmbientLight light = new AmbientLight(Color.rgb(160, 160, 160));
 
@@ -509,17 +621,17 @@ public class SkyBoxApplication extends Application {
         pl.setTranslateX(1000);
         pl.setTranslateY(-100);
         pl.setTranslateZ(-100);
-        sun.getChildren().add(pl);
+       // sun.getChildren().add(pl);
 
         //TODO delete this once mesh is implemented -- Mark: 3/11
-        sun.getChildren().add(light);
+       // sun.getChildren().add(light);
         sphere.setTranslateX(100);
         sphere.setTranslateY(-200);
-        pointlight.setTranslateZ(-1000);
-        pointlight.setTranslateX(+1000);
-        pointlight.setTranslateY(+10);
-        pointlight.setColor(Color.GREENYELLOW);
-
+        pl.setTranslateZ(-1000);
+        pl.setTranslateX(+1000);
+        pl.setTranslateY(+10);
+        pl.setColor(Color.GREENYELLOW);
+        sun = new Group(sphere, pl, light);
         return sun;
     }
 
@@ -849,42 +961,42 @@ public class SkyBoxApplication extends Application {
 
         for(int i = 0; i < totalHours.length; i++){
             sunTrajectory(totalHours[i]);
-            total += calculateLightIntesity((Box) solarPanelOnewR.getChildren().get(1), sun);
+            total += calculateLightIntensity((Box) solarPanelOnewR.getChildren().get(1), sun);
         }
         averageP1 = total / 12;
 
         total = 0;
         for(int i = 0; i < totalHours.length; i++){
             sunTrajectory(totalHours[i]);
-            total += calculateLightIntesity((Box) solarPanelTwowR.getChildren().get(1), sun);
+            total += calculateLightIntensity((Box) solarPanelTwowR.getChildren().get(1), sun);
         }
         averageP2 = total / 12;
 
         total = 0;
         for(int i = 0; i < totalHours.length; i++){
             sunTrajectory(totalHours[i]);
-            total += calculateLightIntesity((Box) solarPanelThreewR.getChildren().get(1), sun);
+            total += calculateLightIntensity((Box) solarPanelThreewR.getChildren().get(1), sun);
         }
         averageP3 = total / 12;
 
         total = 0;
         for(int i = 0; i < totalHours.length; i++){
             sunTrajectory(totalHours[i]);
-            total += calculateLightIntesity((Box) solarPanelFourwR.getChildren().get(1), sun);
+            total += calculateLightIntensity((Box) solarPanelFourwR.getChildren().get(1), sun);
         }
         averageP4 = total / 12;
 
         total = 0;
         for(int i = 0; i < totalHours.length; i++){
             sunTrajectory(totalHours[i]);
-            total += calculateLightIntesity((Box) gPanelOneBox.getChildren().get(1), sun);
+            total += calculateLightIntensity((Box) gPanelOneBox.getChildren().get(1), sun);
         }
         averageGP1 = total / 12;
 
         total = 0;
         for(int i = 0; i < totalHours.length; i++){
             sunTrajectory(totalHours[i]);
-            total += calculateLightIntesity((Box) gPanelTwoBox.getChildren().get(1), sun);
+            total += calculateLightIntensity((Box) gPanelTwoBox.getChildren().get(1), sun);
         }
         averageGP2 = total / 12;
 
@@ -963,11 +1075,11 @@ public class SkyBoxApplication extends Application {
         }
     }
 
-    static double calculateLightIntesity(Box box, Group Sun){
+    static double calculateLightIntensity(Box box, Group Sun){
         double distance = Math.abs(distancecalc(box, Sun));
-        double intesity = 1/((distance)*(distance));
-        intesity = intesity*10000000;
-        return intesity;
+        double intensity = 1/((distance)*(distance));
+        intensity = intensity*10000000;
+        return intensity;
     }
 
     public static void main(String[] args) {

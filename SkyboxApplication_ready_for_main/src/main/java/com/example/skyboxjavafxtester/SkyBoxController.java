@@ -4,10 +4,7 @@ import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;
 import com.luckycatlabs.sunrisesunset.dto.Location;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.AmbientLight;
 import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.PointLight;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Slider;
@@ -18,7 +15,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
-import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
 import javax.swing.JOptionPane;
@@ -111,28 +107,36 @@ public class SkyBoxController {
     @FXML
     protected static Pane setSkyboxPane() throws ParseException {
         Group skyBox = new Group();
+
+
+
+
         Group sun = SkyBoxApplication.sunCreation(); //creating sun
-        SkyBoxApplication.constructWorld(skyBox);
+
         SkyBoxApplication.startParams(); // Setting start date, location, sunset/sunrise times
         Group panelsWHouse = SkyBoxApplication.models(); //Creating all models for the scene
 
-        skyBox.getChildren().addAll(sun, panelsWHouse);
+
+        //image
+        //set size
+        //camera build
+        //getTransforms().add(affine);
+        //loadImageViews();
+
+
+
+
+        Group layoutViews = SkyBoxApplication.layoutViews();
+        Group skyboxOut = SkyBoxApplication.createSkybox(layoutViews);
+        skyBox.getChildren().addAll(sun, panelsWHouse, skyboxOut);
        // Construct the empty SkyBox group
 
-        //THIS causes an error: Duplicate children added so i commented it out. Its being out in skyboxPane above
-        //skyboxPane.getChildren().add(skybox);
 
-        skyboxPane = new Pane(sun, skyBox);
-        //Heres where we do the set up camera and background?
-        //Could we move it into constructWorld?
-        //How to convert the things happening from a Scene to A AnchorPane or how to add a new scene into the Pane?
+        //TODO set up camera within the skybox pane
 
-        /*
-        skybox.setFill(new ImagePattern(SkyBoxApplication.skyboxImage));
-        camera = new PerspectiveCamera(true);
-        camera.setNearClip(0.1);
-        camera.setFarClip(30000.0);
-         */
+
+        skyboxPane = new Pane(skyBox);
+
 
 
         return skyboxPane;
@@ -157,20 +161,7 @@ public class SkyBoxController {
 
         recalculateSunTimes();
     }
-    static void constructWorld(Group skyBox) {
-        // AmbientLight light = new AmbientLight();
-        AmbientLight light = new AmbientLight(Color.rgb(160, 160, 160));
 
-        PointLight pl = new PointLight();
-        pl.setTranslateX(1000);
-        pl.setTranslateY(-100);
-        pl.setTranslateZ(-100);
-        skyBox.getChildren().add(pl);
-
-        //TODO delete this once mesh is implemented -- Mark: 3/11
-        skyBox.getChildren().add(light);
-
-    }
     public void showROI(ActionEvent actionEvent) {
         DecimalFormat dc = new DecimalFormat("0.00");
         int panelCost = 550; //Price of each solar panel
@@ -201,12 +192,12 @@ public class SkyBoxController {
 
     public void showIntensityLevels(ActionEvent actionEvent) {
         double solarP1Intensity, solarP2Intensity, solarP3Intensity, solarP4Intensity, solarGP1Intensity, solarGP2Intensity;
-        solarP1Intensity = SkyBoxApplication.calculateLightIntesity((Box) SkyBoxApplication.solarPanelOnewR.getChildren().get(1), SkyBoxApplication.sun);
-        solarP2Intensity = SkyBoxApplication.calculateLightIntesity((Box) SkyBoxApplication.solarPanelTwowR.getChildren().get(1), SkyBoxApplication.sun);
-        solarP3Intensity = SkyBoxApplication.calculateLightIntesity((Box) SkyBoxApplication.solarPanelThreewR.getChildren().get(1), SkyBoxApplication.sun);
-        solarP4Intensity = SkyBoxApplication.calculateLightIntesity((Box) SkyBoxApplication.solarPanelFourwR.getChildren().get(1), SkyBoxApplication.sun);
-        solarGP1Intensity = SkyBoxApplication.calculateLightIntesity((Box) SkyBoxApplication.gPanelOneBox.getChildren().get(1), SkyBoxApplication.sun);
-        solarGP2Intensity = SkyBoxApplication.calculateLightIntesity((Box) SkyBoxApplication.gPanelTwoBox.getChildren().get(1), SkyBoxApplication.sun);
+        solarP1Intensity = SkyBoxApplication.calculateLightIntensity((Box) SkyBoxApplication.solarPanelOnewR.getChildren().get(1), SkyBoxApplication.sun);
+        solarP2Intensity = SkyBoxApplication.calculateLightIntensity((Box) SkyBoxApplication.solarPanelTwowR.getChildren().get(1), SkyBoxApplication.sun);
+        solarP3Intensity = SkyBoxApplication.calculateLightIntensity((Box) SkyBoxApplication.solarPanelThreewR.getChildren().get(1), SkyBoxApplication.sun);
+        solarP4Intensity = SkyBoxApplication.calculateLightIntensity((Box) SkyBoxApplication.solarPanelFourwR.getChildren().get(1), SkyBoxApplication.sun);
+        solarGP1Intensity = SkyBoxApplication.calculateLightIntensity((Box) SkyBoxApplication.gPanelOneBox.getChildren().get(1), SkyBoxApplication.sun);
+        solarGP2Intensity = SkyBoxApplication.calculateLightIntensity((Box) SkyBoxApplication.gPanelTwoBox.getChildren().get(1), SkyBoxApplication.sun);
         if(pressed == false)
         {
             getLevels(solarP1Intensity, (Box) SkyBoxApplication.solarPanelOnewR.getChildren().get(1));
