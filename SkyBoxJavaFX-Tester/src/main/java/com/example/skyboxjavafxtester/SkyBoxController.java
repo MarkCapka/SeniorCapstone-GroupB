@@ -85,12 +85,15 @@ public class SkyBoxController{
         //Initialize Slider Ticks
         LocalTime start = LocalTime.parse(SkyBoxApplication.sunriseTime);
         LocalTime end =  LocalTime.parse(SkyBoxApplication.sunsetTime);
-        Long hours = ChronoUnit.HOURS.between(start, end);//# of mins between
-        slider.setMax(hours); //Gives 11 ticks.... 11 hours between sunrise and sunset
+        Long hoursBetweenRiseSet = ChronoUnit.HOURS.between(start, end);
+        slider.setMax(hoursBetweenRiseSet + 1);
 
-        //Initialize currentTime
+        //Initialize currentTime and current sun position with the time
         changeHour(6, 0);
-        currentTimeLabel.setText(currentTime);
+        SkyBoxApplication.sunTrajectory(6.0);
+
+        //Create variables to show converted sunrise and sunset strings
+        convertTimes();
 
     }
 
@@ -103,22 +106,19 @@ public class SkyBoxController{
     @FXML
     protected static Pane setSkyboxPane() throws ParseException {
 
-        Group skyBox = SkyBoxApplication.createSkybox(skyboxGroup);
+        //*****************QUESTION FOR MARK FROM SEAN BELOW*****************************//
+        //Do we need both createSkybox() call and the constructWorld() call below a few lines?
+        //Can we remove the ambient light and point light originally created in the skybox since our sun is creating light?
+        Group skyBox = SkyBoxApplication.createSkybox(skyboxGroup); //create empty skybox
 
         //TODO pretty sure we need to pull in the details of the skybox in createskybox() and pass them to be added to the skybox pane group below.
-
-
-
         SkyBoxApplication.sunCreation(); //creating sun
-
         SkyBoxApplication.startParams(); // Setting start date, location, sunset/sunrise times
         Group panelsWHouse = SkyBoxApplication.models(); //Creating all models for the scene
         SkyBoxApplication.constructWorld(skyBox); // Construct the empty SkyBox group
 
 
         //because the javafx scene graphs its on top of your scene and stage objects, any fills or images applied to root nodes will paint OVER The scene
-
-//
 //        Group cameraGroup = new Group();
 //        camera.setNearClip(0.1);
 //        camera.setFarClip(30000.0);
@@ -140,19 +140,10 @@ public class SkyBoxController{
 //        cameraGroup.getChildren().addAll(camera, cameraDolly);
 
         skyboxPane = new Pane(skyboxGroup); //TODO we probably want to call camera in setSkyboxPane
-        //THIS causes an error: Duplicate children added so i commented it out. Its being out in skyboxPane above
-     //   skyboxPane.getChildren().add(skybox);
-
 
         //Heres where we do the set up camera and background?
         //Could we move it into constructWorld?
         //How to convert the things happening from a Scene to A AnchorPane or how to add a new scene into the Pane?
-
-        /*
-
-
-         */
-
 
         return skyboxPane;
     }

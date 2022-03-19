@@ -194,19 +194,16 @@ public class SkyBoxApplication extends Application {
             e.printStackTrace();
         }
 
-
         //TODO: make thie borderpane the root, but load the fxml
 //        double width = skyboxImage.getWidth();
 //        double height = skyboxImage.getHeight();
-        //
+
         //  createSkybox(root);
            //constructWorld(root); //lights
 
 //        createSun(root);
 //        sunriseSunset();
-//
         //    modifySkybox(root);
-
 
 //        Group panelsWHouse = addSolarPanel(root);
 
@@ -214,10 +211,8 @@ public class SkyBoxApplication extends Application {
        // skyboxPane.getChildren().addAll((Collection<? extends Node>) skyBox);
         entireFrame.getChildren().addAll(skyboxPane);
 
-
 //        SubScene subScene = new SubScene(skyBox, 768, 600);
-//
-//
+
 //        PerspectiveCamera camera = new PerspectiveCamera();
 //        camera.setNearClip(0.1);
 //        camera.setFarClip(30000.0);
@@ -230,9 +225,7 @@ public class SkyBoxApplication extends Application {
         cameraAndControls(root, panelsWHouse, scene);
         scene.setRoot(root);
 
-
         /*
-
         // This needs to set up the inside of the skyboxPane?
         scene.setFill(new ImagePattern(skyboxImage)); //THIS causes whole UI to get filled over, because we are adding it to the scene which encompassdes everything, could translate or
       *(
@@ -242,7 +235,6 @@ public class SkyBoxApplication extends Application {
         //sceneRoot.getScene().setCamera(camera);
         root.getScene().setCamera(camera);
         // translations through dolly
-
         */
 
         stage.setTitle("Solar Optimization Simulator!");
@@ -419,9 +411,6 @@ public class SkyBoxApplication extends Application {
             xRotate.setAngle(((xRotate.getAngle() + mouseDeltaY * 0.2) % 360 + 540) % 360 - 180); // -
         });
     }
-//
-
-
 
     static void constructWorld(Group skyBox) {
         // AmbientLight light = new AmbientLight();
@@ -435,11 +424,7 @@ public class SkyBoxApplication extends Application {
 
         //TODO delete this once mesh is implemented -- Mark: 3/11
         skyBox.getChildren().add(light);
-
-
-
     }
-
 
     // Example converted from JavaFX for Dummies from triangle mesh to cube mesh
     public static Group createSkybox(Group skyboxGroup)
@@ -448,30 +433,23 @@ public class SkyBoxApplication extends Application {
         //TODO NOTE: this is messy since i've been trying a few different approahces.
         Image textureImage = skyboxImage;
        // loadImageViews(); //folded skybox
-//
-//
+
 //        TriangleMesh cube = createMesh(WIDTH, HEIGHT, DEPTH);
 //        calculatePoints();
 //        calculateTexCords();
 //        calculateFaces();
 
-
 //        MeshView cubeMesh= new MeshView(cube);
 //        cubeMesh.setOpacity(.75);
 
-
         PhongMaterial skyboxMaterial = new PhongMaterial();
-
 
         skyboxMaterial.setSpecularColor(Color.TRANSPARENT);
         skyboxMaterial.setDiffuseMap(textureImage);
 
-
         Box box = new Box(WIDTH, HEIGHT, DEPTH);
 
-
         box.setMaterial(skyboxMaterial);
-
 
         box.setTranslateX(500);
         box.setTranslateY(400);
@@ -479,8 +457,6 @@ public class SkyBoxApplication extends Application {
         box.setScaleX(1.5);
         box.setScaleY(1.5);
         box.setScaleZ(1.5);
-
-
 
 //        cubeMesh.setTranslateX(1000);
 //        cubeMesh.setTranslateY(400);
@@ -494,9 +470,7 @@ public class SkyBoxApplication extends Application {
         //skyboxGroup.getChildren().add(cubeMesh);
        skyboxGroup.getChildren().add(box);
 
-
-
-        return skyboxGroup;
+       return skyboxGroup;
     }
 
 //    private static TriangleMesh createMesh(int WIDTH, int HEIGHT, int DEPTH) {
