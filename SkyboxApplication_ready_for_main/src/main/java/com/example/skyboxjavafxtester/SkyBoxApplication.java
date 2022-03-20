@@ -1,16 +1,17 @@
 package com.example.skyboxjavafxtester;
 
+
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableFloatArray;
 import javafx.collections.ObservableIntegerArray;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point3D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
@@ -34,12 +35,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
+import javafx.animation.AnimationTimer;
 
 public class SkyBoxApplication extends Application {
 
     private static Image skyboxImage;
     static Group root = new Group();
+    private Group skybox;
+    private SubScene subScene;
+    private Pane skyboxPane;
+    PerspectiveCamera skyboxCamera;
     {
         try {
             skyboxImage = new Image(new FileInputStream("C:\\skyboxExample.png"));
@@ -57,6 +62,9 @@ public class SkyBoxApplication extends Application {
     private static final int WIDTH = 680;
     private static final int HEIGHT = 849;
     private static final int DEPTH = 700;
+//    private Cube skyboxBox;
+
+
 
     //Mouse control variable declarations
     private double mousePosX;
@@ -83,19 +91,21 @@ public class SkyBoxApplication extends Application {
         back.setId("back ");
         front.setId("front ");
     }
+    private PhongMaterial skyboxMaterial;
 
     //aggregating these views into a list
     private static final ImageView[] views = new ImageView[]
             {
                     top, left, back, right, front, bottom
             };
-    private Image topImg;
-    private Image bottomImg;
-    private Image leftImg;
-    private Image rightImg;
-    private static ImageView frontImg;
-    private Image backImg;
-    private Image singleImg;
+    private Image topImg = top.getImage();
+    private Image bottomImg = bottom.getImage();
+    private Image leftImg = left.getImage();
+    private Image rightImg = right.getImage();
+    private Image frontImg = front.getImage();
+    private Image backImg = back.getImage();
+
+    private Image singleImg = skyboxImage;
 
 
     //private static final double depth = skyboxImage.getDepth(); //MAY NOT NEED FOR cube since shoudl scale evenly
@@ -147,27 +157,33 @@ public class SkyBoxApplication extends Application {
     static PhongMaterial optimal = new PhongMaterial(Color.GREEN);
     static PhongMaterial subOptimal = new PhongMaterial(Color.RED);
 
+//    public SkyBoxApplication(Image skyboxImage, int size, PerspectiveCamera skyboxCamera) {
+//        this.skyboxImage = skyboxImage;
+//        this.size = size;
+//        this.skyboxCamera = skyboxCamera;
+//    }
 
-    private static void recalculateSize(double size) {
-        double factor = Math.floor(getSize()/size);
-        setSize(size * factor);
-    }
+//    protected static void recalculateSize(double cell) {
+//        double factor = Math.floor(getSize()/size);
+//        setSize(cell * factor);
+//    }
+
     //build the box through translations and folding
-    protected static ImageView[] layoutViews()
+    protected static void layoutViews()
     {
-        for(ImageView view : views)
+        for(ImageView v : views)
         {
-            view.setFitWidth(getSize());
-            view.setFitHeight(getSize());
+            v.setFitWidth(size);
+            v.setFitHeight(size);
         }
 
 
-        back.setTranslateX(-0.5 * getSize());
-        back.setTranslateY(-0.5 * getSize());
-        back.setTranslateZ(-0.5 * getSize());
+        back.setTranslateX(-0.5 * size);
+        back.setTranslateY(-0.5 * size);
+        back.setTranslateZ(-0.5 * size);
 
 
-        front.setTranslateX(-0.5 * getSize());
+        front.setTranslateX(-0.5 * size);
         front.setTranslateY(-0.5 * getSize());
         front.setTranslateZ(0.5 * getSize());
         front.setRotationAxis(Rotate.Z_AXIS);
@@ -195,55 +211,70 @@ public class SkyBoxApplication extends Application {
         right.setRotationAxis(Rotate.Y_AXIS);
         right.setRotate(-90);
 
-
-      //  layout.getChildren().addAll(views)
-        return views;
     }
 
-    public static final double getSize()
-    {
-        return size;
-    }
-
-    public static final void setSize(double value)
-    {
-        size = value;
-    }
 
 
     @Override
     public void start(Stage stage) throws IOException, ParseException {
         FXMLLoader fxmlLoader = new FXMLLoader(SkyBoxApplication.class.getResource("skybox-viewUI.fxml"));
         Pane entireFrame = new Pane();
-        Pane skyboxPane = new Pane();
+        Pane skyboxPane;
+        Pane uiPane;
             // This needs to set up the inside of the skyboxPane?
-
+        skybox = new Group();
+       // SkyBoxApplication skyBoxApplication = new SkyBoxApplication(skyboxImage, 10000, skyboxCamera);
+        cameraDolly = new Group();
         // translations dolly, moves camera, rotates, etc
-
         // rotation transforms
 
+   //   #Subscene declaration -> need to set up everything then integrate since i keep breaking it otherwise
 
-        try {
-            skyboxPane = SkyBoxController.setSkyboxPane();
-            cameraDolly = new Group();
-            cameraDolly.setTranslateZ(-1500);
-            cameraDolly.setTranslateY(400);
-            cameraDolly.setTranslateX(500);            camera = new PerspectiveCamera(true); //TODO could make into skyboxCamera and regular perspective camera to make sure it is adjusting visuals corretly
-            camera.setNearClip(0.1);
-            camera.setFarClip(30000.0);
-            skyboxPane.getChildren().addAll(cameraDolly);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        //NOTE: root will be main Group that scene uses
+        //sceneRoot will be the main Group for skyboxScene
+
+        skyboxImage = new Image(new FileInputStream("C:\\skyboxExample.png"));
 
 
+  // Build the Scene Graph
+
+// Create and position camera
+        PerspectiveCamera skyboxCamera = new PerspectiveCamera(true);
+//        skyboxCamera.getTransforms().addAll(
+//                new Rotate(-20, Rotate.Y_AXIS),
+//                new Rotate(-20, Rotate.X_AXIS),
+//                new Translate(0, 0, -20));
+
+        //from setSKyboxPane
+        Group sun = SkyBoxApplication.sunCreation(); //creating sun
+        SkyBoxApplication.startParams(); // Setting start date, location, sunset/sunrise times
+        Group panelsWHouse = SkyBoxApplication.models(); //Creating all models for the scene
+
+        Group skyboxOut = SkyBoxApplication.createSkybox();
+
+        skybox = createSkybox();
+
+        skybox.getChildren().addAll(sun, panelsWHouse, skyboxOut, skyboxCamera);
+
+        Group skyboxRoot = new Group();
+        skyboxRoot.getChildren().addAll(skybox);
+        //skyboxRoot.getChildren().add(skybox);
+//        skyboxRoot.getChildren().add(panelsWHouse);
+//        skyboxRoot.getChildren().add(sun);
+        //skyboxRoot.getChildren().add(ambient); //i think can delete, light is build in sun
 
 
-        entireFrame.getChildren().addAll(skyboxPane);
 
 
+        subScene = new SubScene(skyboxRoot, WIDTH, HEIGHT, true, SceneAntialiasing.BALANCED);
+        subScene.setRoot(skyboxRoot);
+        subScene.setCamera(skyboxCamera);
+        //subScene.setFill(BLACK);
+        subScene.setHeight(WIDTH);
+        subScene.setWidth(678);
+        subScene.setTranslateX(300);
+        subScene.setTranslateY(100);
 
-        //sceneRoot.getScene().setCamera(camera);
 
 
         Group turn = new Group();
@@ -251,12 +282,47 @@ public class SkyBoxApplication extends Application {
         Rotate yRotate = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);
         cameraDolly.getTransforms().addAll(xRotate);
         turn.getTransforms().addAll(yRotate);
+        subScene.setRoot(skyboxRoot);
+
+        skyboxRoot.getChildren().add(cameraDolly);
+        cameraDolly.getChildren().add(turn);
+        turn.getChildren().add(skyboxCamera);
 
 
-        //sceneRoot.getChildren().add(cameraDolly);
+        Group skyboxSceneGroup = new Group();
+
+        skyboxSceneGroup.getChildren().addAll(subScene, skyboxRoot, turn, skybox);
+
+        //below try should be within the subscene
+            //NOTE: creating new PerspectiveCamera skyboxCamera for first person view. Camera will stay as main view for ui and scene
+        try {
+            //TODO need to group before setting skyboxPane
+
+            skyboxPane = SkyBoxController.setSkyboxPane(skyboxSceneGroup);
+            skyboxPane.setMaxWidth(WIDTH);
+            skyboxPane.setMaxHeight(HEIGHT);
+
+            skyboxPane.getChildren().addAll(skyboxSceneGroup);
 
 
-        Scene scene = new Scene(root, 1024, 768); // Make the whole scene with everything
+          //  skyboxPane.getChildren().addAll(cameraDolly);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+            /*
+
+
+         */
+
+        entireFrame.getChildren().addAll(subScene);
+
+
+
+
+
+
+
 
 
         //-------------END of Scene and Camera set up----------------------------//
@@ -265,7 +331,7 @@ public class SkyBoxApplication extends Application {
 
         // Use keyboard to control camera position
         //scene.getRoot().setOnKeyPressed(event -> { ???????????????????????????? scene.getRoot() put controls in the anchorPane?
-        scene.setOnKeyPressed(event -> {
+        subScene.setOnKeyPressed(event -> {
             double change = cameraQuantity;
             KeyCode keycode = event.getCode();
 
@@ -376,12 +442,12 @@ public class SkyBoxApplication extends Application {
         });
 
         // Use mouse to control camera rotation
-        scene.setOnMousePressed(me -> {
+        subScene.setOnMousePressed(me -> {
             mousePosX = me.getSceneX();
             mousePosY = me.getSceneY();
         });
 
-        scene.setOnMouseDragged(me -> {
+        subScene.setOnMouseDragged(me -> {
             mouseOldX = mousePosX;
             mouseOldY = mousePosY;
             mousePosX = me.getSceneX();
@@ -392,12 +458,20 @@ public class SkyBoxApplication extends Application {
             yRotate.setAngle(((yRotate.getAngle() - mouseDeltaX * 0.2) % 360 + 540) % 360 - 180); // +
             xRotate.setAngle(((xRotate.getAngle() + mouseDeltaY * 0.2) % 360 + 540) % 360 - 180); // -
         });
-        root.getScene().setCamera(camera);
-        root.getChildren().add(cameraDolly);
-        cameraDolly.getChildren().add(turn);
-        turn.getChildren().add(camera);
+        Scene scene = new Scene(entireFrame, 1024, 768); // Make the whole scene with everything
+
+        //TODO put below in scope of entireFrame
+        PerspectiveCamera camera = new PerspectiveCamera(true); //TODO could make into skyboxCamera and regular perspective camera to make sure it is adjusting visuals corretly
+        camera.setNearClip(0.1);
+        camera.setFarClip(30000.0);
+
+        camera.setTranslateZ(-1500);
+        camera.setTranslateY(400);
+        camera.setTranslateX(500);
+        scene.setCamera(camera);
 
         entireFrame.getChildren().add(fxmlLoader.load());
+
 
         root.getChildren().addAll(entireFrame);
         scene.setRoot(root);
@@ -406,6 +480,44 @@ public class SkyBoxApplication extends Application {
         stage.setScene(scene);
         stage.show();
     }
+
+
+
+
+    /*      ################ First Person Controls  -- tied to subscene
+
+*/
+//  private void createCameraView(){
+//        skyboxCamera = new CameraView(subScene);
+//        skyboxCamera.setFitWidth(400);
+//        skyboxCamera.setFitHeight(300);
+//        skyboxCamera.setFirstPersonNavigationEabled(true);
+//        skyboxCamera.setFocusTraversable(true);
+//        skyboxCamera.getCamera().setTranslateZ(-2500);
+//        skyboxCamera.getCamera().setTranslateX(500);
+//
+//        StackPane.setAlignment(skyboxCamera, Pos.BOTTOM_RIGHT);
+//        StackPane.setMargin(skyboxCamera, new Insets(10));
+//
+//       skyboxPane.getChildren().add(skyboxCamera);
+//
+//       // skyboxCamera.startViewing();
+//    }
+
+
+//    public SkyBoxApplication(Image skyboxImage, double size, PerspectiveCamera skyboxCamera) {
+//        super();
+//      //  this.imageType = SkyboxImageType.SINGLE;
+//
+//        this.skyboxImage = skyboxImage;
+//        this.size.setSize(size);
+//        this.skyboxCamera = skyboxCamera;
+//
+//
+//        getTransforms().add(affine);
+//        loadImageViews();
+//        getChildren().addAll(views);
+//    }
 
 
 
@@ -462,52 +574,112 @@ public class SkyBoxApplication extends Application {
     }  // Example converted from JavaFX for Dummies from triangle mesh to cube mesh
 
     // top, left, back, right, front, bottom
-    protected static ImageView[] loadImageViews(ImageView[] views) {
-        top.setImage(views[0].getImage());
-        left.setImage(views[1].getImage());
-        back.setImage(views[2].getImage());
-        right.setImage(views[3].getImage());
-        front.setImage(views[4].getImage());
-        bottom.setImage(views[5].getImage());
+    protected static void loadImageViews() {
+//        top.setImage(views[0].getImage());
+//        left.setImage(views[1].getImage());
+//        back.setImage(views[2].getImage());
+//        right.setImage(views[3].getImage());
+//        front.setImage(views[4].getImage());
+//        bottom.setImage(views[5].getImage());
      //   Group skyboxViews = new Group();
 
         for (ImageView imageView : views) {
 
-
+            imageView.setSmooth(true);
             imageView.setScaleX(10);
             imageView.setScaleY(10);
             imageView.setScaleZ(10);
-            imageView.setSmooth(true);
+
             imageView.setPreserveRatio(true);
          //  skyboxViews.getChildren().add(imageView);
         }
 
-        return views;
 
+         layoutViews();
 
+        double width = skyboxImage.getWidth(),
+                height = skyboxImage.getHeight();
+
+        //simple chack to see if cells will be square
+        if(width / 4 != height / 3){
+            throw new UnsupportedOperationException("Image does not comply with size constraints");
+        }
+        double cellSize = skyboxImage.getWidth() - skyboxImage.getHeight();
+
+      //  recalculateSize(cell);
+
+        double
+                topx = cellSize, topy = 0,
+
+                botx = cellSize, boty = cellSize * 2,
+
+                leftx = 0, lefty = cellSize,
+
+                rightx = cellSize * 2, righty = cellSize,
+
+                fwdx = cellSize, fwdy = cellSize,
+
+                backx = cellSize * 3, backy = cellSize;
+
+        //add top padding x+, y+, width-, height
+        top.setViewport(new Rectangle2D(topx , topy , cellSize, cellSize ));
+
+        //add left padding x, y+, width, height-
+        left.setViewport(new Rectangle2D(leftx , lefty , cellSize - 1, cellSize - 1));
+
+        //add front padding x+, y+, width-, height
+        back.setViewport(new Rectangle2D(fwdx , fwdy, cellSize , cellSize));
+
+        //add right padding x, y+, width, height-
+        right.setViewport(new Rectangle2D(rightx, righty , cellSize , cellSize ));
+
+        //add back padding x, y+, width, height-
+        front.setViewport(new Rectangle2D(backx + 1, backy - 1, cellSize - 1, cellSize - 1));
+
+        //add bottom padding x+, y, width-, height-
+        bottom.setViewport(new Rectangle2D(botx, boty, cellSize , cellSize));
+
+        for(ImageView v : views){
+            v.setImage(skyboxImage);
+            //System.out.println(v.getId() + v.getViewport() + cellSize);
+        }
     }
-    public static Group createSkybox(ImageView[] setViews)
+
+
+
+    public static Group createSkybox()
     {
         TriangleMesh cube = new TriangleMesh();
         //TODO NOTE: this is messy since i've been trying a few different approahces.
-        //Image textureImage = skyboxImage;//l
+
+    //for setting individual faces textures
+//        for(int i = 0; i < setViews.length; i++){
+//
+//                    //not that the value of setViews should be equal to the face of the skyboxBox
+//           //Image textureImage = new Image(SkyBoxApplication.class.getResource(String.valueOf(setViews[i])).toExternalForm());
+//    }
 
 
-//        TriangleMesh cube = createMesh(WIDTH, HEIGHT, DEPTH);
-//        calculatePoints();
-//        calculateTexCords();
-//        calculateFaces();
 
 
-//        MeshView cubeMesh= new MeshView(cube);
-//        cubeMesh.setOpacity(.75);
+
+
+
+
 
 
         PhongMaterial skyboxMaterial = new PhongMaterial();
 
 
         Box box = new Box(WIDTH, HEIGHT, DEPTH);
+////        TriangleMesh cube = createMesh(WIDTH, HEIGHT, DEPTH);
+////        calculatePoints();
+////        calculateTexCords();
+////        calculateFaces();
 //
+//
+////        MeshView cubeMesh= new MeshView(cube);
+////        cubeMesh.setOpacity(.75);
 //       //skyboxMaterial.setSpecularColor(Color.TRANSPARENT);
 //        for(int i =0; i < views.length; i++)
 //        {
@@ -515,29 +687,30 @@ public class SkyBoxApplication extends Application {
 //
 //           // box.
 //        }
-        layoutViews();
-        loadImageViews(setViews);
+//        layoutViews();
+//        loadImageViews(setViews);
 
-         skyboxMaterial.setDiffuseMap(skyboxImage);
+        skyboxMaterial.setDiffuseMap(skyboxImage);
+            //below is for setting a variety of options for image loading
+        //skyboxMaterial.diffuseMapProperty().bind(Bindings.when(diffuseMap).then(skyboxImage).otherwise((Image) null));
 
 
-
-
-       box.setTranslateX(WIDTH);
+        box.setMaterial(skyboxMaterial);
+       box.setTranslateX(WIDTH+400);
        box.setTranslateY(HEIGHT);
        box.setTranslateZ(18500);
-        box.setScaleX(10);
-       box.setScaleY(10);
-        box.setScaleZ(10);
-        box.setMaterial(skyboxMaterial);
+        box.setScaleX(12);
+       box.setScaleY(12);
+        box.setScaleZ(12);
+
         box.toBack();
 
-
+        box.setCullFace(CullFace.FRONT);
 
 //        cubeMesh.setTranslateX(1000);
 //        cubeMesh.setTranslateY(400);
 //        cubeMesh.setTranslateZ(200);
-        box.setCullFace(CullFace.FRONT);
+
 //        cubeMesh.setCullFace(CullFace.NONE);
 //        cubeMesh.setMaterial(skyboxMaterial);
         //TODO  maybe try something like:
@@ -550,6 +723,14 @@ public class SkyBoxApplication extends Application {
 
 
         return skybox;
+    }
+
+
+    private void createSubscene(){
+       
+        subScene.widthProperty().bind(skyboxPane.widthProperty());
+        subScene.heightProperty().bind(skyboxPane.heightProperty());
+        subScene.setFocusTraversable(true);
     }
 
 
@@ -661,6 +842,7 @@ public class SkyBoxApplication extends Application {
        // sun.getChildren().add(light);
         sphere.setTranslateX(100);
         sphere.setTranslateY(-200);
+
         pl.setTranslateZ(-1000);
         pl.setTranslateX(+1000);
         pl.setTranslateY(+10);
@@ -1108,6 +1290,12 @@ public class SkyBoxApplication extends Application {
             ((Box) gPanelOneBox.getChildren().get(1)).setMaterial(subOptimal);
             ((Box) gPanelTwoBox.getChildren().get(1)).setMaterial(optimal);
         }
+    }
+//    public static void setSize(double value) {
+//        size.set(value);
+//    }
+    public static double getSize() {
+        return size;
     }
 
     static double calculateLightIntensity(Box box, Group Sun){

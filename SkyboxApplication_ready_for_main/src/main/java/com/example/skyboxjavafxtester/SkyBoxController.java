@@ -5,6 +5,8 @@ import com.luckycatlabs.sunrisesunset.dto.Location;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
+import javafx.scene.SceneAntialiasing;
+import javafx.scene.SubScene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Slider;
@@ -82,7 +84,11 @@ public class SkyBoxController {
 
     @FXML
     protected void initialize() throws ParseException, IOException {
-        setSkyboxPane();
+
+//       SubScene subScene = new SubScene(skyboxRoot, WIDTH, HEIGHT, true, SceneAntialiasing.BALANCED);
+//        subScene.setRoot(skyboxRoot);
+//        subScene.setCamera(skyboxCamera);
+//        setSkyboxPane(subScene);
         setEntireFrame();
 
         //Initialize Slider Ticks
@@ -106,16 +112,17 @@ public class SkyBoxController {
     }
 
     @FXML
-    protected static Pane setSkyboxPane() throws ParseException {
+    protected static Pane setSkyboxPane(Group skyboxSceneGroup) throws ParseException {
+        SkyBoxApplication.startParams(); // Setting start date, location, sunset/sunrise times
         Group skyBox = new Group();
 
+        skyBox.getChildren().addAll(skyboxSceneGroup);
+    //SkyboxApplication.createSkybox(setViews()); //alternatively pass as param to setEntireFrame with skyboxGroup
 
 
 
-        Group sun = SkyBoxApplication.sunCreation(); //creating sun
 
-        SkyBoxApplication.startParams(); // Setting start date, location, sunset/sunrise times
-        Group panelsWHouse = SkyBoxApplication.models(); //Creating all models for the scene
+        //Group panelsWHouse = SkyBoxApplication.models(); //Creating all models for the scene
 
 
         //image
@@ -127,15 +134,15 @@ public class SkyBoxController {
 
 
 
-        ImageView[] views = SkyBoxApplication.layoutViews();
-        ImageView[] setViews = SkyBoxApplication.loadImageViews(views);
-        Group skyboxOut = SkyBoxApplication.createSkybox(setViews);
-        skyBox.getChildren().addAll(sun, panelsWHouse, skyboxOut);
+//        ImageView[] views = SkyBoxApplication.layoutViews();
+////        ImageView[] setViews = SkyBoxApplication.loadImageViews(views);
+//        Group skyboxOut = SkyBoxApplication.createSkybox(setViews);
+         //skyBox.getChildren().addAll(sun, panelsWHouse, skyboxOut);
        // Construct the empty SkyBox group
 
 
         //TODO set up camera within the skybox pane
-
+       // cameraAndControls();
 
         skyboxPane = new Pane(skyBox);
 
