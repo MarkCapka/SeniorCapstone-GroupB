@@ -5,15 +5,39 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6cee0f4c-ae2b-4f37-92d9-62094ef5f861" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/java.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/resources/sunset1.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_dlsc_formsfx_formsfx_core_11_3_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__eu_hansolo_tilesfx_11_48.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_synedra_validatorfx_0_1_13.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_1_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_controlsfx_controlsfx_11_1_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_7_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_engine_5_7_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_7_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_engine_1_7_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_kordamp_bootstrapfx_bootstrapfx_core_0_4_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_kordamp_ikonli_ikonli_core_12_2_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_kordamp_ikonli_ikonli_javafx_12_2_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_base_17_0_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_base_win_17_0_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_controls_17_0_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_controls_win_17_0_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_fxml_17_0_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_fxml_win_17_0_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_graphics_17_0_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_graphics_win_17_0_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_media_17_0_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_media_win_17_0_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_web_17_0_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_openjfx_javafx_web_win_17_0_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_opentest4j_opentest4j_1_2_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_2_12_2022_11_27_PM.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_2_12_2022_11_27_PM.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/SkyBoxJavaFX-Tester.iml" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/SkyBoxJavaFX-Tester.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyboxApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyboxApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyboxApplication.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/module-info.class" beforeDir="false" afterPath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/module-info.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyboxApplication.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/com/example/skyboxjavafxtester/SkyboxController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SkyBoxJavaFX-Tester/target/classes/module-info.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +55,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="SeanZ-SunriseSunset" />
+        <entry key="$PROJECT_DIR$" value="oldCode" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -75,7 +99,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/SkyBoxJavaFX-Tester/src/main/resources/timezonemap-master/.mvn/wrapper/maven-wrapper.jar" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../JFX3DModelImporters_EA_2014-02-09 (1)/jim3dsModelImporterJFX.jar" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -155,6 +179,7 @@
       <workItem from="1645561605767" duration="1078000" />
       <workItem from="1645563715808" duration="664000" />
       <workItem from="1645828800517" duration="26390000" />
+      <workItem from="1647763701050" duration="13783000" />
     </task>
     <task id="LOCAL-00005" summary="Accurate sunset and sunrise times from location and date">
       <created>1645159193328</created>
@@ -213,7 +238,8 @@
     <MESSAGE value="Code Cleaned and integrated with Anthony patch2" />
     <MESSAGE value="Accurate sunset and sunrise times from location and date" />
     <MESSAGE value="New Controls and cleaner code" />
-    <option name="LAST_COMMIT_MESSAGE" value="New Controls and cleaner code" />
+    <MESSAGE value="Old code" />
+    <option name="LAST_COMMIT_MESSAGE" value="Old code" />
   </component>
   <component name="XPathView.XPathProjectComponent">
     <history />

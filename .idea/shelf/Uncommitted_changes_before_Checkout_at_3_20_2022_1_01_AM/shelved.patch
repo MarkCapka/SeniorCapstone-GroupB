@@ -1,0 +1,1226 @@
+Index: SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyBoxApplication.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.skyboxjavafxtester;\r\n\r\nimport javafx.application.Application;\r\nimport javafx.collections.ObservableIntegerArray;\r\nimport javafx.fxml.FXMLLoader;\r\nimport javafx.geometry.Point3D;\r\nimport javafx.geometry.Rectangle2D;\r\nimport javafx.scene.Scene;\r\nimport javafx.scene.control.Label;\r\nimport javafx.scene.image.ImageView;\r\nimport javafx.scene.input.KeyCode;\r\nimport javafx.scene.layout.*;\r\nimport javafx.scene.shape.Box;\r\nimport javafx.scene.transform.Affine;\r\nimport javafx.scene.transform.Transform;\r\nimport javafx.stage.Stage;\r\nimport com.interactivemesh.jfx.importer.tds.TdsModelImporter;\r\nimport com.luckycatlabs.sunrisesunset.*;\r\nimport com.luckycatlabs.sunrisesunset.dto.Location;\r\nimport javafx.geometry.Bounds;\r\nimport javafx.scene.*;\r\nimport javafx.scene.image.Image;\r\nimport javafx.scene.paint.Color;\r\nimport javafx.scene.paint.PhongMaterial;\r\nimport javafx.scene.shape.*;\r\nimport javafx.scene.transform.Rotate;\r\n\r\nimport java.io.File;\r\nimport java.io.FileInputStream;\r\nimport java.io.FileNotFoundException;\r\nimport java.io.IOException;\r\nimport java.text.DateFormat;\r\nimport java.text.ParseException;\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.Calendar;\r\nimport java.util.Date;\r\n\r\nimport javafx.collections.FXCollections;\r\nimport javafx.collections.ObservableFloatArray;\r\n\r\n\r\n\r\npublic class SkyBoxApplication extends Application {\r\n\r\n\r\n    static Group skybox = new Group();\r\n\r\n    private static Image skyboxImage;\r\n    private static TriangleMesh cubeMesh;\r\n    //camera controls and scene settings declarations\r\n    private PerspectiveCamera camera;\r\n    private Group cameraDolly;\r\n    private final double cameraQuantity = 10.0;\r\n    private static final int WIDTH = 680;\r\n    private static final int HEIGHT = 849;\r\n    private static final int DEPTH = 700;\r\n\r\n    //Mouse control variable declarations\r\n    private double mousePosX;\r\n    private double mousePosY;\r\n    private double mouseOldX;\r\n    private double mouseOldY;\r\n    private double mouseDeltaX;\r\n    private double mouseDeltaY;\r\n    private final Affine affine = new Affine();\r\n    //setting up for the folding of our image into a skybox\r\n    private final ImageView\r\n            top   = new ImageView(),\r\n            bottom= new ImageView(),\r\n            left  = new ImageView(),\r\n            right = new ImageView(),\r\n            back  = new ImageView(),\r\n            front = new ImageView();\r\n    private double size;\r\n\r\n\r\n    {\r\n        top.setId(\"top \");\r\n        bottom.setId(\"bottom \");\r\n        left.setId(\"left \");\r\n        right.setId(\"right \");\r\n        back.setId(\"back \");\r\n        front.setId(\"front \");\r\n    }\r\n\r\n    //aggregating these views into a list\r\n    private final ImageView[] views = new ImageView[]\r\n            {\r\n                    top, left, back, right, front, bottom\r\n            };\r\n\r\n\r\n\r\n\r\n    //Model Import Declaration\r\n    private static final File house = new File(\"C:\\\\House.3ds\");\r\n    private static final File solarPanel = new File(\"C:\\\\SolarPanel(Export).3ds\");\r\n    private static final File groundSolarPanel = new File(\"C:\\\\GroundSolarPanel.3ds\");\r\n    private static Group solarPanelImport;\r\n    private static Group gPanelOne;\r\n    private static Group gPanelTwo;\r\n    private static Group houseImport;\r\n    static Group solarPanelOnewR;\r\n    static Group solarPanelTwowR;\r\n    static Group solarPanelThreewR;\r\n    static Group solarPanelFourwR;\r\n    static Group gPanelOneBox;\r\n    static Group gPanelTwoBox;\r\n    static Group panelsWHouse;\r\n    static Group sun;\r\n    private Boolean oneSelected = false;\r\n    private Boolean twoSelected = false;\r\n    static PhongMaterial clear = new PhongMaterial(Color.TRANSPARENT);\r\n\r\n    //Location and Dates\r\n    static String sunriseTime;\r\n    static String sunsetTime;\r\n    static Calendar cal;\r\n    static String theDate = \"20220310\";\r\n    static String theLocation;\r\n    static String timeZone = \"GMT-8\";\r\n    static Location location;\r\n    static Double latitude = 47.6588;\r\n    static Double longitude = -117.4260;\r\n    static Date date;\r\n\r\n    //Sun movement variables\r\n    static int timeAS;\r\n    static int timeBS;\r\n    static int sliceofday;\r\n    static int totalMinutes = 720;\r\n    static int sunrise = 0;\r\n    static int sunset = 720;\r\n    static boolean box1closest;\r\n    static boolean box2closest;\r\n    static boolean box3closest;\r\n    static boolean box4closest;\r\n    static boolean gbox1closest;\r\n    static boolean gbox2closest;\r\n    static PhongMaterial col = new PhongMaterial(Color.GREEN);\r\n    static PhongMaterial col1 = new PhongMaterial(Color.RED);\r\n\r\n    private AnchorPane sliderAndDate;\r\n    private AnchorPane uiPane;\r\n    private Label label;\r\n\r\n\r\n    //private final double WIDTH, HEIGHT, DEPTH;\r\n    private static TriangleMesh cube;\r\n    private MeshView skyBox;\r\n    private static float x0;\r\n    private static float x1;\r\n    private static float x2;\r\n    private static float x3;\r\n    private static float x4;\r\n    private static float y0;\r\n    private static float y1;\r\n    private static float y2;\r\n    private static float y3; //values for points of skybox\r\n\r\n    //private final Image textureImage;\r\n\r\n\r\n\r\n\r\n\r\n    //private static final double depth = skyboxImage.getDepth(); //MAY NOT NEED FOR cube since shoudl scale evenly\r\n    private static final ObservableIntegerArray faces = FXCollections.observableIntegerArray();\r\n    private static final ObservableFloatArray texCords = FXCollections.observableFloatArray();\r\n    private static final ObservableFloatArray points = FXCollections.observableFloatArray();\r\n\r\n\r\n\r\n    static Group root = new Group();\r\n    {\r\n        try {\r\n            skyboxImage = new Image(new FileInputStream(\"C:\\\\skyboxExample.png\"));\r\n            //TODO confirm if I need this, I THINK it helps with blending the photo together for the skybox corners .\r\n//           final double width = skyboxImage.getWidth();\r\n//            final double height = skyboxImage.getHeight();\r\n        } catch (FileNotFoundException e) {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n\r\n\r\n\r\n\r\n    @Override\r\n    public void start(Stage stage) throws IOException {\r\n        FXMLLoader fxmlLoader = new FXMLLoader(SkyBoxApplication.class.getResource(\"skybox-viewUI.fxml\"));\r\n        Pane entireFrame = new Pane();\r\n        Pane skyboxPane = new Pane();\r\n        try {\r\n            skyboxPane = SkyBoxController.setSkyboxPane();\r\n        } catch (ParseException e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n\r\n        //TODO: make thie borderpane the root, but load the fxml\r\n//        double width = skyboxImage.getWidth();\r\n//        double height = skyboxImage.getHeight();\r\n        //\r\n        //  createSkybox(root);\r\n           //constructWorld(root); //lights\r\n\r\n//        createSun(root);\r\n//        sunriseSunset();\r\n//\r\n        //    modifySkybox(root);\r\n\r\n\r\n//        Group panelsWHouse = addSolarPanel(root);\r\n\r\n        entireFrame.getChildren().add(fxmlLoader.load());\r\n       // skyboxPane.getChildren().addAll((Collection<? extends Node>) skyBox);\r\n        entireFrame.getChildren().addAll(skyboxPane);\r\n\r\n\r\n//        SubScene subScene = new SubScene(skyBox, 768, 600);\r\n//\r\n//\r\n//        PerspectiveCamera camera = new PerspectiveCamera();\r\n//        camera.setNearClip(0.1);\r\n//        camera.setFarClip(30000.0);\r\n\r\n//        subScene.setCamera(camera);\r\n//        subScene.setRoot(skyBox);\r\n\r\n        root.getChildren().addAll(entireFrame, skyboxPane);\r\n\r\n\r\n\r\n\r\n        Scene scene = new Scene(root, 1024, 768); // Make the whole scene with everything\r\n        cameraAndControls(root, panelsWHouse, scene);\r\n\r\n        scene.setRoot(root);\r\n\r\n\r\n        /* Uncomment this section to see the difference that happens\r\n\r\n        // This needs to set up the inside of the skyboxPane?\r\n        scene.setFill(new ImagePattern(skyboxImage)); //THIS causes whole UI to get filled over, because we are adding it to the scene which encompassdes everything, could translate or\r\n      *(\r\n        camera = new PerspectiveCamera(true);\r\n        camera.setNearClip(0.1);\r\n        camera.setFarClip(30000.0);\r\n        //sceneRoot.getScene().setCamera(camera);\r\n        root.getScene().setCamera(camera);\r\n        // translations through dolly\r\n\r\n\r\n         */\r\n\r\n\r\n        //-------------END of Scene and Camera set up----------------------------//\r\n\r\n\r\n\r\n\r\n        stage.setTitle(\"Solar Optimization Simulator!\");\r\n        stage.setScene(scene);\r\n        stage.show();\r\n    }\r\n\r\n    private void cameraAndControls(Group root, Group panelsWHouse, Scene scene) {\r\n        camera = new PerspectiveCamera(true);\r\n        camera.setNearClip(0.1);\r\n        camera.setFarClip(30000.0);\r\n        scene.setCamera(camera);\r\n        // translations through dolly\r\n        cameraDolly = new Group();\r\n        cameraDolly.setTranslateZ(-1000);\r\n        cameraDolly.setTranslateX(200);\r\n        // rotation transforms\r\n        Group turn = new Group();\r\n        Rotate xRotate = new Rotate(0, 0, 0, 0, Rotate.X_AXIS);\r\n        Rotate yRotate = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);\r\n        camera.getTransforms().addAll(xRotate);\r\n        turn.getTransforms().addAll(yRotate);\r\n            //TODO we do have combo of\r\n        root.getChildren().add(cameraDolly);\r\n        cameraDolly.getChildren().add(turn);\r\n        turn.getChildren().add(camera);\r\n        //-------------END of Scene and Camera set up----------------------------//\r\n        //----------------Controls & Camera Controls Section----------------------------//\r\n        //TODO methodize out controls //NOTE i did try to split this from the scene and camera setup, but they were too intertwined at the time.\r\n        // Use keyboard to control camera position\r\n        scene.setOnKeyPressed(event -> {\r\n            double change = cameraQuantity;\r\n            // What key did the user press?\r\n            KeyCode keycode = event.getCode();\r\n            Rotate r;\r\n            Transform t = new Rotate();\r\n            // Translate pivot = new Translate(); //TODO could use for a more elegant rotation of the camera\r\n            Point3D delta = null;\r\n\r\n            if (keycode == KeyCode.COMMA) {\r\n                delta = new Point3D(0, 0, change);\r\n            }\r\n            if (keycode == KeyCode.PERIOD) {\r\n                delta = new Point3D(0, 0, -change);\r\n            }\r\n            if (keycode == KeyCode.A) {\r\n                delta = new Point3D(-change, 0, 0);\r\n            }\r\n            if (keycode == KeyCode.D) {\r\n                delta = new Point3D(change, 0, 0);\r\n            }\r\n            if (keycode == KeyCode.W) {\r\n                delta = new Point3D(0, -change, 0);\r\n            }\r\n            if (keycode == KeyCode.S) {\r\n                delta = new Point3D(0, change, 0);\r\n            }\r\n            //TODO make a path for the camera to follow in a sphere around the house based on current distance\r\n            if (keycode == KeyCode.Q) {                     //rotate camera clockwise\r\n                r = new Rotate(-1, Rotate.Y_AXIS);\r\n                t = t.createConcatenation(r);\r\n                camera.getTransforms().addAll(t);\r\n            }\r\n            //TODO make a path for the camera to follow in a sphere around the house based on current distance, opposite direction of Q\r\n            if (keycode == KeyCode.E) {                     //rotate camera counterclockwise\r\n                r = new Rotate(+1, Rotate.Y_AXIS);\r\n                t = t.createConcatenation(r);\r\n                camera.getTransforms().addAll(t);\r\n            }\r\n            if (keycode == KeyCode.M) {\r\n                r = new Rotate(1, Rotate.Y_AXIS); // Rotate House and Panels on/around Left\r\n                t = t.createConcatenation(r);\r\n                panelsWHouse.getTransforms().addAll(t);\r\n            }\r\n            if (keycode == KeyCode.N) { // Rotate House and Panels on/around Right\r\n                r = new Rotate(-1, Rotate.Y_AXIS);\r\n                t = t.createConcatenation(r);\r\n                panelsWHouse.getTransforms().addAll(t);\r\n            }\r\n\r\n            if (delta != null) {\r\n                Point3D delta2 = camera.localToParent(delta);\r\n                cameraDolly.setTranslateX(cameraDolly.getTranslateX() + delta2.getX());\r\n                cameraDolly.setTranslateY(cameraDolly.getTranslateY() + delta2.getY());\r\n                cameraDolly.setTranslateZ(cameraDolly.getTranslateZ() + delta2.getZ());\r\n\r\n            }\r\n        });\r\n\r\n        // Use mouse to control camera rotation\r\n        scene.setOnMousePressed(me -> {\r\n            mousePosX = me.getSceneX();\r\n            mousePosY = me.getSceneY();\r\n        });\r\n\r\n\r\n        scene.setOnMouseDragged(me -> {\r\n            mouseOldX = mousePosX;\r\n            mouseOldY = mousePosY;\r\n            mousePosX = me.getSceneX();\r\n            mousePosY = me.getSceneY();\r\n            mouseDeltaX = (mousePosX - mouseOldX);\r\n            mouseDeltaY = (mousePosY - mouseOldY);\r\n\r\n            yRotate.setAngle(((yRotate.getAngle() - mouseDeltaX * 0.2) % 360 + 540) % 360 - 180); // +\r\n            xRotate.setAngle(((xRotate.getAngle() + mouseDeltaY * 0.2) % 360 + 540) % 360 - 180); // -\r\n        });\r\n    }\r\n//\r\n\r\n\r\n\r\n    static void constructWorld(Group skyBox) {\r\n        // AmbientLight light = new AmbientLight();\r\n        AmbientLight light = new AmbientLight(Color.rgb(160, 160, 160));\r\n\r\n        PointLight pl = new PointLight();\r\n        pl.setTranslateX(1000);\r\n        pl.setTranslateY(-100);\r\n        pl.setTranslateZ(-100);\r\n        skyBox.getChildren().add(pl);\r\n\r\n        //TODO delete this once mesh is implemented -- Mark: 3/11\r\n        skyBox.getChildren().add(light);\r\n\r\n\r\n\r\n    }\r\n\r\n\r\n    // Example converted from JavaFX for Dummies from triangle mesh to cube mesh\r\n    public static Group createSkybox(Group skyboxGroup)\r\n    {\r\n       TriangleMesh cube = new TriangleMesh();\r\n        //TODO NOTE: this is messy since i've been trying a few different approahces.\r\n        Image textureImage = skyboxImage;\r\n       // loadImageViews(); //folded skybox\r\n//\r\n//\r\n//        TriangleMesh cube = createMesh(WIDTH, HEIGHT, DEPTH);\r\n//        calculatePoints();\r\n//        calculateTexCords();\r\n//        calculateFaces();\r\n\r\n\r\n//        MeshView cubeMesh= new MeshView(cube);\r\n//        cubeMesh.setOpacity(.75);\r\n\r\n\r\n        PhongMaterial skyboxMaterial = new PhongMaterial();\r\n\r\n\r\n        skyboxMaterial.setSpecularColor(Color.TRANSPARENT);\r\n        skyboxMaterial.setDiffuseMap(textureImage);\r\n\r\n\r\n        Box box = new Box(WIDTH, HEIGHT, DEPTH);\r\n\r\n\r\n        box.setMaterial(skyboxMaterial);\r\n\r\n\r\n        box.setTranslateX(500);\r\n        box.setTranslateY(400);\r\n        box.setTranslateZ(200);\r\n        box.setScaleX(1.5);\r\n        box.setScaleY(1.5);\r\n        box.setScaleZ(1.5);\r\n\r\n\r\n\r\n//        cubeMesh.setTranslateX(1000);\r\n//        cubeMesh.setTranslateY(400);\r\n//        cubeMesh.setTranslateZ(200);\r\n        box.setCullFace(CullFace.FRONT);\r\n//        cubeMesh.setCullFace(CullFace.NONE);\r\n//        cubeMesh.setMaterial(skyboxMaterial);\r\n        //TODO  maybe try something like:\r\n            //getpoints/add points, etc... then adding into start or initialize?\r\n\r\n        //skyboxGroup.getChildren().add(cubeMesh);\r\n       skyboxGroup.getChildren().add(box);\r\n\r\n\r\n\r\n        return skyboxGroup;\r\n    }\r\n\r\n//    private static TriangleMesh createMesh(int WIDTH, int HEIGHT, int DEPTH) {\r\n//\r\n//        calculatePoints();\r\n//        calculateFaces();\r\n//        calculateTexCords();\r\n//\r\n//        return cubeMesh;\r\n//    }\r\n\r\n\r\n    //skybox meshview implementation pulled and made specific from https://www.demo2s.com/java/javafx-trianglemesh-tutorial-with-examples.htm\r\n\r\n//    private static void calculatePoints() {\r\n//        float hw = (float) WIDTH/2;\r\n//        float hh = (float) HEIGHT/2;\r\n//        float hd = (float) DEPTH/2;\r\n//\r\n//\r\n//    //triangle mesh points: width, height, depth\r\n//        points.addAll(hw, hh, hd,\r\n//                hw, hh, -hd,\r\n//                hw, -hh, hd,\r\n//                hw, -hh, -hd,\r\n//                -hw, hh, hd,\r\n//                -hw, hh, -hd,\r\n//                -hw, -hh, hd,\r\n//                -hw, -hh, -hd);\r\n//        cube.getPoints().addAll(points);\r\n//\r\n//    }\r\n//    //Below is for setting faces for the values of the cubeMesh: uses 6 each, for each of the 6 faces of the cube\r\n//    private static void calculateFaces() {\r\n//        faces.addAll(0, 10, 2, 5, 1, 9,\r\n//                2, 5, 3, 4, 1, 9,\r\n//                4, 7, 5, 8, 6, 2,\r\n//                6, 2, 5, 8, 7, 3,\r\n//                0, 13, 1, 9, 4, 12,\r\n//                4, 12, 1, 9, 5, 8,\r\n//                2, 1, 6, 0, 3, 4,\r\n//                3, 4, 6, 0, 7, 3,\r\n//                0, 10, 4, 11, 2, 5,\r\n//                2, 5, 4, 11, 6, 6,\r\n//                1, 9, 3, 4, 5, 8,\r\n//                5, 8, 3, 4, 7, 3);\r\n//        cube.getFaces().addAll(faces);\r\n//    }\r\n//    //texture coords are x,y coords\r\n//    private static void calculateTexCords() {\r\n//        float x0 = 0f;\r\n//        float x1 = 1f / 4f;\r\n//        float x2 = 2f / 4f;\r\n//        float x3 = 3f / 4f;\r\n//        float x4 = 1f;\r\n//        float y0 = 0f;\r\n//        float y1 = 1f / 3f;\r\n//        float y2 = 2f / 3f;\r\n//        float y3 = 1f;\r\n//\r\n//\r\n//\r\n//        // x4 = 0; x3 = iw * 0.25f; x2 = iw / 2.0f; x1 = iw * 0.75f; x0 = iw;\r\n//        // y3 = 0; y2 = ih * 0.33f; y1 = ih * 0.66f; y0 = ih;\r\n//\r\n//        texCords.addAll((x1 + 0.001f), (y0 + 0.001f), (x2 - 0.001f), y0, (x0), (y1 + 0.001f), (x1 + 0.001f),\r\n//                (y1 + 0.001f), (x2 - 0.001f), (y1 + 0.001f), x3, (y1 + 0.001f), (x4), (y1 + 0.001f), (x0),\r\n//                (y2 - 0.001f), (x1 + 0.001f), (y2 - 0.001f), x2, (y2 - 0.001f), x3, (y2 - 0.001f), (x4),\r\n//                (y2 - 0.001f), (x1 + 0.001f), (y3 - 0.001f), x2, (y3 - 0.001f));\r\n//        cube.getTexCoords().addAll(texCords);\r\n//    }\r\n//\r\n//    public double getWidth() {\r\n//        return WIDTH;\r\n//    }\r\n//\r\n//    public double getHeight() {\r\n//        return HEIGHT;\r\n//    }\r\n//\r\n//    public double getDepth() {\r\n//        return DEPTH;\r\n//    }\r\n\r\n\r\n    private static Group setHouse() {\r\n        TdsModelImporter modelImporter = new TdsModelImporter(); //Model Importer\r\n\r\n        modelImporter.read(house); //Read in the house model\r\n        Node[] oneStoryHouse = modelImporter.getImport(); //create House object with Node[]\r\n        modelImporter.clear(); // clear the importer\r\n\r\n        for (Node node : oneStoryHouse) {\r\n            node.setScaleX(1);\r\n            node.setScaleY(1);\r\n            node.setScaleZ(1);\r\n            node.getTransforms().setAll(new Rotate(25, Rotate.Y_AXIS), new Rotate(-90, Rotate.X_AXIS));\r\n            node.setTranslateX(0); // These place the house towards the ground and to the right of the view\r\n            node.setTranslateY(200); // ^^^^^^^^^^^^^^^\r\n        }\r\n        houseImport = new Group(oneStoryHouse); //create new group with the house\r\n        return houseImport;\r\n    }\r\n\r\n    private static Group setAllSolarPanels(File solar, int pX, int pY, int pZ, int AY, int AX, int AZ) //----Model Helper Method----//\r\n    {\r\n        TdsModelImporter modelImporter = new TdsModelImporter(); //Model Importer\r\n        modelImporter.read(solar);\r\n        Node[] model = modelImporter.getImport();\r\n\r\n        for (Node node : model) {\r\n            node.setScaleX(1);\r\n            node.setScaleY(1);\r\n            node.setScaleZ(1);                                                         //Slope of roof\r\n            node.getTransforms().setAll(new Rotate(AY, Rotate.Y_AXIS), new Rotate(AX, Rotate.X_AXIS), new Rotate(AZ, Rotate.Z_AXIS));\r\n            node.setTranslateX(pX); // Move right or left\r\n            node.setTranslateY(pY); // Move Up or down ... Height of roof\r\n            node.setTranslateZ(pZ); // Move forward or backward\r\n        }\r\n        solarPanelImport = new Group(model);\r\n        return solarPanelImport;\r\n    }\r\n\r\n    private static Box createSolar(Group group1, double height, double depth, double width, double rax, double raz, double ray) {\r\n        Box box = new Box();\r\n        Bounds cord = group1.getBoundsInLocal();\r\n        box.getTransforms().setAll(new Rotate(ray, Rotate.Y_AXIS), new Rotate(rax, Rotate.X_AXIS), new Rotate(raz, Rotate.Z_AXIS));\r\n        box.setTranslateX(cord.getCenterX());\r\n        box.setTranslateZ(cord.getCenterZ());\r\n        box.setTranslateY(cord.getCenterY());\r\n        box.setHeight(height);\r\n        box.setDepth(depth);\r\n        box.setWidth(width);\r\n        box.setMaterial(clear);\r\n        return box;\r\n    }\r\n\r\n    private void setCenters(Rotate r, Group beingRotated) {\r\n        r.setPivotX(beingRotated.getBoundsInLocal().getCenterX());\r\n        r.setPivotY(beingRotated.getBoundsInLocal().getCenterY());\r\n        r.setPivotZ(beingRotated.getBoundsInLocal().getCenterZ());\r\n    }\r\n\r\n    private void gPanelOneSelected() {\r\n        oneSelected = true;\r\n        twoSelected = false;\r\n    }\r\n\r\n    private void gPanelTwoSelected() {\r\n        oneSelected = false;\r\n        twoSelected = true;\r\n    }\r\n\r\n    private void clearSelected() {\r\n        oneSelected = false;\r\n        twoSelected = false;\r\n    }\r\n\r\n    static void startParams() throws ParseException {\r\n        DateFormat formatter = new SimpleDateFormat(\"yyyyMMdd\"); //Formatter\r\n        date = formatter.parse(theDate); //Parse string to create Date object\r\n        cal = Calendar.getInstance(); //Calendar object created\r\n        cal.setTime(date); //Calender object given corresponding date\r\n\r\n        location = new Location(latitude.doubleValue(), longitude.doubleValue()); // Will be entered in coordinates\r\n        SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, timeZone); // Creates calculator for sun times\r\n\r\n        sunriseTime = calculator.getOfficialSunriseForDate(cal); // Gets sunrise based on date and calculator created\r\n        sunsetTime = calculator.getOfficialSunsetForDate(cal); // Gets sunset based on date and calculator created\r\n    }\r\n\r\n    static Group models() {\r\n\r\n        int rightSideAngles[] = {-68, -68, 0};\r\n\r\n        int panelOneCoordinates[] = {300, -74, 190};\r\n        int panelTwoCoordinates[] = {395, -74, 400};\r\n\r\n        int leftSideAngles[] = {-68, -113, 0};\r\n        int panelThreeCoordinates[] = {190, -43, 250};\r\n        int panelFourCoordinates[] = {275, -43, 440};\r\n\r\n        int gPanelOneCoordinates[] = {0, 180, 190};\r\n        int gPanelTwoCoordinates[] = {460, 180, 100};\r\n        int gPanelLeftAngles[] = {115, -90, 0};\r\n        int gPanelRightAngles[] = {-65, -90, 0};\r\n//                                105\r\n        //Sets house and panels into scene\r\n        Group houseImport = setHouse();\r\n        Group solarPanelOne = setAllSolarPanels(solarPanel, panelOneCoordinates[0], panelOneCoordinates[1], panelOneCoordinates[2], rightSideAngles[0], rightSideAngles[1], rightSideAngles[2]); //4 roof panels\r\n        Group solarPanelTwo = setAllSolarPanels(solarPanel, panelTwoCoordinates[0], panelTwoCoordinates[1], panelTwoCoordinates[2], rightSideAngles[0], rightSideAngles[1], rightSideAngles[2]);\r\n        Group solarPanelThree = setAllSolarPanels(solarPanel, panelThreeCoordinates[0], panelThreeCoordinates[1], panelThreeCoordinates[2], leftSideAngles[0], leftSideAngles[1], leftSideAngles[2]);\r\n        Group solarPanelFour = setAllSolarPanels(solarPanel, panelFourCoordinates[0], panelFourCoordinates[1], panelFourCoordinates[2], leftSideAngles[0], leftSideAngles[1], leftSideAngles[2]);\r\n        gPanelOne = setAllSolarPanels(groundSolarPanel, gPanelOneCoordinates[0], gPanelOneCoordinates[1], gPanelOneCoordinates[2], gPanelLeftAngles[0], gPanelLeftAngles[1], gPanelLeftAngles[2]); //2 ground panels\r\n        gPanelTwo = setAllSolarPanels(groundSolarPanel, gPanelTwoCoordinates[0], gPanelTwoCoordinates[1], gPanelTwoCoordinates[2], gPanelRightAngles[0], gPanelRightAngles[1], gPanelRightAngles[2]);\r\n\r\n        //sets boxes with panels\r\n        Box boxers = createSolar(solarPanelOne, 39, 3.64, 65, rightSideAngles[1], rightSideAngles[2], rightSideAngles[0]);\r\n        Box boxers2 = createSolar(solarPanelTwo, 39, 3.64, 65, rightSideAngles[1], rightSideAngles[2], rightSideAngles[0]);\r\n        Box boxers3 = createSolar(solarPanelThree, 39, 3.64, 65, -rightSideAngles[1], -rightSideAngles[2], rightSideAngles[0]);\r\n        Box boxers4 = createSolar(solarPanelFour, 39, 3.64, 65, -rightSideAngles[1], -rightSideAngles[2], rightSideAngles[0]);\r\n        Box boxers5 = createSolar(gPanelOne, 39, 3.64, 130, 55, 0, -65);\r\n        Box boxers6 = createSolar(gPanelTwo, 39, 3.64, 130, -55, 0, -65);\r\n\r\n        //Grouping together solar panel w/ respective box\r\n        solarPanelOnewR = new Group(solarPanelOne, boxers);\r\n        solarPanelTwowR = new Group(solarPanelTwo, boxers2);\r\n        solarPanelThreewR = new Group(solarPanelThree, boxers3);\r\n        solarPanelFourwR = new Group(solarPanelFour, boxers4);\r\n        gPanelOneBox = new Group(gPanelOne, boxers5);\r\n        gPanelTwoBox = new Group(gPanelTwo, boxers6);\r\n\r\n        panelsWHouse = new Group(houseImport, solarPanelOnewR, solarPanelTwowR, solarPanelThreewR, solarPanelFourwR, gPanelOneBox, gPanelTwoBox);\r\n        panelsWHouse.setTranslateY(500); // puts house at ground level.. If you comment this it removes models on screen\r\n        panelsWHouse.setTranslateX(400); // puts house at ground level.. If you comment this out it removes models on screen\r\n        return panelsWHouse;\r\n    }\r\n\r\n    static Group sunCreation() {\r\n        Sphere sphere = new Sphere(80.0f);\r\n        PhongMaterial material = new PhongMaterial();\r\n        material.setDiffuseColor(Color.YELLOWGREEN);\r\n        sphere.setMaterial(material);\r\n\r\n        // create a point light\r\n        PointLight pointlight = new PointLight();\r\n\r\n        // create a Group\r\n        sun = new Group(sphere, pointlight);\r\n        // translate the sphere to a position\r\n\r\n        sphere.setTranslateX(100);\r\n        sphere.setTranslateY(-200);\r\n        pointlight.setTranslateZ(-1000);\r\n        pointlight.setTranslateX(+1000);\r\n        pointlight.setTranslateY(+10);\r\n        pointlight.setColor(Color.GREENYELLOW);\r\n\r\n        return sun;\r\n    }\r\n\r\n    static void sunTrajectory() {\r\n        Sphere sphere = new Sphere(80.0f);\r\n        Sphere sphere1 = new Sphere(80.0f);\r\n        Sphere sphere3 = new Sphere(80.0f);\r\n        Sphere sphere4 = new Sphere(80.0f);\r\n\r\n        PhongMaterial material = new PhongMaterial();\r\n        material.setDiffuseColor(Color.YELLOWGREEN);\r\n        sphere.setMaterial(material);\r\n        //sphere1.setMaterial(material);\r\n\r\n        // create a point light\r\n        PointLight pointlight = new PointLight();\r\n        Group sun = new Group(sphere, pointlight);\r\n        Group sun1 = new Group(sphere1, pointlight);\r\n        Group sun3 = new Group(sphere3, pointlight);\r\n        Group sun4 = new Group(sphere4, pointlight);\r\n\r\n        pointlight.setColor(Color.YELLOWGREEN);\r\n\r\n        Point3D point1 = new Point3D(gPanelOneBox.getTranslateX(), gPanelOneBox.getTranslateY(), gPanelOneBox.getTranslateZ());\r\n        Point3D point2 = new Point3D(sun.getTranslateX(), sun.getTranslateY(), sun.getTranslateZ());\r\n\r\n        Double distance = Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2) + Math.pow(point1.getZ() - point2.getZ(), 2));\r\n        System.out.println(distance);\r\n\r\n        //code for 7:59 current time\r\n        //199 minutes after sunrise\r\n        //at 6 am or 0;\r\n        int totaltime = 720;\r\n        int slice = totaltime / 6;\r\n        int currenttime = 720;\r\n        int sliceofday = 0;\r\n\r\n\r\n        if (slice >= currenttime) {\r\n            double angle = 30;\r\n            angle = Math.toRadians(angle);\r\n            double x33 = Math.cos(angle);\r\n            double y33 = Math.sin(angle);\r\n\r\n            sun.setTranslateX(x33 * 500);\r\n            sun.setTranslateY(-y33 * 500);\r\n            //sceneRoot.getChildren().add(sun);\r\n            sun.setTranslateZ(0);\r\n            //sceneRoot.getChildren().add(sun);\r\n\r\n        }\r\n\r\n\r\n        if (((2 * slice) >= currenttime) && (slice < currenttime)) {\r\n            double angle1 = 60;\r\n            angle1 = Math.toRadians(angle1);\r\n            double x66 = Math.cos(angle1);\r\n            double y66 = Math.sin(angle1);\r\n            sun.setTranslateX(x66 * 500);\r\n            sun.setTranslateY(-y66 * 500);\r\n            sun.setTranslateZ(0);\r\n            //sceneRoot.getChildren().add(sun1);\r\n\r\n            //sun1.setTranslateZ(0);\r\n        }\r\n        if (((4 * slice) >= currenttime) && (3 * slice < currenttime)) {\r\n            double angle2 = 120;\r\n            angle2 = Math.toRadians(angle2);\r\n            double x12 = Math.cos(angle2);\r\n            double y12 = Math.sin(angle2);\r\n            sun.setTranslateX(x12 * 500);\r\n            sun.setTranslateY(-y12 * 500);\r\n            sun.setTranslateZ(0);\r\n            //sceneRoot.getChildren().add(sun3);\r\n        }\r\n        if (((3 * slice) >= currenttime) && (2 * slice < currenttime)) {\r\n            double angle3 = 90;\r\n            angle3 = Math.toRadians(angle3);\r\n            double x90 = Math.cos(angle3);\r\n            double y90 = Math.sin(angle3);\r\n            sun.setTranslateX(x90 * 500);\r\n            sun.setTranslateZ(0);\r\n            sun.setTranslateY(-y90 * 500);\r\n            //sceneRoot.getChildren().add(sun4);\r\n        }\r\n        if (((5 * slice) >= currenttime) && (4 * slice < currenttime)) {\r\n            double angle3 = 150;\r\n            angle3 = Math.toRadians(angle3);\r\n            double x150 = Math.cos(angle3);\r\n            double y150 = Math.sin(angle3);\r\n            sun.setTranslateX(x150 * 500);\r\n            sun.setTranslateZ(0);\r\n            sun.setTranslateY(-y150 * 500);\r\n            //sceneRoot.getChildren().add(sun4);\r\n        }\r\n        if (((6 * slice) >= currenttime) && (5 * slice < currenttime)) {\r\n            double angle3 = 180;\r\n            angle3 = Math.toRadians(angle3);\r\n            double x180 = Math.cos(angle3);\r\n            double y180 = Math.sin(angle3);\r\n            sun.setTranslateX(x180 * 500);\r\n            sun.setTranslateZ(0);\r\n            sun.setTranslateY(-y180 * 500);\r\n            //sceneRoot.getChildren().add(sun4);\r\n        }\r\n        //sceneRoot.getChildren().add(sun);\r\n\r\n    }\r\n\r\n    //helper methods for most optimal\r\n    public static double distanceCalc(Box box, Group sun) {\r\n        Point3D point1 = new Point3D(box.getTranslateX(), box.getTranslateY(), box.getTranslateZ());\r\n        Point3D point2 = new Point3D(sun.getTranslateX(), sun.getTranslateY(), sun.getTranslateZ());\r\n        Double distance = Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2) + Math.pow(point1.getZ() - point2.getZ(), 2));\r\n        return distance;\r\n    }\r\n\r\n    public static void colorSetOpt(Group sunOb) {\r\n        Double b1d = distanceCalc((Box) solarPanelOnewR.getChildren().get(1), sunOb);\r\n        Double b2d = distanceCalc((Box) solarPanelTwowR.getChildren().get(1), sunOb);\r\n        Double b3d = distanceCalc((Box) solarPanelThreewR.getChildren().get(1), sunOb);\r\n        Double b4d = distanceCalc((Box) solarPanelFourwR.getChildren().get(1), sunOb);\r\n        box1closest = true;\r\n        box2closest = false;\r\n        box3closest = false;\r\n        box4closest = false;\r\n\r\n        if ((b2d < b1d) && (b2d < b3d) && (b2d < b4d)) {\r\n            box1closest = false;\r\n            box2closest = true;\r\n            box3closest = false;\r\n            box4closest = false;\r\n        }\r\n        if ((b3d < b2d) && (b3d < b1d) && (b3d < b4d)) {\r\n            box1closest = false;\r\n            box2closest = false;\r\n            box3closest = true;\r\n            box4closest = false;\r\n        }\r\n        if ((b4d < b1d) && (b4d < b3d) && (b4d < b2d)) {\r\n            box1closest = false;\r\n            box2closest = false;\r\n            box3closest = false;\r\n            box4closest = true;\r\n        }\r\n        if (box1closest = true) {\r\n            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col);\r\n            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col1);\r\n            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col1);\r\n            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col1);\r\n        }\r\n        if (box2closest = true) {\r\n            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col1);\r\n            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col);\r\n            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col1);\r\n            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col1);\r\n\r\n        }\r\n        if (box3closest = true) {\r\n            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col1);\r\n            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col1);\r\n            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col);\r\n            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col1);\r\n        }\r\n        if (box4closest = true) {\r\n            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col1);\r\n            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col1);\r\n            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col1);\r\n            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col);\r\n\r\n        }\r\n    }\r\n\r\n\r\n    public static void gColorSetOpt(Group sunOb){\r\n        Double b1d = distanceCalc((Box) gPanelOneBox.getChildren().get(1), sunOb);\r\n        Double b2d = distanceCalc((Box) gPanelTwoBox.getChildren().get(1), sunOb);\r\n        gbox1closest = true;\r\n        gbox2closest=false;\r\n\r\n        if((b2d < b1d)){\r\n            box1closest = false;\r\n            box2closest = true;\r\n        }\r\n        if(gbox1closest = true){\r\n            ((Box) gPanelOneBox.getChildren().get(1)).setMaterial(col);\r\n            ((Box) gPanelTwoBox.getChildren().get(1)).setMaterial(col1);\r\n        }\r\n        if(gbox2closest = true){\r\n            ((Box) gPanelOneBox.getChildren().get(1)).setMaterial(col1);\r\n            ((Box) gPanelTwoBox.getChildren().get(1)).setMaterial(col);\r\n        }\r\n    }\r\n    //skybox loading and blending of the images to make it look seamless (I think)\r\n    private void loadImageViews() {\r\n        for(ImageView imageViews : views)\r\n        {\r\n            imageViews.setSmooth(true);\r\n\r\n            imageViews.setScaleX(10);\r\n            imageViews.setScaleY(10);\r\n            imageViews.setScaleZ(10);\r\n            imageViews.setPreserveRatio(true);\r\n        }\r\n        buildSkyboxFromImage();\r\n    }\r\n    //for folding skybox from imported 4x3 image\r\n\r\n    //this is what the importing image should look like:\r\n    /*\r\n     *              ____\r\n     *             |top |\r\n     *         ____|____|____ ____\r\n     *        |left|fwd |rght|back|\r\n     *        |____|____|____|____|\r\n     *             |bot |\r\n     *             |____|\r\n     *\r\n     */\r\n\r\n    //loadImageViewPorts - builds skybox\r\n    public void buildSkyboxFromImage()\r\n    {\r\n        //layoutViews(); //top, back, left...\r\n\r\n        //TODO consider if the below is an overcomplication and if you NEED to use a constructor.\r\n        //note that the box we pass in has x,y,z  already there. add diffuse image and call it a day. Assume size is correct?\r\n\r\n\r\n        // Box skyboxBox = new Box(10000, 10000, 10000);\r\n        //Sphere skybox = new Sphere(5000);\r\n\r\n\r\n\r\n\r\n        //4 x 3 image divided by their own ratio should both = 1, validates size of incoming image, we also check when buildingsk=ybox, but what do you do\r\n//        if(width/4 != height/3)\r\n//            throw new UnsupportedOperationException(\"Image needs to be a 4x3 image. Sideways cross, see \");\r\n        double width = WIDTH;\r\n        double height = HEIGHT;\r\n        size = width - height;\r\n        recalculateSize(size);\r\n\r\n        //setting up grids for\r\n        double\r\n                topx = size, topy =0,\r\n                botx = size, boty = size*2,\r\n                leftx = 0, lefty= size,\r\n                rightx = size * 2, righty = size,\r\n                fwdx = size, fwdy= size,\r\n                backx = size *3, backy = size;\r\n\r\n        //add top padding x+, y+, width-, height\r\n        top.setViewport(new Rectangle2D(topx , topy , size, size ));\r\n\r\n        //add left padding x, y+, width, height-\r\n        left.setViewport(new Rectangle2D(leftx , lefty , size - 1, size - 1));\r\n\r\n        //add front padding x+, y+, width-, height\r\n        back.setViewport(new Rectangle2D(fwdx , fwdy, size , size));\r\n\r\n        //add right padding x, y+, width, height-\r\n        right.setViewport(new Rectangle2D(rightx, righty , size , size ));\r\n\r\n        //add back padding x, y+, width, height-\r\n        front.setViewport(new Rectangle2D(backx + 1, backy - 1, size - 1, size - 1));\r\n\r\n        //add bottom padding x+, y, width-, height-\r\n        bottom.setViewport(new Rectangle2D(botx, boty, size , size));\r\n\r\n\r\n        for(ImageView view : views)\r\n        {\r\n            view.setImage(skyboxImage);\r\n            // System.out.println(view.getId() + view.getViewport() + size);  //TODO just for testing correct outputs\r\n\r\n        }\r\n        final PhongMaterial skyMaterial = new PhongMaterial();\r\n        skyMaterial.setSpecularColor(Color.TRANSPARENT);\r\n        skyMaterial.setDiffuseMap(skyboxImage);\r\n        root.getTransforms().add(affine);\r\n        // views.setMaterial(skyMaterial);\r\n        // views.setCullFace(CullFace.NONE);\r\n        layoutViews();\r\n        root.getChildren().addAll(views);\r\n\r\n    }  //ensuring that our cells for our skybox image are appropriately sized before folding\r\n    private void recalculateSize(double size)\r\n    {\r\n        double factor = Math.floor(getSize()/size);\r\n        setSize(size * factor);\r\n    }\r\n\r\n    //build the box through translations and folding\r\n    private void layoutViews()\r\n    {\r\n        for(ImageView view : views)\r\n        {\r\n            view.setFitWidth(getSize());\r\n            view.setFitHeight(getSize());\r\n        }\r\n\r\n\r\n        back.setTranslateX(-0.5 * getSize());\r\n        back.setTranslateY(-0.5 * getSize());\r\n        back.setTranslateZ(-0.5 * getSize());\r\n\r\n\r\n        front.setTranslateX(-0.5 * getSize());\r\n        front.setTranslateY(-0.5 * getSize());\r\n        front.setTranslateZ(0.5 * getSize());\r\n        front.setRotationAxis(Rotate.Z_AXIS);\r\n        front.setRotate(-180);\r\n        front.getTransforms().add(new Rotate(180,front.getFitHeight() / 2, 0,0, Rotate.X_AXIS));\r\n        front.setTranslateY(front.getTranslateY() - getSize());\r\n\r\n        top.setTranslateX(-0.5 * getSize());\r\n        top.setTranslateY(-1 * getSize());\r\n        top.setRotationAxis(Rotate.X_AXIS);\r\n        top.setRotate(-90);\r\n\r\n        bottom.setTranslateX(-0.5 * getSize());\r\n        bottom.setTranslateY(0);\r\n        bottom.setRotationAxis(Rotate.X_AXIS);\r\n        bottom.setRotate(90);\r\n\r\n        left.setTranslateX(-1 * getSize());\r\n        left.setTranslateY(-0.5 * getSize());\r\n        left.setRotationAxis(Rotate.Y_AXIS);\r\n        left.setRotate(90);\r\n\r\n        right.setTranslateX(0);\r\n        right.setTranslateY(-0.5 * getSize());\r\n        right.setRotationAxis(Rotate.Y_AXIS);\r\n        right.setRotate(-90);\r\n    }\r\n\r\n    public final double getSize()\r\n    {\r\n        return size;\r\n    }\r\n\r\n    public final void setSize(double value)\r\n    {\r\n        size = value;\r\n    }\r\n\r\n\r\n\r\n\r\n    public static void main(String[] args) {\r\n        launch(args);\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyBoxApplication.java b/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyBoxApplication.java
+--- a/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyBoxApplication.java	(revision 04709a137893836545148630a505006cb20046a8)
++++ b/SkyBoxJavaFX-Tester/src/main/java/com/example/skyboxjavafxtester/SkyBoxApplication.java	(date 1647763197746)
+@@ -1,59 +1,36 @@
+ package com.example.skyboxjavafxtester;
+ 
+-import javafx.application.Application;
+-import javafx.collections.ObservableIntegerArray;
+-import javafx.fxml.FXMLLoader;
+-import javafx.geometry.Point3D;
+-import javafx.geometry.Rectangle2D;
+-import javafx.scene.Scene;
+-import javafx.scene.control.Label;
+-import javafx.scene.image.ImageView;
+-import javafx.scene.input.KeyCode;
+-import javafx.scene.layout.*;
+-import javafx.scene.shape.Box;
+-import javafx.scene.transform.Affine;
+-import javafx.scene.transform.Transform;
+-import javafx.stage.Stage;
+ import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
+-import com.luckycatlabs.sunrisesunset.*;
+-import com.luckycatlabs.sunrisesunset.dto.Location;
++import javafx.application.Application;
++import javafx.event.Event;
++import javafx.event.EventHandler;
+ import javafx.geometry.Bounds;
++import javafx.geometry.Point3D;
+ import javafx.scene.*;
++import javafx.scene.control.Button;
++import javafx.scene.effect.Light;
++import javafx.scene.effect.Lighting;
+ import javafx.scene.image.Image;
++import javafx.scene.input.KeyCode;
+ import javafx.scene.paint.Color;
++import javafx.scene.paint.ImagePattern;
+ import javafx.scene.paint.PhongMaterial;
+ import javafx.scene.shape.*;
+ import javafx.scene.transform.Rotate;
++import javafx.scene.transform.Transform;
++import javafx.stage.Stage;
++
+ 
+ import java.io.File;
+ import java.io.FileInputStream;
+ import java.io.FileNotFoundException;
+-import java.io.IOException;
+-import java.text.DateFormat;
+-import java.text.ParseException;
+-import java.text.SimpleDateFormat;
+-import java.util.Calendar;
+-import java.util.Date;
+-
+-import javafx.collections.FXCollections;
+-import javafx.collections.ObservableFloatArray;
+ 
++public class SkyboxApplication extends Application {
+ 
+-
+-public class SkyBoxApplication extends Application {
+-
+-
+-    static Group skybox = new Group();
+-
+-    private static Image skyboxImage;
+-    private static TriangleMesh cubeMesh;
+     //camera controls and scene settings declarations
+     private PerspectiveCamera camera;
+     private Group cameraDolly;
+     private final double cameraQuantity = 10.0;
+-    private static final int WIDTH = 680;
+-    private static final int HEIGHT = 849;
+-    private static final int DEPTH = 700;
+ 
+     //Mouse control variable declarations
+     private double mousePosX;
+@@ -62,210 +39,225 @@
+     private double mouseOldY;
+     private double mouseDeltaX;
+     private double mouseDeltaY;
+-    private final Affine affine = new Affine();
+-    //setting up for the folding of our image into a skybox
+-    private final ImageView
+-            top   = new ImageView(),
+-            bottom= new ImageView(),
+-            left  = new ImageView(),
+-            right = new ImageView(),
+-            back  = new ImageView(),
+-            front = new ImageView();
+-    private double size;
+-
+-
+-    {
+-        top.setId("top ");
+-        bottom.setId("bottom ");
+-        left.setId("left ");
+-        right.setId("right ");
+-        back.setId("back ");
+-        front.setId("front ");
+-    }
+-
+-    //aggregating these views into a list
+-    private final ImageView[] views = new ImageView[]
+-            {
+-                    top, left, back, right, front, bottom
+-            };
+-
+-
+-
+ 
+     //Model Import Declaration
+-    private static final File house = new File("C:\\House.3ds");
+-    private static final File solarPanel = new File("C:\\SolarPanel(Export).3ds");
+-    private static final File groundSolarPanel = new File("C:\\GroundSolarPanel.3ds");
+-    private static Group solarPanelImport;
+-    private static Group gPanelOne;
+-    private static Group gPanelTwo;
+-    private static Group houseImport;
+-    static Group solarPanelOnewR;
+-    static Group solarPanelTwowR;
+-    static Group solarPanelThreewR;
+-    static Group solarPanelFourwR;
+-    static Group gPanelOneBox;
+-    static Group gPanelTwoBox;
+-    static Group panelsWHouse;
+-    static Group sun;
+-    private Boolean oneSelected = false;
+-    private Boolean twoSelected = false;
+-    static PhongMaterial clear = new PhongMaterial(Color.TRANSPARENT);
+-
+-    //Location and Dates
+-    static String sunriseTime;
+-    static String sunsetTime;
+-    static Calendar cal;
+-    static String theDate = "20220310";
+-    static String theLocation;
+-    static String timeZone = "GMT-8";
+-    static Location location;
+-    static Double latitude = 47.6588;
+-    static Double longitude = -117.4260;
+-    static Date date;
+-
+-    //Sun movement variables
+-    static int timeAS;
+-    static int timeBS;
+-    static int sliceofday;
+-    static int totalMinutes = 720;
+-    static int sunrise = 0;
+-    static int sunset = 720;
+-    static boolean box1closest;
+-    static boolean box2closest;
+-    static boolean box3closest;
+-    static boolean box4closest;
+-    static boolean gbox1closest;
+-    static boolean gbox2closest;
+-    static PhongMaterial col = new PhongMaterial(Color.GREEN);
+-    static PhongMaterial col1 = new PhongMaterial(Color.RED);
+-
+-    private AnchorPane sliderAndDate;
+-    private AnchorPane uiPane;
+-    private Label label;
+-
+-
+-    //private final double WIDTH, HEIGHT, DEPTH;
+-    private static TriangleMesh cube;
+-    private MeshView skyBox;
+-    private static float x0;
+-    private static float x1;
+-    private static float x2;
+-    private static float x3;
+-    private static float x4;
+-    private static float y0;
+-    private static float y1;
+-    private static float y2;
+-    private static float y3; //values for points of skybox
+-
+-    //private final Image textureImage;
+-
+-
+-
+-
++    private final File house = new File("C:\\House.3ds");
++    private final File solarPanel = new File("C:\\SolarPanel(Export).3ds");
++    private final File groundSolarPanel = new File("C:\\GroundSolarPanel.3ds");
++    private Group solarPanelImport;
+ 
+-    //private static final double depth = skyboxImage.getDepth(); //MAY NOT NEED FOR cube since shoudl scale evenly
+-    private static final ObservableIntegerArray faces = FXCollections.observableIntegerArray();
+-    private static final ObservableFloatArray texCords = FXCollections.observableFloatArray();
+-    private static final ObservableFloatArray points = FXCollections.observableFloatArray();
+ 
+-
+-
+-    static Group root = new Group();
++    Image skyboxImage;
+     {
+         try {
+-            skyboxImage = new Image(new FileInputStream("C:\\skyboxExample.png"));
+-            //TODO confirm if I need this, I THINK it helps with blending the photo together for the skybox corners .
+-//           final double width = skyboxImage.getWidth();
+-//            final double height = skyboxImage.getHeight();
++            skyboxImage = new Image(new FileInputStream("C:\\skyboxDesert.png"));
+         } catch (FileNotFoundException e) {
+             e.printStackTrace();
+         }
+     }
+ 
++    private void constructWorld(Group root) {
++        // AmbientLight light = new AmbientLight();
++        AmbientLight light = new AmbientLight(Color.rgb(160, 160, 160));
++
++        PointLight pl = new PointLight();
++        pl.setTranslateX(100);
++        pl.setTranslateY(-100);
++        pl.setTranslateZ(-100);
++        root.getChildren().add(pl);
++
++        final PhongMaterial greenMaterial = new PhongMaterial();
++        greenMaterial.setDiffuseColor(Color.FORESTGREEN);
++        greenMaterial.setSpecularColor(Color.LIMEGREEN);
++        Box xAxis = new Box(500, 10, 10);
++        xAxis.setMaterial(greenMaterial);
++        Box yAxis = new Box(10, 200, 10);
++        yAxis.setMaterial(greenMaterial);
++        Box zAxis = new Box(10, 10, 200);
++        zAxis.setMaterial(greenMaterial);
++
++        final PhongMaterial redMaterial = new PhongMaterial();
++        redMaterial.setDiffuseColor(Color.RED);
++        redMaterial.setSpecularColor(Color.TOMATO);
++        final Sphere sphere = new Sphere(30);
++        sphere.setMaterial(redMaterial);
+ 
++        sphere.setTranslateX(150);
+ 
++        final PhongMaterial yellowMaterial = new PhongMaterial();
++        yellowMaterial.setDiffuseColor(Color.rgb(200, 200, 0));
++        // yellowMaterial.setDiffuseColor(Color.YELLOW);
++        // yellowMaterial.setSpecularColor(Color.WHITE);
++        final Sphere sphere2 = new Sphere(30);
++        sphere2.setMaterial(yellowMaterial);
++        // sphere2.setDrawMode(DrawMode.LINE);
++
++        sphere2.setTranslateX(110);
++
++        // Example from JavaFX for Dummies
++        TriangleMesh pyramidMesh = new TriangleMesh();
++        // define (a trivial) texture map
++        pyramidMesh.getTexCoords().addAll(
++                0.5f, 0,
++                0, 0.5f,
++                1, 0.5f,
++                0, 1,
++                1, 1
++        );
++        // define vertices
++        float h = 100;                    // Height
++        float s = 200;                    // Base hypotenuse
++        pyramidMesh.getPoints().addAll(
++                0,    0,    0,            // Point 0 - Top
++                0,    h,    -s/2,         // Point 1 - Front
++                -s/2, h,    0,            // Point 2 - Left
++                s/2,  h,    0,            // Point 3 - Right
++                0,    h,    s/2           // Point 4 - Back
++        );
++        // define faces
++        pyramidMesh.getFaces().addAll(
++                0,0,  2,1,  1,2,          // Front left face
++                0,0,  1,1,  3,1,          // Front right face
++                0,0,  3,1,  4,2,          // Back right face
++                0,0,  4,1,  2,2,          // Back left face
++                4,1,  1,4,  2,2,          // Bottom left face
++                4,1,  3,3,  1,4           // Bottom right face
++        );
++        pyramidMesh.getFaceSmoothingGroups().addAll(
++                1, 2, 3, 4, 5, 5);
++        MeshView pyramid = new MeshView(pyramidMesh);
++        //pyramid.setDrawMode(DrawMode.LINE);
++        final PhongMaterial pyrMaterial = new PhongMaterial();
++        //pyrMaterial.setDiffuseMap(new Image("pyr_tex.png")); //TODO missing this image, need to determine the diffuse map
++        pyrMaterial.setDiffuseColor(Color.BLUE);
++        pyrMaterial.setSpecularColor(Color.WHITE);
++        pyramid.setMaterial(pyrMaterial);
++        pyramid.setTranslateX(-50);
++        pyramid.setTranslateY(-200);
++        pyramid.setTranslateZ(0);
++        //  root.getChildren().add(pyramid);
++
++
++
++        final PhongMaterial blueMaterial = new PhongMaterial();
++        blueMaterial.setDiffuseColor(Color.BLUE);
++        blueMaterial.setSpecularColor(Color.WHITE);
++        Box box = new Box(40, 60, 80);
++        box.setMaterial(blueMaterial);
++
++        box.setTranslateX(-30);
++        box.setTranslateY(-20);
++        box.setTranslateZ(-20);
++
++
++        root.getChildren().add(light);
++
++        Image back = new Image("skyboxDesert.png");
++        final PhongMaterial skyMaterial = new PhongMaterial();
++        skyMaterial.setDiffuseMap(back);
++        Box skybox = new Box(10000, 10000, 10000);
++        skybox.setMaterial(skyMaterial);
++        skybox.setCullFace(CullFace.NONE);
++        root.getChildren().add(skybox);
++
++    }
+ 
+     @Override
+-    public void start(Stage stage) throws IOException {
+-        FXMLLoader fxmlLoader = new FXMLLoader(SkyBoxApplication.class.getResource("skybox-viewUI.fxml"));
+-        Pane entireFrame = new Pane();
+-        Pane skyboxPane = new Pane();
+-        try {
+-            skyboxPane = SkyBoxController.setSkyboxPane();
+-        } catch (ParseException e) {
+-            e.printStackTrace();
+-        }
++    public void start(Stage stage) {
++        //initiates the scene, environment and camera
++
++        //TODO directory for filesource is currently hard coded to path.
++        // Image skyboxImage = new Image(new FileInputStream("/Users/katiepalmer/IdeaProjects/SkyBoxJavaFX-Tester/src/main/resources/skyboxDesert.png"));
++
++        //TODO BELOW: we will likely use the fxmlLoader to call the view once we have more pieces impelmented within our view.
++        // right now we are just setting up skybox
++        //FXMLLoader fxmlLoader = new FXMLLoader(SkyboxApplication.class.getResource("skybox-viewUI.fxml"));
++
++        Group sceneRoot = new Group();
++        constructWorld(sceneRoot);
++
++        //----------Anthony: Creating the sun-------------------//
++
++        Sphere sphere = new Sphere(80.0f);
++        PhongMaterial material = new PhongMaterial();
++        material.setDiffuseColor(Color.YELLOWGREEN);
++        sphere.setMaterial(material);
++
++        // create a point light
++        PointLight pointlight = new PointLight();
++
++        // create a Group
++        Group sun = new Group(sphere, pointlight);
++        // translate the sphere to a position
+ 
++        sphere.setTranslateX(100);
++        sphere.setTranslateY(-200);
++        pointlight.setTranslateZ(-1000);
++        pointlight.setTranslateX(+1000);
++        pointlight.setTranslateY(+10);
++        pointlight.setColor(Color.YELLOWGREEN);
++        sceneRoot.getChildren().add(sun);
+ 
+-        //TODO: make thie borderpane the root, but load the fxml
+-//        double width = skyboxImage.getWidth();
+-//        double height = skyboxImage.getHeight();
+-        //
+-        //  createSkybox(root);
+-           //constructWorld(root); //lights
++        //-------End of creating the sun-----------//
+ 
+-//        createSun(root);
+-//        sunriseSunset();
+-//
+-        //    modifySkybox(root);
+ 
+ 
+-//        Group panelsWHouse = addSolarPanel(root);
+ 
+-        entireFrame.getChildren().add(fxmlLoader.load());
+-       // skyboxPane.getChildren().addAll((Collection<? extends Node>) skyBox);
+-        entireFrame.getChildren().addAll(skyboxPane);
++        //-----------Sean and Anthony---------------------//
++        //-----------Adding house and solar panels w/ box to scene -----------------//
+ 
++        //Coordinates for placement of solar panels to look nice on the roof
++        int p1X = 300, p1Y = -74, p1Z = 190;
++        int p2X = 395, p2Y = -74, p2Z = 400;
++        int rAY = -68, rAX = -68, rAZ = 0; // Right side of roof angles for solar panels
+ 
+-//        SubScene subScene = new SubScene(skyBox, 768, 600);
+-//
+-//
+-//        PerspectiveCamera camera = new PerspectiveCamera();
+-//        camera.setNearClip(0.1);
+-//        camera.setFarClip(30000.0);
++        int p3X = 190, p3Y = -43, p3Z = 250;
++        int p4X = 275, p4Y = -43, p4Z = 440;
++        int lAY = -68, lAX = -113, lAZ = 0; // Left side of roof angles for solar panels
+ 
+-//        subScene.setCamera(camera);
+-//        subScene.setRoot(skyBox);
++        int gP1X = 0, gP1Y = 180, gP1Z = 190; //Ground solar panel coordinates
++        int gP2X = 460, gP2Y = 180, gP2Z = 100;
++        int gAY = 100, gAX = -90, gAZ = 0;
++        int gAYTwo = -60, gAXTwo = -90, gAZTwo = 0;
+ 
+-        root.getChildren().addAll(entireFrame, skyboxPane);
++        Group houseImport = setHouse(); //create new group with the house
+ 
++        Group solarPanelOne = setAllSolarPanels(solarPanel, p1X, p1Y, p1Z, rAY, rAX, rAZ); //4 roof panels
++        Group solarPanelTwo = setAllSolarPanels(solarPanel, p2X, p2Y, p2Z, rAY, rAX, rAZ);
++        Group solarPanelThree = setAllSolarPanels(solarPanel, p3X, p3Y, p3Z, lAY, lAX, lAZ);
++        Group solarPanelFour = setAllSolarPanels(solarPanel, p4X, p4Y, p4Z, lAY, lAX, lAZ);
+ 
++        Group gPanelOne = setAllSolarPanels(groundSolarPanel, gP1X, gP1Y, gP1Z, gAY, gAX, gAZ); //2 ground panels
++        Group gPanelTwo = setAllSolarPanels(groundSolarPanel, gP2X, gP2Y, gP2Z, gAYTwo, gAXTwo, gAZTwo);
+ 
++        //Creating the boxes to match the solar panels
++        Box boxers = createsolar(solarPanelOne, 39, 3.64, 65, rAX, rAZ, rAY);
++        Box boxers2 = createsolar(solarPanelTwo, 39, 3.64, 65, rAX, rAZ, rAY);
++        Box boxers3 = createsolar(solarPanelThree, 39, 3.64, 65, -rAX, -rAZ, rAY);
++        Box boxers4 = createsolar(solarPanelFour, 39, 3.64, 65, -rAX, -rAZ, rAY);
++        //Box boxers5 = createsolar(gPanelOne, 39, 3.64, 65, gAX, gAZ, gAY);
+ 
+-        Scene scene = new Scene(root, 1024, 768); // Make the whole scene with everything
+-        cameraAndControls(root, panelsWHouse, scene);
++        //Grouping together solar panel w/ respective box
++        Group solarPanelOnewR = new Group(solarPanelOne, boxers);
++        Group solarPanelTwowR = new Group(solarPanelTwo, boxers2);
++        Group solarPanelThreewR = new Group(solarPanelThree, boxers3);
++        Group solarPanelFourwR = new Group(solarPanelFour, boxers4);
++        //Group gPanelOnewR = new Group(gPanelOne, boxers5);
+ 
+-        scene.setRoot(root);
++        Group panelsWHouse = new Group(solarPanelOnewR, solarPanelTwowR, solarPanelThreewR, solarPanelFourwR, gPanelOne, gPanelTwo, houseImport);
++        sceneRoot.getChildren().add(panelsWHouse);
++        //---------End of adding solar panels with boxes, and house to the scene-----------//
+ 
+ 
+-        /* Uncomment this section to see the difference that happens
+ 
+-        // This needs to set up the inside of the skyboxPane?
+-        scene.setFill(new ImagePattern(skyboxImage)); //THIS causes whole UI to get filled over, because we are adding it to the scene which encompassdes everything, could translate or
+-      *(
+-        camera = new PerspectiveCamera(true);
+-        camera.setNearClip(0.1);
+-        camera.setFarClip(30000.0);
+-        //sceneRoot.getScene().setCamera(camera);
+-        root.getScene().setCamera(camera);
+-        // translations through dolly
+-
+-
+-         */
+-
+-
+-        //-------------END of Scene and Camera set up----------------------------//
+-
+-
+-
+-
+-        stage.setTitle("Solar Optimization Simulator!");
+-        stage.setScene(scene);
+-        stage.show();
+-    }
+-
+-    private void cameraAndControls(Group root, Group panelsWHouse, Scene scene) {
++
++        //-------------Scene and Camera set up----------------------------//
++        //TODO change to 1024
++        double sceneWidth = 600;
++        //TODO change to 768
++        double sceneHeight = 600;
++        Scene scene = new Scene(sceneRoot, sceneWidth, sceneHeight, true);
++        scene.setFill(new ImagePattern(skyboxImage));
+         camera = new PerspectiveCamera(true);
+         camera.setNearClip(0.1);
+         camera.setFarClip(30000.0);
+@@ -280,13 +272,17 @@
+         Rotate yRotate = new Rotate(0, 0, 0, 0, Rotate.Y_AXIS);
+         camera.getTransforms().addAll(xRotate);
+         turn.getTransforms().addAll(yRotate);
+-            //TODO we do have combo of
+-        root.getChildren().add(cameraDolly);
++
++        sceneRoot.getChildren().add(cameraDolly);
+         cameraDolly.getChildren().add(turn);
+         turn.getChildren().add(camera);
+         //-------------END of Scene and Camera set up----------------------------//
+-        //----------------Controls & Camera Controls Section----------------------------//
+-        //TODO methodize out controls //NOTE i did try to split this from the scene and camera setup, but they were too intertwined at the time.
++
++
++
++
++        //----------------Controls Section----------------------------//
++
+         // Use keyboard to control camera position
+         scene.setOnKeyPressed(event -> {
+             double change = cameraQuantity;
+@@ -294,9 +290,8 @@
+             KeyCode keycode = event.getCode();
+             Rotate r;
+             Transform t = new Rotate();
+-            // Translate pivot = new Translate(); //TODO could use for a more elegant rotation of the camera
++
+             Point3D delta = null;
+-
+             if (keycode == KeyCode.COMMA) {
+                 delta = new Point3D(0, 0, change);
+             }
+@@ -315,19 +310,8 @@
+             if (keycode == KeyCode.S) {
+                 delta = new Point3D(0, change, 0);
+             }
+-            //TODO make a path for the camera to follow in a sphere around the house based on current distance
+-            if (keycode == KeyCode.Q) {                     //rotate camera clockwise
+-                r = new Rotate(-1, Rotate.Y_AXIS);
+-                t = t.createConcatenation(r);
+-                camera.getTransforms().addAll(t);
+-            }
+-            //TODO make a path for the camera to follow in a sphere around the house based on current distance, opposite direction of Q
+-            if (keycode == KeyCode.E) {                     //rotate camera counterclockwise
+-                r = new Rotate(+1, Rotate.Y_AXIS);
+-                t = t.createConcatenation(r);
+-                camera.getTransforms().addAll(t);
+-            }
+             if (keycode == KeyCode.M) {
++
+                 r = new Rotate(1, Rotate.Y_AXIS); // Rotate House and Panels on/around Left
+                 t = t.createConcatenation(r);
+                 panelsWHouse.getTransforms().addAll(t);
+@@ -337,7 +321,6 @@
+                 t = t.createConcatenation(r);
+                 panelsWHouse.getTransforms().addAll(t);
+             }
+-
+             if (delta != null) {
+                 Point3D delta2 = camera.localToParent(delta);
+                 cameraDolly.setTranslateX(cameraDolly.getTranslateX() + delta2.getX());
+@@ -353,7 +336,6 @@
+             mousePosY = me.getSceneY();
+         });
+ 
+-
+         scene.setOnMouseDragged(me -> {
+             mouseOldX = mousePosX;
+             mouseOldY = mousePosY;
+@@ -365,171 +347,15 @@
+             yRotate.setAngle(((yRotate.getAngle() - mouseDeltaX * 0.2) % 360 + 540) % 360 - 180); // +
+             xRotate.setAngle(((xRotate.getAngle() + mouseDeltaY * 0.2) % 360 + 540) % 360 - 180); // -
+         });
+-    }
+-//
+ 
+-
+-
+-    static void constructWorld(Group skyBox) {
+-        // AmbientLight light = new AmbientLight();
+-        AmbientLight light = new AmbientLight(Color.rgb(160, 160, 160));
+-
+-        PointLight pl = new PointLight();
+-        pl.setTranslateX(1000);
+-        pl.setTranslateY(-100);
+-        pl.setTranslateZ(-100);
+-        skyBox.getChildren().add(pl);
+-
+-        //TODO delete this once mesh is implemented -- Mark: 3/11
+-        skyBox.getChildren().add(light);
+-
+-
+-
++        stage.setTitle("Skybox");
++        stage.setScene(scene);
++        stage.show();
+     }
+ 
+-
+-    // Example converted from JavaFX for Dummies from triangle mesh to cube mesh
+-    public static Group createSkybox(Group skyboxGroup)
++    //------------------------Helper Methods----------------------------------------//
++    private Group setHouse()
+     {
+-       TriangleMesh cube = new TriangleMesh();
+-        //TODO NOTE: this is messy since i've been trying a few different approahces.
+-        Image textureImage = skyboxImage;
+-       // loadImageViews(); //folded skybox
+-//
+-//
+-//        TriangleMesh cube = createMesh(WIDTH, HEIGHT, DEPTH);
+-//        calculatePoints();
+-//        calculateTexCords();
+-//        calculateFaces();
+-
+-
+-//        MeshView cubeMesh= new MeshView(cube);
+-//        cubeMesh.setOpacity(.75);
+-
+-
+-        PhongMaterial skyboxMaterial = new PhongMaterial();
+-
+-
+-        skyboxMaterial.setSpecularColor(Color.TRANSPARENT);
+-        skyboxMaterial.setDiffuseMap(textureImage);
+-
+-
+-        Box box = new Box(WIDTH, HEIGHT, DEPTH);
+-
+-
+-        box.setMaterial(skyboxMaterial);
+-
+-
+-        box.setTranslateX(500);
+-        box.setTranslateY(400);
+-        box.setTranslateZ(200);
+-        box.setScaleX(1.5);
+-        box.setScaleY(1.5);
+-        box.setScaleZ(1.5);
+-
+-
+-
+-//        cubeMesh.setTranslateX(1000);
+-//        cubeMesh.setTranslateY(400);
+-//        cubeMesh.setTranslateZ(200);
+-        box.setCullFace(CullFace.FRONT);
+-//        cubeMesh.setCullFace(CullFace.NONE);
+-//        cubeMesh.setMaterial(skyboxMaterial);
+-        //TODO  maybe try something like:
+-            //getpoints/add points, etc... then adding into start or initialize?
+-
+-        //skyboxGroup.getChildren().add(cubeMesh);
+-       skyboxGroup.getChildren().add(box);
+-
+-
+-
+-        return skyboxGroup;
+-    }
+-
+-//    private static TriangleMesh createMesh(int WIDTH, int HEIGHT, int DEPTH) {
+-//
+-//        calculatePoints();
+-//        calculateFaces();
+-//        calculateTexCords();
+-//
+-//        return cubeMesh;
+-//    }
+-
+-
+-    //skybox meshview implementation pulled and made specific from https://www.demo2s.com/java/javafx-trianglemesh-tutorial-with-examples.htm
+-
+-//    private static void calculatePoints() {
+-//        float hw = (float) WIDTH/2;
+-//        float hh = (float) HEIGHT/2;
+-//        float hd = (float) DEPTH/2;
+-//
+-//
+-//    //triangle mesh points: width, height, depth
+-//        points.addAll(hw, hh, hd,
+-//                hw, hh, -hd,
+-//                hw, -hh, hd,
+-//                hw, -hh, -hd,
+-//                -hw, hh, hd,
+-//                -hw, hh, -hd,
+-//                -hw, -hh, hd,
+-//                -hw, -hh, -hd);
+-//        cube.getPoints().addAll(points);
+-//
+-//    }
+-//    //Below is for setting faces for the values of the cubeMesh: uses 6 each, for each of the 6 faces of the cube
+-//    private static void calculateFaces() {
+-//        faces.addAll(0, 10, 2, 5, 1, 9,
+-//                2, 5, 3, 4, 1, 9,
+-//                4, 7, 5, 8, 6, 2,
+-//                6, 2, 5, 8, 7, 3,
+-//                0, 13, 1, 9, 4, 12,
+-//                4, 12, 1, 9, 5, 8,
+-//                2, 1, 6, 0, 3, 4,
+-//                3, 4, 6, 0, 7, 3,
+-//                0, 10, 4, 11, 2, 5,
+-//                2, 5, 4, 11, 6, 6,
+-//                1, 9, 3, 4, 5, 8,
+-//                5, 8, 3, 4, 7, 3);
+-//        cube.getFaces().addAll(faces);
+-//    }
+-//    //texture coords are x,y coords
+-//    private static void calculateTexCords() {
+-//        float x0 = 0f;
+-//        float x1 = 1f / 4f;
+-//        float x2 = 2f / 4f;
+-//        float x3 = 3f / 4f;
+-//        float x4 = 1f;
+-//        float y0 = 0f;
+-//        float y1 = 1f / 3f;
+-//        float y2 = 2f / 3f;
+-//        float y3 = 1f;
+-//
+-//
+-//
+-//        // x4 = 0; x3 = iw * 0.25f; x2 = iw / 2.0f; x1 = iw * 0.75f; x0 = iw;
+-//        // y3 = 0; y2 = ih * 0.33f; y1 = ih * 0.66f; y0 = ih;
+-//
+-//        texCords.addAll((x1 + 0.001f), (y0 + 0.001f), (x2 - 0.001f), y0, (x0), (y1 + 0.001f), (x1 + 0.001f),
+-//                (y1 + 0.001f), (x2 - 0.001f), (y1 + 0.001f), x3, (y1 + 0.001f), (x4), (y1 + 0.001f), (x0),
+-//                (y2 - 0.001f), (x1 + 0.001f), (y2 - 0.001f), x2, (y2 - 0.001f), x3, (y2 - 0.001f), (x4),
+-//                (y2 - 0.001f), (x1 + 0.001f), (y3 - 0.001f), x2, (y3 - 0.001f));
+-//        cube.getTexCoords().addAll(texCords);
+-//    }
+-//
+-//    public double getWidth() {
+-//        return WIDTH;
+-//    }
+-//
+-//    public double getHeight() {
+-//        return HEIGHT;
+-//    }
+-//
+-//    public double getDepth() {
+-//        return DEPTH;
+-//    }
+-
+-
+-    private static Group setHouse() {
+         TdsModelImporter modelImporter = new TdsModelImporter(); //Model Importer
+ 
+         modelImporter.read(house); //Read in the house model
+@@ -544,11 +370,11 @@
+             node.setTranslateX(0); // These place the house towards the ground and to the right of the view
+             node.setTranslateY(200); // ^^^^^^^^^^^^^^^
+         }
+-        houseImport = new Group(oneStoryHouse); //create new group with the house
++        Group houseImport = new Group(oneStoryHouse); //create new group with the house
+         return houseImport;
+     }
+ 
+-    private static Group setAllSolarPanels(File solar, int pX, int pY, int pZ, int AY, int AX, int AZ) //----Model Helper Method----//
++    private Group setAllSolarPanels(File solar,int pX, int pY, int pZ, int AY, int AX, int AZ) //----Model Helper Method----//
+     {
+         TdsModelImporter modelImporter = new TdsModelImporter(); //Model Importer
+         modelImporter.read(solar);
+@@ -567,7 +393,7 @@
+         return solarPanelImport;
+     }
+ 
+-    private static Box createSolar(Group group1, double height, double depth, double width, double rax, double raz, double ray) {
++    private Box createsolar(Group group1, double height, double depth, double width, double rax, double raz, double ray){
+         Box box = new Box();
+         Bounds cord = group1.getBoundsInLocal();
+         box.getTransforms().setAll(new Rotate(ray, Rotate.Y_AXIS), new Rotate(rax, Rotate.X_AXIS), new Rotate(raz, Rotate.Z_AXIS));
+@@ -577,463 +403,21 @@
+         box.setHeight(height);
+         box.setDepth(depth);
+         box.setWidth(width);
+-        box.setMaterial(clear);
+         return box;
+     }
+ 
+-    private void setCenters(Rotate r, Group beingRotated) {
+-        r.setPivotX(beingRotated.getBoundsInLocal().getCenterX());
+-        r.setPivotY(beingRotated.getBoundsInLocal().getCenterY());
+-        r.setPivotZ(beingRotated.getBoundsInLocal().getCenterZ());
+-    }
+-
+-    private void gPanelOneSelected() {
+-        oneSelected = true;
+-        twoSelected = false;
+-    }
+-
+-    private void gPanelTwoSelected() {
+-        oneSelected = false;
+-        twoSelected = true;
+-    }
+-
+-    private void clearSelected() {
+-        oneSelected = false;
+-        twoSelected = false;
+-    }
+-
+-    static void startParams() throws ParseException {
+-        DateFormat formatter = new SimpleDateFormat("yyyyMMdd"); //Formatter
+-        date = formatter.parse(theDate); //Parse string to create Date object
+-        cal = Calendar.getInstance(); //Calendar object created
+-        cal.setTime(date); //Calender object given corresponding date
+-
+-        location = new Location(latitude.doubleValue(), longitude.doubleValue()); // Will be entered in coordinates
+-        SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, timeZone); // Creates calculator for sun times
+-
+-        sunriseTime = calculator.getOfficialSunriseForDate(cal); // Gets sunrise based on date and calculator created
+-        sunsetTime = calculator.getOfficialSunsetForDate(cal); // Gets sunset based on date and calculator created
+-    }
+-
+-    static Group models() {
+-
+-        int rightSideAngles[] = {-68, -68, 0};
+-
+-        int panelOneCoordinates[] = {300, -74, 190};
+-        int panelTwoCoordinates[] = {395, -74, 400};
+-
+-        int leftSideAngles[] = {-68, -113, 0};
+-        int panelThreeCoordinates[] = {190, -43, 250};
+-        int panelFourCoordinates[] = {275, -43, 440};
+-
+-        int gPanelOneCoordinates[] = {0, 180, 190};
+-        int gPanelTwoCoordinates[] = {460, 180, 100};
+-        int gPanelLeftAngles[] = {115, -90, 0};
+-        int gPanelRightAngles[] = {-65, -90, 0};
+-//                                105
+-        //Sets house and panels into scene
+-        Group houseImport = setHouse();
+-        Group solarPanelOne = setAllSolarPanels(solarPanel, panelOneCoordinates[0], panelOneCoordinates[1], panelOneCoordinates[2], rightSideAngles[0], rightSideAngles[1], rightSideAngles[2]); //4 roof panels
+-        Group solarPanelTwo = setAllSolarPanels(solarPanel, panelTwoCoordinates[0], panelTwoCoordinates[1], panelTwoCoordinates[2], rightSideAngles[0], rightSideAngles[1], rightSideAngles[2]);
+-        Group solarPanelThree = setAllSolarPanels(solarPanel, panelThreeCoordinates[0], panelThreeCoordinates[1], panelThreeCoordinates[2], leftSideAngles[0], leftSideAngles[1], leftSideAngles[2]);
+-        Group solarPanelFour = setAllSolarPanels(solarPanel, panelFourCoordinates[0], panelFourCoordinates[1], panelFourCoordinates[2], leftSideAngles[0], leftSideAngles[1], leftSideAngles[2]);
+-        gPanelOne = setAllSolarPanels(groundSolarPanel, gPanelOneCoordinates[0], gPanelOneCoordinates[1], gPanelOneCoordinates[2], gPanelLeftAngles[0], gPanelLeftAngles[1], gPanelLeftAngles[2]); //2 ground panels
+-        gPanelTwo = setAllSolarPanels(groundSolarPanel, gPanelTwoCoordinates[0], gPanelTwoCoordinates[1], gPanelTwoCoordinates[2], gPanelRightAngles[0], gPanelRightAngles[1], gPanelRightAngles[2]);
+-
+-        //sets boxes with panels
+-        Box boxers = createSolar(solarPanelOne, 39, 3.64, 65, rightSideAngles[1], rightSideAngles[2], rightSideAngles[0]);
+-        Box boxers2 = createSolar(solarPanelTwo, 39, 3.64, 65, rightSideAngles[1], rightSideAngles[2], rightSideAngles[0]);
+-        Box boxers3 = createSolar(solarPanelThree, 39, 3.64, 65, -rightSideAngles[1], -rightSideAngles[2], rightSideAngles[0]);
+-        Box boxers4 = createSolar(solarPanelFour, 39, 3.64, 65, -rightSideAngles[1], -rightSideAngles[2], rightSideAngles[0]);
+-        Box boxers5 = createSolar(gPanelOne, 39, 3.64, 130, 55, 0, -65);
+-        Box boxers6 = createSolar(gPanelTwo, 39, 3.64, 130, -55, 0, -65);
+-
+-        //Grouping together solar panel w/ respective box
+-        solarPanelOnewR = new Group(solarPanelOne, boxers);
+-        solarPanelTwowR = new Group(solarPanelTwo, boxers2);
+-        solarPanelThreewR = new Group(solarPanelThree, boxers3);
+-        solarPanelFourwR = new Group(solarPanelFour, boxers4);
+-        gPanelOneBox = new Group(gPanelOne, boxers5);
+-        gPanelTwoBox = new Group(gPanelTwo, boxers6);
+-
+-        panelsWHouse = new Group(houseImport, solarPanelOnewR, solarPanelTwowR, solarPanelThreewR, solarPanelFourwR, gPanelOneBox, gPanelTwoBox);
+-        panelsWHouse.setTranslateY(500); // puts house at ground level.. If you comment this it removes models on screen
+-        panelsWHouse.setTranslateX(400); // puts house at ground level.. If you comment this out it removes models on screen
+-        return panelsWHouse;
+-    }
+-
+-    static Group sunCreation() {
+-        Sphere sphere = new Sphere(80.0f);
+-        PhongMaterial material = new PhongMaterial();
+-        material.setDiffuseColor(Color.YELLOWGREEN);
+-        sphere.setMaterial(material);
+-
+-        // create a point light
+-        PointLight pointlight = new PointLight();
+-
+-        // create a Group
+-        sun = new Group(sphere, pointlight);
+-        // translate the sphere to a position
+-
+-        sphere.setTranslateX(100);
+-        sphere.setTranslateY(-200);
+-        pointlight.setTranslateZ(-1000);
+-        pointlight.setTranslateX(+1000);
+-        pointlight.setTranslateY(+10);
+-        pointlight.setColor(Color.GREENYELLOW);
+-
+-        return sun;
+-    }
+-
+-    static void sunTrajectory() {
+-        Sphere sphere = new Sphere(80.0f);
+-        Sphere sphere1 = new Sphere(80.0f);
+-        Sphere sphere3 = new Sphere(80.0f);
+-        Sphere sphere4 = new Sphere(80.0f);
+-
+-        PhongMaterial material = new PhongMaterial();
+-        material.setDiffuseColor(Color.YELLOWGREEN);
+-        sphere.setMaterial(material);
+-        //sphere1.setMaterial(material);
+-
+-        // create a point light
+-        PointLight pointlight = new PointLight();
+-        Group sun = new Group(sphere, pointlight);
+-        Group sun1 = new Group(sphere1, pointlight);
+-        Group sun3 = new Group(sphere3, pointlight);
+-        Group sun4 = new Group(sphere4, pointlight);
+-
+-        pointlight.setColor(Color.YELLOWGREEN);
+-
+-        Point3D point1 = new Point3D(gPanelOneBox.getTranslateX(), gPanelOneBox.getTranslateY(), gPanelOneBox.getTranslateZ());
+-        Point3D point2 = new Point3D(sun.getTranslateX(), sun.getTranslateY(), sun.getTranslateZ());
+-
+-        Double distance = Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2) + Math.pow(point1.getZ() - point2.getZ(), 2));
+-        System.out.println(distance);
+-
+-        //code for 7:59 current time
+-        //199 minutes after sunrise
+-        //at 6 am or 0;
+-        int totaltime = 720;
+-        int slice = totaltime / 6;
+-        int currenttime = 720;
+-        int sliceofday = 0;
+-
+-
+-        if (slice >= currenttime) {
+-            double angle = 30;
+-            angle = Math.toRadians(angle);
+-            double x33 = Math.cos(angle);
+-            double y33 = Math.sin(angle);
+-
+-            sun.setTranslateX(x33 * 500);
+-            sun.setTranslateY(-y33 * 500);
+-            //sceneRoot.getChildren().add(sun);
+-            sun.setTranslateZ(0);
+-            //sceneRoot.getChildren().add(sun);
+-
+-        }
+-
+-
+-        if (((2 * slice) >= currenttime) && (slice < currenttime)) {
+-            double angle1 = 60;
+-            angle1 = Math.toRadians(angle1);
+-            double x66 = Math.cos(angle1);
+-            double y66 = Math.sin(angle1);
+-            sun.setTranslateX(x66 * 500);
+-            sun.setTranslateY(-y66 * 500);
+-            sun.setTranslateZ(0);
+-            //sceneRoot.getChildren().add(sun1);
+-
+-            //sun1.setTranslateZ(0);
+-        }
+-        if (((4 * slice) >= currenttime) && (3 * slice < currenttime)) {
+-            double angle2 = 120;
+-            angle2 = Math.toRadians(angle2);
+-            double x12 = Math.cos(angle2);
+-            double y12 = Math.sin(angle2);
+-            sun.setTranslateX(x12 * 500);
+-            sun.setTranslateY(-y12 * 500);
+-            sun.setTranslateZ(0);
+-            //sceneRoot.getChildren().add(sun3);
+-        }
+-        if (((3 * slice) >= currenttime) && (2 * slice < currenttime)) {
+-            double angle3 = 90;
+-            angle3 = Math.toRadians(angle3);
+-            double x90 = Math.cos(angle3);
+-            double y90 = Math.sin(angle3);
+-            sun.setTranslateX(x90 * 500);
+-            sun.setTranslateZ(0);
+-            sun.setTranslateY(-y90 * 500);
+-            //sceneRoot.getChildren().add(sun4);
+-        }
+-        if (((5 * slice) >= currenttime) && (4 * slice < currenttime)) {
+-            double angle3 = 150;
+-            angle3 = Math.toRadians(angle3);
+-            double x150 = Math.cos(angle3);
+-            double y150 = Math.sin(angle3);
+-            sun.setTranslateX(x150 * 500);
+-            sun.setTranslateZ(0);
+-            sun.setTranslateY(-y150 * 500);
+-            //sceneRoot.getChildren().add(sun4);
+-        }
+-        if (((6 * slice) >= currenttime) && (5 * slice < currenttime)) {
+-            double angle3 = 180;
+-            angle3 = Math.toRadians(angle3);
+-            double x180 = Math.cos(angle3);
+-            double y180 = Math.sin(angle3);
+-            sun.setTranslateX(x180 * 500);
+-            sun.setTranslateZ(0);
+-            sun.setTranslateY(-y180 * 500);
+-            //sceneRoot.getChildren().add(sun4);
+-        }
+-        //sceneRoot.getChildren().add(sun);
+-
+-    }
+-
+-    //helper methods for most optimal
+-    public static double distanceCalc(Box box, Group sun) {
+-        Point3D point1 = new Point3D(box.getTranslateX(), box.getTranslateY(), box.getTranslateZ());
+-        Point3D point2 = new Point3D(sun.getTranslateX(), sun.getTranslateY(), sun.getTranslateZ());
+-        Double distance = Math.sqrt(Math.pow(point1.getX() - point2.getX(), 2) + Math.pow(point1.getY() - point2.getY(), 2) + Math.pow(point1.getZ() - point2.getZ(), 2));
+-        return distance;
+-    }
+-
+-    public static void colorSetOpt(Group sunOb) {
+-        Double b1d = distanceCalc((Box) solarPanelOnewR.getChildren().get(1), sunOb);
+-        Double b2d = distanceCalc((Box) solarPanelTwowR.getChildren().get(1), sunOb);
+-        Double b3d = distanceCalc((Box) solarPanelThreewR.getChildren().get(1), sunOb);
+-        Double b4d = distanceCalc((Box) solarPanelFourwR.getChildren().get(1), sunOb);
+-        box1closest = true;
+-        box2closest = false;
+-        box3closest = false;
+-        box4closest = false;
+-
+-        if ((b2d < b1d) && (b2d < b3d) && (b2d < b4d)) {
+-            box1closest = false;
+-            box2closest = true;
+-            box3closest = false;
+-            box4closest = false;
+-        }
+-        if ((b3d < b2d) && (b3d < b1d) && (b3d < b4d)) {
+-            box1closest = false;
+-            box2closest = false;
+-            box3closest = true;
+-            box4closest = false;
+-        }
+-        if ((b4d < b1d) && (b4d < b3d) && (b4d < b2d)) {
+-            box1closest = false;
+-            box2closest = false;
+-            box3closest = false;
+-            box4closest = true;
+-        }
+-        if (box1closest = true) {
+-            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col);
+-            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col1);
+-            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col1);
+-            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col1);
+-        }
+-        if (box2closest = true) {
+-            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col1);
+-            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col);
+-            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col1);
+-            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col1);
+-
+-        }
+-        if (box3closest = true) {
+-            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col1);
+-            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col1);
+-            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col);
+-            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col1);
+-        }
+-        if (box4closest = true) {
+-            ((Box) solarPanelOnewR.getChildren().get(1)).setMaterial(col1);
+-            ((Box) solarPanelTwowR.getChildren().get(1)).setMaterial(col1);
+-            ((Box) solarPanelThreewR.getChildren().get(1)).setMaterial(col1);
+-            ((Box) solarPanelFourwR.getChildren().get(1)).setMaterial(col);
+-
+-        }
+-    }
+-
+-
+-    public static void gColorSetOpt(Group sunOb){
+-        Double b1d = distanceCalc((Box) gPanelOneBox.getChildren().get(1), sunOb);
+-        Double b2d = distanceCalc((Box) gPanelTwoBox.getChildren().get(1), sunOb);
+-        gbox1closest = true;
+-        gbox2closest=false;
+-
+-        if((b2d < b1d)){
+-            box1closest = false;
+-            box2closest = true;
+-        }
+-        if(gbox1closest = true){
+-            ((Box) gPanelOneBox.getChildren().get(1)).setMaterial(col);
+-            ((Box) gPanelTwoBox.getChildren().get(1)).setMaterial(col1);
+-        }
+-        if(gbox2closest = true){
+-            ((Box) gPanelOneBox.getChildren().get(1)).setMaterial(col1);
+-            ((Box) gPanelTwoBox.getChildren().get(1)).setMaterial(col);
+-        }
+-    }
+-    //skybox loading and blending of the images to make it look seamless (I think)
+-    private void loadImageViews() {
+-        for(ImageView imageViews : views)
+-        {
+-            imageViews.setSmooth(true);
+-
+-            imageViews.setScaleX(10);
+-            imageViews.setScaleY(10);
+-            imageViews.setScaleZ(10);
+-            imageViews.setPreserveRatio(true);
+-        }
+-        buildSkyboxFromImage();
+-    }
+-    //for folding skybox from imported 4x3 image
+-
+-    //this is what the importing image should look like:
+-    /*
+-     *              ____
+-     *             |top |
+-     *         ____|____|____ ____
+-     *        |left|fwd |rght|back|
+-     *        |____|____|____|____|
+-     *             |bot |
+-     *             |____|
+-     *
+-     */
+-
+-    //loadImageViewPorts - builds skybox
+-    public void buildSkyboxFromImage()
+-    {
+-        //layoutViews(); //top, back, left...
+-
+-        //TODO consider if the below is an overcomplication and if you NEED to use a constructor.
+-        //note that the box we pass in has x,y,z  already there. add diffuse image and call it a day. Assume size is correct?
+-
+-
+-        // Box skyboxBox = new Box(10000, 10000, 10000);
+-        //Sphere skybox = new Sphere(5000);
+-
+-
+-
+-
+-        //4 x 3 image divided by their own ratio should both = 1, validates size of incoming image, we also check when buildingsk=ybox, but what do you do
+-//        if(width/4 != height/3)
+-//            throw new UnsupportedOperationException("Image needs to be a 4x3 image. Sideways cross, see ");
+-        double width = WIDTH;
+-        double height = HEIGHT;
+-        size = width - height;
+-        recalculateSize(size);
+-
+-        //setting up grids for
+-        double
+-                topx = size, topy =0,
+-                botx = size, boty = size*2,
+-                leftx = 0, lefty= size,
+-                rightx = size * 2, righty = size,
+-                fwdx = size, fwdy= size,
+-                backx = size *3, backy = size;
+-
+-        //add top padding x+, y+, width-, height
+-        top.setViewport(new Rectangle2D(topx , topy , size, size ));
+-
+-        //add left padding x, y+, width, height-
+-        left.setViewport(new Rectangle2D(leftx , lefty , size - 1, size - 1));
+-
+-        //add front padding x+, y+, width-, height
+-        back.setViewport(new Rectangle2D(fwdx , fwdy, size , size));
+-
+-        //add right padding x, y+, width, height-
+-        right.setViewport(new Rectangle2D(rightx, righty , size , size ));
+-
+-        //add back padding x, y+, width, height-
+-        front.setViewport(new Rectangle2D(backx + 1, backy - 1, size - 1, size - 1));
+-
+-        //add bottom padding x+, y, width-, height-
+-        bottom.setViewport(new Rectangle2D(botx, boty, size , size));
+-
+-
+-        for(ImageView view : views)
+-        {
+-            view.setImage(skyboxImage);
+-            // System.out.println(view.getId() + view.getViewport() + size);  //TODO just for testing correct outputs
+-
+-        }
+-        final PhongMaterial skyMaterial = new PhongMaterial();
+-        skyMaterial.setSpecularColor(Color.TRANSPARENT);
+-        skyMaterial.setDiffuseMap(skyboxImage);
+-        root.getTransforms().add(affine);
+-        // views.setMaterial(skyMaterial);
+-        // views.setCullFace(CullFace.NONE);
+-        layoutViews();
+-        root.getChildren().addAll(views);
+-
+-    }  //ensuring that our cells for our skybox image are appropriately sized before folding
+-    private void recalculateSize(double size)
+-    {
+-        double factor = Math.floor(getSize()/size);
+-        setSize(size * factor);
+-    }
+-
+-    //build the box through translations and folding
+-    private void layoutViews()
+-    {
+-        for(ImageView view : views)
+-        {
+-            view.setFitWidth(getSize());
+-            view.setFitHeight(getSize());
+-        }
+-
+-
+-        back.setTranslateX(-0.5 * getSize());
+-        back.setTranslateY(-0.5 * getSize());
+-        back.setTranslateZ(-0.5 * getSize());
+-
+-
+-        front.setTranslateX(-0.5 * getSize());
+-        front.setTranslateY(-0.5 * getSize());
+-        front.setTranslateZ(0.5 * getSize());
+-        front.setRotationAxis(Rotate.Z_AXIS);
+-        front.setRotate(-180);
+-        front.getTransforms().add(new Rotate(180,front.getFitHeight() / 2, 0,0, Rotate.X_AXIS));
+-        front.setTranslateY(front.getTranslateY() - getSize());
+-
+-        top.setTranslateX(-0.5 * getSize());
+-        top.setTranslateY(-1 * getSize());
+-        top.setRotationAxis(Rotate.X_AXIS);
+-        top.setRotate(-90);
+-
+-        bottom.setTranslateX(-0.5 * getSize());
+-        bottom.setTranslateY(0);
+-        bottom.setRotationAxis(Rotate.X_AXIS);
+-        bottom.setRotate(90);
+-
+-        left.setTranslateX(-1 * getSize());
+-        left.setTranslateY(-0.5 * getSize());
+-        left.setRotationAxis(Rotate.Y_AXIS);
+-        left.setRotate(90);
+-
+-        right.setTranslateX(0);
+-        right.setTranslateY(-0.5 * getSize());
+-        right.setRotationAxis(Rotate.Y_AXIS);
+-        right.setRotate(-90);
+-    }
+-
+-    public final double getSize()
+-    {
+-        return size;
+-    }
+-
+-    public final void setSize(double value)
+-    {
+-        size = value;
+-    }
+-
+-
++/*
++        //TODO below may be moved into skybox-view.fxml so we have control of all view functionality in one place
++        ImageView imageView = new ImageView(skyboxImage);
++        imageView.setX(50);
++        imageView.setY(25);
++        Group skyboxImages = new Group(imageView);
++        stage.setTitle("Java Skybox");
++        stage.setScene(scene);
++        stage.show();*/
+ 
+ 
+     public static void main(String[] args) {
+-        launch(args);
++        launch();
+     }
+-
+-}
++}
+\ No newline at end of file
