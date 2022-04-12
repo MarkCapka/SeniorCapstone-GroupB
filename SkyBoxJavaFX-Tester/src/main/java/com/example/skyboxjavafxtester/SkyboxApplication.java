@@ -1,30 +1,40 @@
 package com.example.skyboxjavafxtester;
 
 import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
+import com.luckycatlabs.sunrisesunset.SunriseSunsetCalculator;
+import com.luckycatlabs.sunrisesunset.dto.Location;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
+import javafx.geometry.Orientation;
 import javafx.geometry.Point3D;
+import javafx.geometry.Pos;
 import javafx.scene.*;
-import javafx.scene.control.Button;
-import javafx.scene.effect.Light;
-import javafx.scene.effect.Lighting;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
+import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
-
-
+import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
+import java.util.Date;
 
 public class SkyboxApplication extends Application {
 
@@ -45,7 +55,6 @@ public class SkyboxApplication extends Application {
     private static final File house = new File("C:\\House.3ds");
     private static final File solarPanel = new File("C:\\SolarPanel(Export).3ds");
     private static final File groundSolarPanel = new File("C:\\GroundSolarPanel.3ds");
-    private static Group solarPanelImport;
     private static Group gPanelOne;
     private static Group gPanelTwo;
     private static Group houseImport;
@@ -60,7 +69,6 @@ public class SkyboxApplication extends Application {
     private Boolean oneSelected = false;
     private Boolean twoSelected = false;
     static PhongMaterial clear = new PhongMaterial(Color.TRANSPARENT);
-    static double sunT = 0.0;
     private static Boolean pressed = false;
     private static Boolean pressedTwo = false;
     static boolean box1closest;
@@ -72,6 +80,29 @@ public class SkyboxApplication extends Application {
     static PhongMaterial optimal = new PhongMaterial(Color.GREEN);
     static PhongMaterial subOptimal = new PhongMaterial(Color.RED);
 
+    private static String currentTime;
+    private static String convertedSunrise;
+    private static String convertedSunset;
+    private static Boolean pm = false;
+    private static Label currentTimeLabel = new Label();
+    private static Slider slider = new Slider();
+    static String sunriseTime;
+    static String sunsetTime;
+
+    //Location and Dates
+    static Calendar cal;
+    static String theDate = "20220310";
+    static String theLocation;
+    static String timeZone = "GMT-8";
+    static Location location;
+    static Double latitude = 47.6588;
+    static Double longitude = -117.4260;
+    static Date date;
+    static DatePicker datePicker = new DatePicker();
+    static TextField locationPicker = new TextField();
+    static BorderPane pane = new BorderPane();
+    static Stage stage;
+    static TextField tz = new TextField();
 
 
     Image skyboxImage;
@@ -84,148 +115,26 @@ public class SkyboxApplication extends Application {
         }
     }
 
-    private void constructWorld(Group root) {
-
-        // AmbientLight light = new AmbientLight();
-        AmbientLight light = new AmbientLight(Color.rgb(160, 160, 160));
-/*
-        PointLight pl = new PointLight();
-        pl.setTranslateX(100);
-        pl.setTranslateY(-100);
-        pl.setTranslateZ(-100);
-        root.getChildren().add(pl);
-
-         */
-
-        final PhongMaterial greenMaterial = new PhongMaterial();
-        greenMaterial.setDiffuseColor(Color.FORESTGREEN);
-        greenMaterial.setSpecularColor(Color.LIMEGREEN);
-        Box xAxis = new Box(500, 10, 10);
-        xAxis.setMaterial(greenMaterial);
-        Box yAxis = new Box(10, 200, 10);
-        yAxis.setMaterial(greenMaterial);
-        Box zAxis = new Box(10, 10, 200);
-        zAxis.setMaterial(greenMaterial);
-
-        final PhongMaterial redMaterial = new PhongMaterial();
-        redMaterial.setDiffuseColor(Color.RED);
-        redMaterial.setSpecularColor(Color.TOMATO);
-        final Sphere sphere = new Sphere(30);
-        sphere.setMaterial(redMaterial);
-
-        sphere.setTranslateX(150);
-
-        final PhongMaterial yellowMaterial = new PhongMaterial();
-        yellowMaterial.setDiffuseColor(Color.rgb(200, 200, 0));
-        // yellowMaterial.setDiffuseColor(Color.YELLOW);
-        // yellowMaterial.setSpecularColor(Color.WHITE);
-        final Sphere sphere2 = new Sphere(30);
-        sphere2.setMaterial(yellowMaterial);
-        // sphere2.setDrawMode(DrawMode.LINE);
-
-        sphere2.setTranslateX(110);
-
-        // Example from JavaFX for Dummies
-        TriangleMesh pyramidMesh = new TriangleMesh();
-        // define (a trivial) texture map
-        pyramidMesh.getTexCoords().addAll(
-                0.5f, 0,
-                0, 0.5f,
-                1, 0.5f,
-                0, 1,
-                1, 1
-        );
-        // define vertices
-        float h = 100;                    // Height
-        float s = 200;                    // Base hypotenuse
-        pyramidMesh.getPoints().addAll(
-                0, 0, 0,            // Point 0 - Top
-                0, h, -s / 2,         // Point 1 - Front
-                -s / 2, h, 0,            // Point 2 - Left
-                s / 2, h, 0,            // Point 3 - Right
-                0, h, s / 2           // Point 4 - Back
-        );
-        // define faces
-        pyramidMesh.getFaces().addAll(
-                0, 0, 2, 1, 1, 2,          // Front left face
-                0, 0, 1, 1, 3, 1,          // Front right face
-                0, 0, 3, 1, 4, 2,          // Back right face
-                0, 0, 4, 1, 2, 2,          // Back left face
-                4, 1, 1, 4, 2, 2,          // Bottom left face
-                4, 1, 3, 3, 1, 4           // Bottom right face
-        );
-        pyramidMesh.getFaceSmoothingGroups().addAll(
-                1, 2, 3, 4, 5, 5);
-        MeshView pyramid = new MeshView(pyramidMesh);
-        //pyramid.setDrawMode(DrawMode.LINE);
-        final PhongMaterial pyrMaterial = new PhongMaterial();
-        //pyrMaterial.setDiffuseMap(new Image("pyr_tex.png")); //TODO missing this image, need to determine the diffuse map
-        pyrMaterial.setDiffuseColor(Color.BLUE);
-        pyrMaterial.setSpecularColor(Color.WHITE);
-        pyramid.setMaterial(pyrMaterial);
-        pyramid.setTranslateX(-50);
-        pyramid.setTranslateY(-200);
-        pyramid.setTranslateZ(0);
-        //  root.getChildren().add(pyramid);
-
-
-        final PhongMaterial blueMaterial = new PhongMaterial();
-        blueMaterial.setDiffuseColor(Color.BLUE);
-        blueMaterial.setSpecularColor(Color.WHITE);
-        Box box = new Box(40, 60, 80);
-        box.setMaterial(blueMaterial);
-
-        box.setTranslateX(-30);
-        box.setTranslateY(-20);
-        box.setTranslateZ(-20);
-
-
-        root.getChildren().add(light);
-
-        Image back = new Image("skyboxDesert.png");
-        final PhongMaterial skyMaterial = new PhongMaterial();
-        skyMaterial.setDiffuseMap(back);
-        Box skybox = new Box(10000, 10000, 10000);
-        skybox.setMaterial(skyMaterial);
-        skybox.setCullFace(CullFace.NONE);
-        //root.getChildren().add(skybox);
-        models();
-        sunCreation();
-        root.getChildren().addAll(skybox, sun, panelsWHouse);
-
-    }
 
     @Override
-    public void start(Stage stage) throws InterruptedException {
-        //initiates the scene, environment and camera
-
-        //TODO directory for filesource is currently hard coded to path.
-        // Image skyboxImage = new Image(new FileInputStream("/Users/katiepalmer/IdeaProjects/SkyBoxJavaFX-Tester/src/main/resources/skyboxDesert.png"));
-
-        //TODO BELOW: we will likely use the fxmlLoader to call the view once we have more pieces impelmented within our view.
-        // right now we are just setting up skybox
-        //FXMLLoader fxmlLoader = new FXMLLoader(SkyboxApplication.class.getResource("skybox-viewUI.fxml"));
+    public void start(Stage stage) throws InterruptedException, ParseException {
 
         Group sceneRoot = new Group();
+        startParams();
         constructWorld(sceneRoot);
-
-
-       // models();
-       // sunCreation();
-        //sceneRoot.getChildren().addAll(sun, panelsWHouse);
-
+        uiBuild();
 
         //-------------Scene and Camera set up----------------------------//
-        //TODO change to 1024
+        //TODO change to 1024, 600
         double sceneWidth = 600;
-        //TODO change to 768
+        //TODO change to 768, 600
         double sceneHeight = 600;
-        Scene scene = new Scene(sceneRoot, sceneWidth, sceneHeight, true);
-        scene.setFill(new ImagePattern(skyboxImage));
+        SubScene Subscene = new SubScene(sceneRoot, sceneWidth, sceneHeight, true, SceneAntialiasing.BALANCED);
+        Subscene.setFill(new ImagePattern(skyboxImage));
         camera = new PerspectiveCamera(true);
         camera.setNearClip(0.1);
         camera.setFarClip(30000.0);
-        scene.setCamera(camera);
+        Subscene.setCamera(camera);
         // translations through dolly
         cameraDolly = new Group();
         cameraDolly.setTranslateZ(-1000);
@@ -240,6 +149,9 @@ public class SkyboxApplication extends Application {
         sceneRoot.getChildren().add(cameraDolly);
         cameraDolly.getChildren().add(turn);
         turn.getChildren().add(camera);
+
+        pane.setCenter(Subscene);
+        Scene scene = new Scene(pane);
         //-------------END of Scene and Camera set up----------------------------//
 
 
@@ -289,14 +201,6 @@ public class SkyboxApplication extends Application {
             if (keycode == KeyCode.N) { //Rotate house and all solar panels Left
                 t = t.createConcatenation(r);
                 panelsWHouse.getTransforms().addAll(t);
-            }
-            if (keycode == KeyCode.F) { //Rotate house and all solar panels Left
-                sunT = sunT + 1.0;
-                sunTrajectory(sunT);
-            }
-            if (keycode == KeyCode.G) { //Rotate house and all solar panels Left
-                sunT = sunT - 1.0;
-                sunTrajectory(sunT);
             }
             if (keycode == KeyCode.DIGIT0) { //Clears selected panels
                 clearSelected();
@@ -348,23 +252,6 @@ public class SkyboxApplication extends Application {
                     t = t.createConcatenation(n1);
                     gPanelTwoBox.getTransforms().addAll(t);
                 }
-            }
-
-            if(keycode == KeyCode.NUMPAD0)
-            {
-                highlightOptimalPanels();
-            }
-            if(keycode == KeyCode.NUMPAD1)
-            {
-                showIntensityLevels();
-            }
-            if(keycode == KeyCode.NUMPAD2)
-            {
-                addAllPanels();
-            }
-            if(keycode == KeyCode.NUMPAD3)
-            {
-                removeAllPanels();
             }
 
             if (delta != null) {
@@ -516,9 +403,6 @@ public class SkyboxApplication extends Application {
         gPanelTwoBox = new Group(gPanelTwo, boxers6);
 
         panelsWHouse = new Group(houseImport, solarPanelOnewR, solarPanelTwowR, solarPanelThreewR, solarPanelFourwR, gPanelOneBox, gPanelTwoBox);
-       // panelsWHouse.setTranslateY(500); // puts house at ground level.. If you comment this it removes models on screen
-       // panelsWHouse.setTranslateX(400); // puts house at ground level.. If you comment this out it removes models on screen
-       // panelsWHouse.setTranslateZ(-400);
     }
 
     static void sunCreation() {
@@ -542,6 +426,149 @@ public class SkyboxApplication extends Application {
         pointlight.setColor(Color.rgb(255, 255, 255));
 
     }
+
+    public void sunMovement() {
+
+        double sliderValue = slider.getValue();
+        if(sliderValue == 0)
+        {
+            changeTime(0, 0);
+            sunTrajectory(0.0);
+        }
+        else if(sliderValue == .5)
+        {
+            changeTime(0, 30);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 1.5)
+        {
+            changeTime(1, 30);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 1)
+        {
+            changeTime(1, 0);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 2.5)
+        {
+            changeTime(2, 30);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 2)
+        {
+            changeTime(2, 0);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 3.5)
+        {
+            changeTime(3, 30);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 3)
+        {
+            changeTime(3, 0);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 4.5)
+        {
+            changeTime(4, 30);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 4)
+        {
+            changeTime(4, 0);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 5.5)
+        {
+            changeTime(5, 30);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 5)
+        {
+            changeTime(5, 0);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 6.5)
+        {
+            changeTime(6, 30);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 6)
+        {
+            changeTime(6, 0);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 7.5)
+        {
+            changeTime(7, 30);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 7)
+        {
+            changeTime(7, 0);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 8.5)
+        {
+            changeTime(8, 30);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 8)
+        {
+            changeTime(8, 0);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 9.5)
+        {
+            changeTime(9, 30);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 9)
+        {
+            changeTime(9, 0);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 10.5)
+        {
+            changeTime(10, 30);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 10)
+        {
+            changeTime(10, 0);
+            sunTrajectory(sliderValue);
+
+        }
+        else if(sliderValue == 11)
+        {
+            changeTime(11, 0);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 11.5)
+        {
+            changeTime(11, 30);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 12)
+        {
+            changeTime(12, 0);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 12.5)
+        {
+            changeTime(12, 30);
+            sunTrajectory(sliderValue);
+        }
+        else if(sliderValue == 13)
+        {
+            changeTime(13, 0);
+            sunTrajectory(sliderValue);
+        }
+
+    }
+
 
     static void sunTrajectory(Double sliderValue) {
         double x;
@@ -857,6 +884,30 @@ public class SkyboxApplication extends Application {
         return distance;
     }
 
+    static void startParams() throws ParseException {
+        //Choosing Spokane 3/10/22 as starting place and time
+        DateFormat formatter = new SimpleDateFormat("yyyyMMdd"); //Formatter
+        date = formatter.parse(theDate); //Parse string to create Date object
+        cal = Calendar.getInstance(); //Calendar object created
+        cal.setTime(date); //Calender object given corresponding date
+
+        location = new Location(latitude.doubleValue(), longitude.doubleValue()); // Will be entered in coordinates
+        SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, timeZone); // Creates calculator for sun times
+
+        sunriseTime = calculator.getOfficialSunriseForDate(cal); // Gets sunrise based on date and calculator created
+        sunsetTime = calculator.getOfficialSunsetForDate(cal); // Gets sunset based on date and calculator created
+
+        //Initialize Slider Ticks
+        LocalTime start = LocalTime.parse(sunriseTime);
+        LocalTime end =  LocalTime.parse(sunsetTime);
+        Long hoursBetweenRiseSet = ChronoUnit.HOURS.between(start, end);
+        slider.setMax(hoursBetweenRiseSet + 1);
+
+        //Initialize currentTime and current sun position with the time
+        changeTime(6, 0);
+        sunTrajectory(6.0);
+    }
+
     public void highlightOptimalPanels() {
 
         if(pressed == false)
@@ -1087,6 +1138,418 @@ public class SkyboxApplication extends Application {
             panelsWHouse.getChildren().remove(2);
             panelsWHouse.getChildren().remove(1);
         }
+    }
+
+    public static void changeTime(int currentHour, int currentMin){
+        String startTime = sunriseTime;
+        String[] wholeTime = startTime.split(":");
+
+        int hour = Integer.parseInt(wholeTime[0]);
+        int min = Integer.parseInt(wholeTime[1]);
+        int newHour = hour + currentHour;
+        int newMin = min + currentMin;
+
+        StringBuilder timeMaker = new StringBuilder(newHour + ":" + newMin);
+        currentTime = timeMaker.toString();
+
+        if(currentTime.length() < 5)
+        {
+            String str = String.format("%1s",currentTime);
+            str = str.replace(' ','0');
+
+            currentTimeLabel.setText(str);
+        }
+        else
+            currentTimeLabel.setText(currentTime);
+
+        System.out.println(currentTimeLabel);
+    }
+
+    public void showControls() {
+        String controls =
+                "Controls:\n"
+                        + "\n"
+                        + "Rotate Camera: click and drag\n"
+                        + "Move Camera Up: w\n"
+                        + "Move Camera Left: a\n"
+                        + "Move Camera Down: s\n"
+                        + "Move Camera Right: d\n"
+                        + "Zoom In: ,\n"
+                        + "Zoom out: .\n"
+                        + "Rotate Model Right: m\n"
+                        + "Rotate Model Left: n\n"
+                        + "\n"
+                        + "Select Solar Panel 1: 1\n"
+                        + "Select Solar Panel 2: 2\n"
+                        + "Clear Selection: 0\n"
+                        + "\n"
+                        + "If Panel Is Selected:\n"
+                        + "Move Backward: Up Arrow\n"
+                        + "Move Forawrd: Down Arrow\n"
+                        + "Move Left: Right Arrow\n"
+                        + "Move Right: Left Arrow\n"
+                        + "Rotate 45 degrees: Spacebar";
+
+        JOptionPane.showMessageDialog(null, controls, "Controls", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    public void showSunTimes() {
+
+        String sunTimes =
+                "On " + date.toString() + "\n"
+                        + "at latitude: " + latitude + ", and longitude: " + longitude + ":\n"
+                        + "\n"
+                        + "Sunrise: " + sunriseTime + "\n"
+                        + "Sunset: " + sunsetTime;
+
+        JOptionPane.showMessageDialog(null, sunTimes, "Sunrise/Sunset Times", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    public void showPP() {
+        DecimalFormat dc = new DecimalFormat("0.00");
+        int panelCost = 550; //Price of each solar panel
+        int groundPanelCost = 1100; //Price of each Ground solar panel
+        int maintenance = 200; //Cost of maintenance, should me serviced 2x a year
+        int installCost = 4000; //Labor cost
+        int costPerMonth = 100; //Cost per month to spend
+        double averageMonthlyElectricBill = 115.49; // Price of average US Electric bill
+
+        double pp = ((panelCost * 4) + (groundPanelCost * 2) + installCost + (costPerMonth * 12) + (maintenance * 2)) / (averageMonthlyElectricBill * 12);
+
+        String result = "The Payback Period is: " + dc.format(pp) + " Years";
+        JOptionPane.showMessageDialog(null, result, "Payback Period", JOptionPane.PLAIN_MESSAGE);
+
+    }
+
+    //Methods for buttons
+    public void getDate() throws ParseException {
+        String newDate = datePicker.getValue().toString();
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd"); //Formatter
+        date = formatter.parse(newDate);
+
+        recalculateSunTimes();
+    }
+
+    public void getLocation() {
+        theLocation = locationPicker.getText();
+        String[] coords = theLocation.split(",");
+        latitude = Double.parseDouble(coords[0]);
+        longitude = Double.parseDouble(coords[1]);
+
+        recalculateSunTimes();
+    }
+
+    private void recalculateSunTimes() {
+
+        cal.clear();
+        cal.setTime(date); //Calender object given corresponding date
+
+        location = new Location(latitude, longitude); // Will be entered in coordinates
+        System.out.println(location.getLatitude());
+        SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(location, timeZone); // Creates calculator for sun times
+        System.out.println(timeZone.toString());
+
+        sunriseTime = calculator.getOfficialSunriseForDate(cal); // Gets sunrise based on date and calculator created
+        sunsetTime = calculator.getOfficialSunsetForDate(cal); // Gets sunset based on date and calculator created
+
+        //Initialize currentTime and current sun position with the time
+        changeTime(6, 0);
+        sunTrajectory(6.0);
+
+    }
+
+    private void constructWorld(Group root) {
+
+        AmbientLight light = new AmbientLight(Color.rgb(160, 160, 160));
+
+        final PhongMaterial greenMaterial = new PhongMaterial();
+        greenMaterial.setDiffuseColor(Color.FORESTGREEN);
+        greenMaterial.setSpecularColor(Color.LIMEGREEN);
+        Box xAxis = new Box(500, 10, 10);
+        xAxis.setMaterial(greenMaterial);
+        Box yAxis = new Box(10, 200, 10);
+        yAxis.setMaterial(greenMaterial);
+        Box zAxis = new Box(10, 10, 200);
+        zAxis.setMaterial(greenMaterial);
+
+        final PhongMaterial redMaterial = new PhongMaterial();
+        redMaterial.setDiffuseColor(Color.RED);
+        redMaterial.setSpecularColor(Color.TOMATO);
+        final Sphere sphere = new Sphere(30);
+        sphere.setMaterial(redMaterial);
+
+        sphere.setTranslateX(150);
+
+        final PhongMaterial yellowMaterial = new PhongMaterial();
+        yellowMaterial.setDiffuseColor(Color.rgb(200, 200, 0));
+        // yellowMaterial.setDiffuseColor(Color.YELLOW);
+        // yellowMaterial.setSpecularColor(Color.WHITE);
+        final Sphere sphere2 = new Sphere(30);
+        sphere2.setMaterial(yellowMaterial);
+        // sphere2.setDrawMode(DrawMode.LINE);
+
+        sphere2.setTranslateX(110);
+
+        // Example from JavaFX for Dummies
+        TriangleMesh pyramidMesh = new TriangleMesh();
+        // define (a trivial) texture map
+        pyramidMesh.getTexCoords().addAll(
+                0.5f, 0,
+                0, 0.5f,
+                1, 0.5f,
+                0, 1,
+                1, 1
+        );
+        // define vertices
+        float h = 100;                    // Height
+        float s = 200;                    // Base hypotenuse
+        pyramidMesh.getPoints().addAll(
+                0, 0, 0,            // Point 0 - Top
+                0, h, -s / 2,         // Point 1 - Front
+                -s / 2, h, 0,            // Point 2 - Left
+                s / 2, h, 0,            // Point 3 - Right
+                0, h, s / 2           // Point 4 - Back
+        );
+        // define faces
+        pyramidMesh.getFaces().addAll(
+                0, 0, 2, 1, 1, 2,          // Front left face
+                0, 0, 1, 1, 3, 1,          // Front right face
+                0, 0, 3, 1, 4, 2,          // Back right face
+                0, 0, 4, 1, 2, 2,          // Back left face
+                4, 1, 1, 4, 2, 2,          // Bottom left face
+                4, 1, 3, 3, 1, 4           // Bottom right face
+        );
+        pyramidMesh.getFaceSmoothingGroups().addAll(
+                1, 2, 3, 4, 5, 5);
+        MeshView pyramid = new MeshView(pyramidMesh);
+        //pyramid.setDrawMode(DrawMode.LINE);
+        final PhongMaterial pyrMaterial = new PhongMaterial();
+        //pyrMaterial.setDiffuseMap(new Image("pyr_tex.png")); //TODO missing this image, need to determine the diffuse map
+        pyrMaterial.setDiffuseColor(Color.BLUE);
+        pyrMaterial.setSpecularColor(Color.WHITE);
+        pyramid.setMaterial(pyrMaterial);
+        pyramid.setTranslateX(-50);
+        pyramid.setTranslateY(-200);
+        pyramid.setTranslateZ(0);
+        //  root.getChildren().add(pyramid);
+
+
+        final PhongMaterial blueMaterial = new PhongMaterial();
+        blueMaterial.setDiffuseColor(Color.BLUE);
+        blueMaterial.setSpecularColor(Color.WHITE);
+        Box box = new Box(40, 60, 80);
+        box.setMaterial(blueMaterial);
+
+        box.setTranslateX(-30);
+        box.setTranslateY(-20);
+        box.setTranslateZ(-20);
+
+
+        root.getChildren().add(light);
+
+        Image back = new Image("skyboxDesert.png");
+        final PhongMaterial skyMaterial = new PhongMaterial();
+        skyMaterial.setDiffuseMap(back);
+        Box skybox = new Box(10000, 10000, 10000);
+        skybox.setMaterial(skyMaterial);
+        skybox.setCullFace(CullFace.NONE);
+        //root.getChildren().add(skybox);
+        models();
+        sunCreation();
+        root.getChildren().addAll(skybox, sun, panelsWHouse);
+
+    }
+
+    private void uiBuild(){
+        //Top UI
+        datePicker.setLayoutX(14.0);
+        datePicker.setLayoutY(13.0);
+        datePicker.setPrefHeight(25.0);
+        datePicker.setPrefWidth(166.0);
+        datePicker.setPromptText("03/10/2022");
+        datePicker.setOnAction(e->{
+            try {
+                getDate();
+            } catch (ParseException ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        slider.setLayoutX(193.0);
+        slider.setLayoutY(7.0);
+        slider.setMajorTickUnit(1.0);
+        slider.setMax(12.0);
+        slider.setMinorTickCount(1);
+        slider.setPrefHeight(38.0);
+        slider.setPrefWidth(590.0);
+        slider.setShowTickMarks(true);
+        slider.setSnapToTicks(true);
+        slider.setValue(6.0);
+        slider.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<?extends Number> observable, Number oldValue, Number newValue){
+                sunMovement();
+            }
+        });
+
+        ToolBar sliderAndDate = new ToolBar(datePicker, slider);
+        sliderAndDate.setOrientation(Orientation.HORIZONTAL);
+        sliderAndDate.setLayoutY(39.0);
+        sliderAndDate.setPrefHeight(51.0);
+        sliderAndDate.setPrefWidth(1024.0);
+        sliderAndDate.setStyle("-fx-background-color: linear-gradient(to right, indigo 20%, red 70%, indigo 100%)");
+
+        pane.setTop(sliderAndDate);
+
+
+        //Side UI
+        Label solarLabel = new Label("Solar Panels");
+        solarLabel.setLayoutX(14.0);
+        solarLabel.setLayoutY(232.0);
+        solarLabel.setPrefHeight(17.0);
+        solarLabel.setPrefWidth(149.0);
+        solarLabel.setAlignment(Pos.CENTER);
+
+        Label location = new Label("Location");
+        location.setLayoutX(13.0);
+        location.setLayoutY(98.0);
+        location.setPrefHeight(17.0);
+        location.setPrefWidth(149.0);
+        location.setAlignment(Pos.CENTER);
+
+
+        locationPicker.setLayoutX(13.0);
+        locationPicker.setLayoutY(123.0);
+        locationPicker.setText("47.6588, -117.4260");
+        locationPicker.setAlignment(Pos.CENTER);
+        locationPicker.setOnAction(e->{
+            getLocation();
+        });
+
+
+        Label time = new Label("Current Time:");
+        time.setLayoutX(14.0);
+        time.setLayoutY(14.0);
+        time.setPrefHeight(17.0);
+        time.setPrefWidth(149.0);
+        time.setAlignment(Pos.CENTER);
+
+        currentTimeLabel.setLayoutX(13.0);
+        currentTimeLabel.setLayoutY(41.0);
+        currentTimeLabel.setPrefHeight(17.0);
+        currentTimeLabel.setPrefWidth(149.0);
+        currentTimeLabel.setAlignment(Pos.CENTER);
+
+        Button addAll = new Button("Add All");
+        addAll.setOnAction(e->{
+            addAllPanels();
+        });
+
+        addAll.setLayoutX(9.0);
+        addAll.setLayoutY(265.0);
+        addAll.setPrefHeight(38.0);
+        addAll.setPrefWidth(75.0);
+
+        Button removeAll = new Button("Remove All");
+        removeAll.setOnAction(e->{
+            removeAllPanels();
+        });
+
+        removeAll.setLayoutX(94.0);
+        removeAll.setLayoutY(265.0);
+        removeAll.setPrefHeight(38.0);
+        removeAll.setPrefWidth(75.0);
+
+        Button paybackPeriod = new Button("Payback Period");
+        paybackPeriod.setOnAction(e->{
+            showPP();
+        });
+
+        paybackPeriod.setLayoutX(9.0);
+        paybackPeriod.setLayoutY(557.0);
+        paybackPeriod.setPrefHeight(38.0);
+        paybackPeriod.setPrefWidth(159.0);
+
+        Button optimalPanels = new Button("Optimal Panels");
+        optimalPanels.setOnAction(e->{
+            highlightOptimalPanels();
+        });
+
+        optimalPanels.setLayoutX(9.0);
+        optimalPanels.setLayoutY(456.0);
+        optimalPanels.setPrefHeight(38.0);
+        optimalPanels.setPrefWidth(159.0);
+
+        Button intensityLevels = new Button("Light Intensity Levels");
+        intensityLevels.setOnAction(e->{
+            showIntensityLevels();
+        });
+
+        intensityLevels.setLayoutX(9.0);
+        intensityLevels.setLayoutY(510.0);
+        intensityLevels.setPrefHeight(38.0);
+        intensityLevels.setPrefWidth(159.0);
+
+        Button sunTimes = new Button("Sunrise/Sunset Times");
+        sunTimes.setOnAction(e->{
+            showSunTimes();
+        });
+
+        sunTimes.setLayoutX(9.0);
+        sunTimes.setLayoutY(404.0);
+        sunTimes.setPrefHeight(38.0);
+        sunTimes.setPrefWidth(159.0);
+
+        Button controls = new Button("Controls");
+        controls.setOnAction(e->{
+            showControls();
+        });
+
+        controls.setLayoutX(9.0);
+        controls.setLayoutY(354.0);
+        controls.setPrefHeight(38.0);
+        controls.setPrefWidth(159.0);
+
+        Button quit = new Button("Quit");
+        quit.setOnAction(e->{
+            stage.close();
+        });
+
+        quit.setLayoutX(8.0);
+        quit.setLayoutY(613.0);
+        quit.setPrefHeight(38.0);
+        quit.setPrefWidth(159.0);
+
+        Label timeZoneLabel = new Label("Timezone");
+        timeZoneLabel.setLayoutX(14.0);
+        timeZoneLabel.setLayoutY(163.0);
+        timeZoneLabel.setPrefHeight(17.0);
+        timeZoneLabel.setPrefWidth(149.0);
+        timeZoneLabel.setAlignment(Pos.CENTER);
+
+
+        tz.setText("GMT-8");
+        tz.setLayoutX(14.0);
+        tz.setLayoutY(188.0);
+        tz.setAlignment(Pos.CENTER);
+        tz.setOnAction(e->{
+            getTimeZone();
+        });
+
+
+        ToolBar sideUI = new ToolBar(time, currentTimeLabel, location, locationPicker, timeZoneLabel, tz, solarLabel, addAll, removeAll, controls, sunTimes, optimalPanels, intensityLevels, paybackPeriod, quit);
+        sideUI.setOrientation(Orientation.VERTICAL);
+        sideUI.setLayoutY(89.0);
+        sideUI.setPrefHeight(678.0);
+        sideUI.setPrefWidth(177.0);
+        pane.setLeft(sideUI);
+        pane.setPrefSize(600,600);
+
+    }
+
+    public void getTimeZone() {
+        theLocation = locationPicker.getText();
+        timeZone = tz.getText();
+        recalculateSunTimes();
     }
 
 

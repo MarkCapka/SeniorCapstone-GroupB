@@ -8,6 +8,7 @@ module com.example.skyboxjavafxtester {
     requires eu.hansolo.tilesfx;
     requires jim3dsModelImporterJFX;
     requires sunset1;
+    requires java.desktop;
 
     opens com.example.skyboxjavafxtester to javafx.fxml;
     exports com.example.skyboxjavafxtester;
